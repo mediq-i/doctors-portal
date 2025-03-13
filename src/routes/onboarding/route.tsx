@@ -17,12 +17,12 @@ function OnboardingLayout() {
           />
         </div>
 
-        <div className="flex flex-col justify-center h-full mx-auto bg-gunmetal p-8">
+        <div className="flex flex-col h-full bg-gunmetal py-8 px-6 max-w-4xl">
           <h1 className="text-3xl font-semibold mb-4 text-white">
             Optimize your healthcare operations with our intelligent medical
             admin dashboard
           </h1>
-          <p className="text-white/80 mb-6 font-medium text-sm">
+          <p className="text-white/80 mb-6 font-medium text-sm max-w-2xl">
             This comprehensive digital solution centralizes and streamlines
             essential tasks, data, and processes, empowering healthcare
             providers to deliver better patient care and enhance operational
