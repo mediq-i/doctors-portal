@@ -94,7 +94,7 @@ export default function VerifyEmailForm() {
 
         <Button
           type="submit"
-          className="w-full text-center text-base bg-transparent border border-secondary-foreground text-gunmetal py-5 rounded-lg transition-all duration-100 hover:text-neutral-50 hover:shadow-md hover:bg-primary hover:border-transparent"
+          className="w-full text-center text-base bg-primary border text-white py-6 rounded-lg transition-all duration-600 hover:text-neutral-50 hover:shadow-md"
           disabled={isSubmitting}
         >
           {isSubmitting ? <LoadingIcon /> : "Continue"}
@@ -103,7 +103,7 @@ export default function VerifyEmailForm() {
 
       <div className="mt-8 flex justify-center">
         <Button
-          className="text-gunmetal text-sm flex gap-x-2 justify-center bg-transparent py-2.5 rounded-lg transition-all duration-100 hover:underline hover:bg-transparent"
+          className="text-gunmetal text-sm flex gap-x-2 justify-center bg-transparent py-2.5 rounded-lg transition-all duration-300 hover:underline hover:bg-transparent hover:scale-105"
           onClick={() => onClickResendOTP({ email: email ?? "" })}
           disabled={isSubmitting}
         >

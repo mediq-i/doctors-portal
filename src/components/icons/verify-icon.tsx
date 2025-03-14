@@ -3,8 +3,8 @@ import React from "react";
 export default function VerifyIcon() {
   return (
     <svg
-      width="200"
-      height="200"
+      width="120"
+      height="120"
       viewBox="0 0 200 200"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

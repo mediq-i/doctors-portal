@@ -16,6 +16,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as OnboardingVerifyEmailImport } from './routes/onboarding/verify-email'
 import { Route as OnboardingPersonalProfessionalInformationImport } from './routes/onboarding/personal-professional-information'
+import { Route as OnboardingOnboardingStepsImport } from './routes/onboarding/onboarding-steps'
 import { Route as OnboardingInfoCardImport } from './routes/onboarding/info-card'
 import { Route as OnboardingCreateAccountImport } from './routes/onboarding/create-account'
 
@@ -51,6 +52,12 @@ const OnboardingPersonalProfessionalInformationRoute =
     path: '/personal-professional-information',
     getParentRoute: () => OnboardingRouteRoute,
   } as any)
+
+const OnboardingOnboardingStepsRoute = OnboardingOnboardingStepsImport.update({
+  id: '/onboarding-steps',
+  path: '/onboarding-steps',
+  getParentRoute: () => OnboardingRouteRoute,
+} as any)
 
 const OnboardingInfoCardRoute = OnboardingInfoCardImport.update({
   id: '/info-card',
@@ -103,6 +110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingInfoCardImport
       parentRoute: typeof OnboardingRouteImport
     }
+    '/onboarding/onboarding-steps': {
+      id: '/onboarding/onboarding-steps'
+      path: '/onboarding-steps'
+      fullPath: '/onboarding/onboarding-steps'
+      preLoaderRoute: typeof OnboardingOnboardingStepsImport
+      parentRoute: typeof OnboardingRouteImport
+    }
     '/onboarding/personal-professional-information': {
       id: '/onboarding/personal-professional-information'
       path: '/personal-professional-information'
@@ -125,6 +139,7 @@ declare module '@tanstack/react-router' {
 interface OnboardingRouteRouteChildren {
   OnboardingCreateAccountRoute: typeof OnboardingCreateAccountRoute
   OnboardingInfoCardRoute: typeof OnboardingInfoCardRoute
+  OnboardingOnboardingStepsRoute: typeof OnboardingOnboardingStepsRoute
   OnboardingPersonalProfessionalInformationRoute: typeof OnboardingPersonalProfessionalInformationRoute
   OnboardingVerifyEmailRoute: typeof OnboardingVerifyEmailRoute
 }
@@ -132,6 +147,7 @@ interface OnboardingRouteRouteChildren {
 const OnboardingRouteRouteChildren: OnboardingRouteRouteChildren = {
   OnboardingCreateAccountRoute: OnboardingCreateAccountRoute,
   OnboardingInfoCardRoute: OnboardingInfoCardRoute,
+  OnboardingOnboardingStepsRoute: OnboardingOnboardingStepsRoute,
   OnboardingPersonalProfessionalInformationRoute:
     OnboardingPersonalProfessionalInformationRoute,
   OnboardingVerifyEmailRoute: OnboardingVerifyEmailRoute,
@@ -147,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/info-card': typeof OnboardingInfoCardRoute
+  '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
   '/onboarding/personal-professional-information': typeof OnboardingPersonalProfessionalInformationRoute
   '/onboarding/verify-email': typeof OnboardingVerifyEmailRoute
 }
@@ -157,6 +174,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/info-card': typeof OnboardingInfoCardRoute
+  '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
   '/onboarding/personal-professional-information': typeof OnboardingPersonalProfessionalInformationRoute
   '/onboarding/verify-email': typeof OnboardingVerifyEmailRoute
 }
@@ -168,6 +186,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/info-card': typeof OnboardingInfoCardRoute
+  '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
   '/onboarding/personal-professional-information': typeof OnboardingPersonalProfessionalInformationRoute
   '/onboarding/verify-email': typeof OnboardingVerifyEmailRoute
 }
@@ -180,6 +199,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding/create-account'
     | '/onboarding/info-card'
+    | '/onboarding/onboarding-steps'
     | '/onboarding/personal-professional-information'
     | '/onboarding/verify-email'
   fileRoutesByTo: FileRoutesByTo
@@ -189,6 +209,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding/create-account'
     | '/onboarding/info-card'
+    | '/onboarding/onboarding-steps'
     | '/onboarding/personal-professional-information'
     | '/onboarding/verify-email'
   id:
@@ -198,6 +219,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding/create-account'
     | '/onboarding/info-card'
+    | '/onboarding/onboarding-steps'
     | '/onboarding/personal-professional-information'
     | '/onboarding/verify-email'
   fileRoutesById: FileRoutesById
@@ -238,6 +260,7 @@ export const routeTree = rootRoute
       "children": [
         "/onboarding/create-account",
         "/onboarding/info-card",
+        "/onboarding/onboarding-steps",
         "/onboarding/personal-professional-information",
         "/onboarding/verify-email"
       ]
@@ -251,6 +274,10 @@ export const routeTree = rootRoute
     },
     "/onboarding/info-card": {
       "filePath": "onboarding/info-card.tsx",
+      "parent": "/onboarding"
+    },
+    "/onboarding/onboarding-steps": {
+      "filePath": "onboarding/onboarding-steps.tsx",
       "parent": "/onboarding"
     },
     "/onboarding/personal-professional-information": {
