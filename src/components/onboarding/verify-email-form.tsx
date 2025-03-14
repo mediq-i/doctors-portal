@@ -49,7 +49,7 @@ export default function VerifyEmailForm() {
   };
 
   return (
-    <section className="text-center md:w-[360px] pt-8">
+    <section className="w-full mx-auto pt-8 text-center  lg:max-w-3xl">
       <div className="flex flex-col items-center">
         <VerifyIcon />
         <h1 className="pb-2 leading-10 text-3xl font-bold pt-6">

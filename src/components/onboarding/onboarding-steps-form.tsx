@@ -1,19 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Check } from "lucide-react";
 import { OnboardIcon } from "../icons";
 
 export function OnboardingStepsForm() {
   return (
-    <div className="w-full max-w-md mx-auto p-6">
+    <div className="w-full lg:max-w-3xl mx-auto pt-6 lg:pt-10 px-4 md:px-0 xl:px-8">
       {/* Icon */}
       <div className="flex justify-center">
         <OnboardIcon />
       </div>
 
       {/* Title */}
-      <h1 className="pb-2 leading-10 text-3xl font-bold pt-6">
+      <h1 className="pb-2 leading-10 text-xl md:text-2xl lg:text-3xl font-bold pt-6 max-w-lg">
         Personal & professional information
       </h1>
 
@@ -25,7 +23,7 @@ export function OnboardingStepsForm() {
             <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
               <p className="text-xs text-white">1</p>
             </div>
-            <span className="text-lg font-medium text-night">
+            <span className="text-base md:text-lg font-medium text-night">
               Create your account
             </span>
           </div>
@@ -38,7 +36,7 @@ export function OnboardingStepsForm() {
             <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
               <p className="text-xs text-white">2</p>
             </div>
-            <span className="text-lg font-medium text-night">
+            <span className="text-base md:text-lg font-medium text-night">
               Personal & professional information
             </span>
           </div>
@@ -51,7 +49,7 @@ export function OnboardingStepsForm() {
             <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center">
               <p className="text-xs text-gunmetal">3</p>
             </div>
-            <span className="text-lg font-medium text-night">
+            <span className="text-base md:text-lg font-medium text-night">
               Practice & work history
             </span>
           </div>

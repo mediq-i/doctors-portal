@@ -43,8 +43,8 @@ function OnboardingLayout() {
         </div>
 
         {/* Right side - Form content */}
-        <div className="flex flex-1 lg:w-1/2 flex-col px-12">
-          <div className="flex-1 mx-auto w-full px-24 py-12">
+        <div className="flex flex-1 w-full md:max-w-3xl mx-auto lg:w-1/2 sm:px-0 md:px-12">
+          <div className="flex-1 mx-auto w-full px-4 md:px-8 py-6 lg:py-12">
             <div className=" mb-8 ">
               <LogoBlue />
             </div>
