@@ -1,5 +1,8 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import SEOWrapper from "@/utils/helpers/seo-wrapper";
+import { LogoBlue } from "@/components/icons";
+import { ArrowLeft } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingLayout,
@@ -17,7 +20,7 @@ function OnboardingLayout() {
       <div className="flex min-h-screen w-full flex-col lg:flex-row">
         {/* Left side - Marketing content (hidden on mobile/tablet) */}
         <div className="hidden lg:flex lg:w-1/2 flex-col relative">
-          <div className="bg-red-500 h-[500px]">
+          <div className="h-[500px]">
             <img
               src="/images/onboarding-img.png"
               alt="doctor's image"
@@ -40,11 +43,15 @@ function OnboardingLayout() {
         </div>
 
         {/* Right side - Form content */}
-        <div className="flex flex-1 lg:w-1/2 flex-col">
-          <div className="flex-1 max-w-md mx-auto w-full px-6 py-12">
-            {/* Logo for mobile view (shown only on mobile/tablet) */}
-            <div className="flex justify-center mb-8 lg:hidden">
-              <div className="text-2xl font-bold">Your Brand</div>
+        <div className="flex flex-1 lg:w-1/2 flex-col px-12">
+          <div className="flex-1 mx-auto w-full px-24 py-12">
+            <div className=" mb-8 ">
+              <LogoBlue />
+            </div>
+
+            <div className="flex items-center gap-x-3">
+              <ArrowLeft />
+              <Progress value={33} className="w-[300px]" />
             </div>
 
             {/* Outlet for nested routes (forms) */}
