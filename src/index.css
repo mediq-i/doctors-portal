@@ -8,7 +8,8 @@
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* --foreground: oklch(0.145 0 0); */
+  --foreground: #1c2634;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -40,6 +41,7 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --gunmetal: #1d2735;
+  --dimgrey: #6c7278;
 }
 
 .dark {
@@ -113,6 +115,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-gunmetal: var(--gunmetal);
+  --color-dimgrey: var(--dimgrey);
 }
 
 @layer base {
