@@ -3,4 +3,18 @@ import {
   createAccountSchema,
 } from "./create-account-schema";
 
-export { type CreateAccountSchema, createAccountSchema };
+import {
+  VerificationCodeSchema,
+  verificationCodeValidator,
+  emailValidator,
+  EmailSchema,
+} from "./verify-email-schema";
+
+export {
+  type CreateAccountSchema,
+  createAccountSchema,
+  type VerificationCodeSchema,
+  verificationCodeValidator,
+  type EmailSchema,
+  emailValidator,
+};

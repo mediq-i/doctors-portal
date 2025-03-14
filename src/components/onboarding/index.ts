@@ -1,3 +1,4 @@
 import CreateAccountForm from "./create-account-form";
+import VerifyEmailForm from "./verify-email-form";
 
-export { CreateAccountForm };
+export { CreateAccountForm, VerifyEmailForm };

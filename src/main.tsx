@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App.tsx";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { HelmetProvider } from "react-helmet-async";
+import { Toaster } from "@/components/ui/sonner";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -21,6 +22,7 @@ declare module "@tanstack/react-router" {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
+      <Toaster />
       <RouterProvider router={router} />
     </HelmetProvider>
   </StrictMode>

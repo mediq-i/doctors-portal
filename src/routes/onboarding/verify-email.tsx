@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { VerifyEmailForm } from "@/components/onboarding";
 
-export const Route = createFileRoute('/onboarding/verify-email')({
+export const Route = createFileRoute("/onboarding/verify-email")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return <div>Hello "/onboarding/verify-email"!</div>
+  return <VerifyEmailForm />;
 }
