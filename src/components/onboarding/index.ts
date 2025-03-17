@@ -1,11 +1,13 @@
 import CreateAccountForm from "./create-account-form";
 import VerifyEmailForm from "./verify-email-form";
 import { OnboardingStepsForm } from "./onboarding-steps-form";
-import PersonalInfoForm from "./professional-info-form";
+import PersonalInfoForm from "./personal-info-form";
+import SelectIdVerificationForm from "./select-id-verification-form";
 
 export {
   CreateAccountForm,
   VerifyEmailForm,
   OnboardingStepsForm,
   PersonalInfoForm,
+  SelectIdVerificationForm,
 };

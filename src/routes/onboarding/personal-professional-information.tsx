@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PersonalInfoForm } from "@/components/onboarding";
+import {
+  PersonalInfoForm,
+  SelectIdVerificationForm,
+} from "@/components/onboarding";
 
 export const Route = createFileRoute(
   "/onboarding/personal-professional-information"
@@ -8,5 +11,8 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  return <PersonalInfoForm />;
+  return (
+    // <PersonalInfoForm />
+    <SelectIdVerificationForm />
+  );
 }

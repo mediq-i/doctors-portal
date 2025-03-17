@@ -43,6 +43,7 @@
   --gunmetal: #1d2735;
   --dimgrey: #6c7278;
   --night: #111111;
+  --dim-grey: #707070;
 }
 
 .dark {
@@ -118,6 +119,7 @@
   --color-gunmetal: var(--gunmetal);
   --color-dimgrey: var(--dimgrey);
   --color-night: var(--night);
+  --color-dim-grey: var(--dim-grey);
 }
 
 @layer base {
