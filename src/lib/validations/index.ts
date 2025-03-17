@@ -10,6 +10,11 @@ import {
   EmailSchema,
 } from "./verify-email-schema";
 
+import {
+  personalInfoSchema,
+  PersonalInfoFormValues,
+} from "./personal-professional-info-schema";
+
 export {
   type CreateAccountSchema,
   createAccountSchema,
@@ -17,4 +22,6 @@ export {
   verificationCodeValidator,
   type EmailSchema,
   emailValidator,
+  type PersonalInfoFormValues,
+  personalInfoSchema,
 };

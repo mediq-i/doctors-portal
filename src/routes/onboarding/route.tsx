@@ -49,9 +49,9 @@ function OnboardingLayout() {
               <LogoBlue />
             </div>
 
-            <div className="flex items-center gap-x-3">
+            <div className="flex items-center gap-x-5">
               <ArrowLeft />
-              <Progress value={33} className="w-[300px]" />
+              <Progress value={33} className="w-[350px] md:w-[400px] h-1.5" />
             </div>
 
             {/* Outlet for nested routes (forms) */}
