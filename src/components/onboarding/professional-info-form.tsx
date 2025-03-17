@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import type React from "react";
+
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,38 +20,61 @@ import { CalendarIcon } from "lucide-react";
 import { format, parse, isValid } from "date-fns";
 
 export default function PersonalInfoForm() {
+  // Use a ref to track if we're updating programmatically to prevent loops
+  const [isInternalUpdate, setIsInternalUpdate] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting },
     watch,
+    formState: { errors, isSubmitting },
   } = useForm<PersonalInfoFormValues>({
     resolver: zodResolver(personalInfoSchema),
+    mode: "onBlur", // Only validate on blur, not on every keystroke
   });
 
   const dateOfBirth = watch("dateOfBirth");
 
-  // Update the input field when the calendar date changes
-  useEffect(() => {
-    if (date) {
-      setValue("dateOfBirth", format(date, "dd/MM/yyyy"), {
-        shouldValidate: true,
-      });
-    }
-  }, [date, setDate]);
+  // Memoize the date parser function
+  const parseDateString = useCallback((dateString: string): Date | null => {
+    if (!dateString || dateString.length !== 10) return null;
 
-  // Update the calendar when the input field changes
-  useEffect(() => {
-    if (dateOfBirth && dateOfBirth.length === 10) {
-      const parsedDate = parse(dateOfBirth, "dd/MM/yyyy", new Date());
-      if (isValid(parsedDate)) {
-        setDate(parsedDate);
-      }
+    try {
+      const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
+      return isValid(parsedDate) ? parsedDate : null;
+    } catch {
+      return null;
     }
-  }, [dateOfBirth]);
+  }, []);
+
+  // Update the input field when the calendar date changes
+  const handleCalendarSelect = useCallback(
+    (selectedDate: Date | undefined) => {
+      if (!selectedDate) return;
+
+      setDate(selectedDate);
+      setIsInternalUpdate(true);
+      setValue("dateOfBirth", format(selectedDate, "dd/MM/yyyy"));
+      setIsCalendarOpen(false); // Close the calendar after selection
+
+      // Reset the flag after the update
+      setTimeout(() => setIsInternalUpdate(false), 0);
+    },
+    [setValue]
+  );
+
+  // Update the calendar when the input field changes, but only if it's not from an internal update
+  useEffect(() => {
+    if (isInternalUpdate || !dateOfBirth) return;
+
+    const parsedDate = parseDateString(dateOfBirth);
+    if (parsedDate) {
+      setDate(parsedDate);
+    }
+  }, [dateOfBirth, parseDateString, isInternalUpdate]);
 
   const onSubmit = async (data: PersonalInfoFormValues) => {
     try {
@@ -57,58 +82,94 @@ export default function PersonalInfoForm() {
       const formattedData = { ...data };
 
       if (data.dateOfBirth) {
-        const [day, month, year] = data.dateOfBirth.split("/").map(Number);
-        const dateObj = new Date(year, month - 1, day);
-
-        // You can use either ISO string or timestamp depending on your backend requirements
-        formattedData.dateOfBirth = dateObj.toISOString();
-        // Or if you prefer timestamp: formattedData.dateOfBirthTimestamp = dateObj.getTime()
+        const parsedDate = parseDateString(data.dateOfBirth);
+        if (parsedDate) {
+          formattedData.dateOfBirth = parsedDate.toISOString();
+        }
       }
 
       console.log("Form data:", data);
       console.log("Formatted data for backend:", formattedData);
-      //navigate to the next step
       //navigate to the next step
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Helper function to format date input as user types
-  const formatDateInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target;
-    let value = input.value.replace(/[^\d]/g, ""); // Remove all non-digit characters
-    let formattedValue = "";
-    let cursorPosition = input.selectionStart || 0;
+  // Optimized formatter that doesn't use setTimeout
+  const formatDateInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const input = e.target;
+      const originalValue = input.value;
+      const selectionStart = input.selectionStart || 0;
 
-    // Apply formatting logic
-    if (value.length > 0) {
-      formattedValue += value.substring(0, 2); // Day
-      if (value.length >= 2) formattedValue += "/"; // Auto-insert first slash
-    }
-    if (value.length > 2) {
-      formattedValue += value.substring(2, 4); // Month
-      if (value.length >= 4) formattedValue += "/"; // Auto-insert second slash
-    }
-    if (value.length > 4) {
-      formattedValue += value.substring(4, 8); // Year
-    }
+      // Count slashes before cursor
+      const slashesBeforeCursor = (
+        originalValue.substring(0, selectionStart).match(/\//g) || []
+      ).length;
 
-    // Limit to 10 characters (DD/MM/YYYY)
-    formattedValue = formattedValue.substring(0, 10);
+      // Remove non-digits and format
+      let digitsOnly = originalValue.replace(/[^\d]/g, "");
+      if (digitsOnly.length > 8) digitsOnly = digitsOnly.substring(0, 8);
 
-    // Preserve cursor position intelligently
-    if (cursorPosition === 2 || cursorPosition === 5) {
-      cursorPosition += 1;
-    }
+      let formattedValue = "";
+      if (digitsOnly.length > 0) {
+        formattedValue += digitsOnly.substring(0, 2);
+        if (digitsOnly.length >= 2) formattedValue += "/";
+      }
+      if (digitsOnly.length > 2) {
+        formattedValue += digitsOnly.substring(2, 4);
+        if (digitsOnly.length >= 4) formattedValue += "/";
+      }
+      if (digitsOnly.length > 4) {
+        formattedValue += digitsOnly.substring(4, 8);
+      }
 
-    // Update input field
-    input.value = formattedValue;
+      // Only update if the value actually changed
+      if (formattedValue !== originalValue) {
+        // Calculate new cursor position
+        const newSlashesBeforeCursor = (
+          formattedValue.substring(0, selectionStart).match(/\//g) || []
+        ).length;
+        const slashDifference = newSlashesBeforeCursor - slashesBeforeCursor;
 
-    setTimeout(() => {
-      input.selectionStart = input.selectionEnd = cursorPosition;
-    }, 0);
-  };
+        // Update value and cursor in one go
+        input.value = formattedValue;
+
+        // Set cursor position synchronously
+        const newPosition = selectionStart + slashDifference;
+        input.setSelectionRange(newPosition, newPosition);
+      }
+
+      return formattedValue;
+    },
+    []
+  );
+
+  // Register the date input with a custom onChange handler
+  const dateInputProps = register("dateOfBirth");
+  const handleDateInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      formatDateInput(e);
+      dateInputProps.onChange(e);
+    },
+    [formatDateInput, dateInputProps]
+  );
+
+  // Memoize calendar props to prevent unnecessary re-renders
+  const calendarProps = useMemo(
+    () => ({
+      mode: "single" as const,
+      selected: date,
+      onSelect: handleCalendarSelect,
+      initialFocus: true,
+      disabled: (date: Date) => date > new Date(),
+      fromYear: 1900,
+      toYear: new Date().getFullYear(),
+      captionLayout: "dropdown-buttons" as const,
+    }),
+    [date, handleCalendarSelect]
+  );
 
   return (
     <div className="w-full md:max-w-md mx-auto lg:max-w-3xl pt-4">
@@ -128,7 +189,7 @@ export default function PersonalInfoForm() {
             id="legalFirstName"
             placeholder="Legal first name"
             {...register("legalFirstName")}
-            className={errors.legalFirstName ? "border-destructive" : "py-5"}
+            className={`${errors.legalFirstName ? "border-destructive" : ""} py-5`}
           />
           {errors.legalFirstName && (
             <p className="text-sm text-destructive">
@@ -148,7 +209,7 @@ export default function PersonalInfoForm() {
             id="legalLastName"
             placeholder="Legal last name"
             {...register("legalLastName")}
-            className={errors.legalLastName ? "border-destructive" : "py-5"}
+            className={`${errors.legalLastName ? "border-destructive" : ""} py-5`}
           />
           {errors.legalLastName && (
             <p className="text-sm text-destructive">
@@ -168,38 +229,25 @@ export default function PersonalInfoForm() {
             <Input
               id="dateOfBirth"
               placeholder="DD/MM/YYYY"
-              {...register("dateOfBirth")}
-              onChange={(e) => {
-                formatDateInput(e);
-                register("dateOfBirth").onChange(e);
-              }}
-              className={`${errors.dateOfBirth ? "border-destructive" : "py-5"} pr-10`}
+              {...dateInputProps}
+              onChange={handleDateInputChange}
+              className={`${errors.dateOfBirth ? "border-destructive" : ""} py-5 pr-10`}
             />
-            <Popover>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
+                  type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground"
+                  className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:bg-transparent"
+                  onClick={() => setIsCalendarOpen(true)}
                 >
                   <CalendarIcon className="h-5 w-5" />
                   <span className="sr-only">Open calendar</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                  disabled={(date) => {
-                    // Disable future dates
-                    return date > new Date();
-                  }}
-                  fromYear={1900}
-                  toYear={new Date().getFullYear()}
-                  captionLayout="dropdown-buttons"
-                />
+                {isCalendarOpen && <Calendar {...calendarProps} />}
               </PopoverContent>
             </Popover>
           </div>
