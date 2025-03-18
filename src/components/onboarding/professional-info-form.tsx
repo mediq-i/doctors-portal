@@ -43,7 +43,7 @@ export default function ProfessionalInfoForm() {
   };
 
   return (
-    <div className="w-full md:max-w-md mx-auto lg:max-w-3xl pt-4">
+    <div className="w-full md:max-w-md lg:max-w-3xl pt-4">
       <div className="mb-6">
         <h1 className="pb-2 leading-8 lg:leading-10 text-xl md:text-2xl lg:text-3xl font-bold pt-6 max-w-lg">
           Enter your professional information

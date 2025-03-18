@@ -4,6 +4,7 @@ import {
   SelectIdVerificationForm,
   VerifyIdForm,
   ProfessionalInfoForm,
+  UploadMedicalLicense,
 } from "@/components/onboarding";
 
 export const Route = createFileRoute(
@@ -17,6 +18,7 @@ function RouteComponent() {
     // <PersonalInfoForm />
     // <SelectIdVerificationForm />
     // <VerifyIdForm />
-    <ProfessionalInfoForm />
+    // <ProfessionalInfoForm />
+    <UploadMedicalLicense />
   );
 }

@@ -60,8 +60,10 @@ export default function VerifyIdForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Verify your identity</h1>
+    <div className="w-full max-w-md p-6 pl-0">
+      <h1 className="pb-2 leading-8 lg:leading-10 text-xl md:text-2xl lg:text-3xl font-bold pt-6 max-w-lg">
+        Verify your identity
+      </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col gap-y-2">

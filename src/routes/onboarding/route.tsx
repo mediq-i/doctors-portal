@@ -52,6 +52,7 @@ function OnboardingLayout() {
             <div className="flex items-center gap-x-5">
               <ArrowLeft />
               <Progress value={33} className="w-[350px] md:w-[400px] h-1.5" />
+              {/* <Progress value={33} className="w-full h-1.5" /> */}
             </div>
 
             {/* Outlet for nested routes (forms) */}
