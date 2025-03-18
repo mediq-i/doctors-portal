@@ -69,7 +69,10 @@ export default function VerifyIdForm() {
             Document type
           </label>
           <Select value={documentType} onValueChange={setDocumentType}>
-            <SelectTrigger id="document-type" className="w-full">
+            <SelectTrigger
+              id="document-type"
+              className="w-full border-input/50"
+            >
               <SelectValue placeholder="Select document type" />
             </SelectTrigger>
             <SelectContent>

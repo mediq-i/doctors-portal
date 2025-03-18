@@ -4,6 +4,7 @@ import { OnboardingStepsForm } from "./onboarding-steps-form";
 import PersonalInfoForm from "./personal-info-form";
 import SelectIdVerificationForm from "./select-id-verification-form";
 import VerifyIdForm from "./verify-id-form";
+import ProfessionalInfoForm from "./professional-info-form";
 
 export {
   CreateAccountForm,
@@ -12,4 +13,5 @@ export {
   PersonalInfoForm,
   SelectIdVerificationForm,
   VerifyIdForm,
+  ProfessionalInfoForm,
 };

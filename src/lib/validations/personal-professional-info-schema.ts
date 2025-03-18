@@ -68,3 +68,30 @@ export const personalInfoSchema = z.object({
 
 // Type for the form values
 export type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>;
+
+export const professionalInfoSchema = z.object({
+  medicalLicenseNumber: z
+    .string()
+    .min(1, "Medical license number is required")
+    .regex(/^\d+$/, "License number must contain only digits")
+    .length(12, "License number must be exactly 12 digits"),
+
+  issuingMedicalBoard: z.string().min(1, "Issuing medical board is required"),
+
+  specialty: z.string().min(1, "Specialty is required"),
+
+  yearsOfExperience: z
+    .string()
+    .min(1, "Years of experience is required")
+    .regex(/^\d+$/, "Years must be a number")
+    .refine((val) => Number.parseInt(val) >= 0 && Number.parseInt(val) <= 70, {
+      message: "Years of experience must be between 0 and 70",
+    }),
+
+  professionalAssociations: z
+    .string()
+    .min(1, "Professional associations are required")
+    .max(500, "Professional associations cannot exceed 500 characters"),
+});
+
+export type ProfessionalInfoFormValues = z.infer<typeof professionalInfoSchema>;

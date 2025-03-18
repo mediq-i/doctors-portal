@@ -11,7 +11,7 @@ export function OnboardingStepsForm() {
       </div>
 
       {/* Title */}
-      <h1 className="pb-2 leading-10 text-xl md:text-2xl lg:text-3xl font-bold pt-6 max-w-lg">
+      <h1 className="pb-2 leading-8 lg:leading-10 text-xl md:text-2xl lg:text-3xl font-bold pt-6 max-w-lg">
         Personal & professional information
       </h1>
 

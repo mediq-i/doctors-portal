@@ -15,6 +15,11 @@ import {
   PersonalInfoFormValues,
 } from "./personal-professional-info-schema";
 
+import {
+  professionalInfoSchema,
+  ProfessionalInfoFormValues,
+} from "./personal-professional-info-schema";
+
 export {
   type CreateAccountSchema,
   createAccountSchema,
@@ -24,4 +29,6 @@ export {
   emailValidator,
   type PersonalInfoFormValues,
   personalInfoSchema,
+  type ProfessionalInfoFormValues,
+  professionalInfoSchema,
 };
