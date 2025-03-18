@@ -1,7 +1,6 @@
-import React from "react";
 import { Link } from "@tanstack/react-router";
 import { ContactCard } from "../icons";
-import { ChevronRight, Divide } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 const IdItems = [
   {
@@ -35,6 +34,7 @@ export default function SelectIdVerificationForm() {
               key={item.title}
               className="flex justify-between items-center h-14"
             >
+              {/* <Link to="/onboarding/personal-professional-information"> */}
               <div className="flex items-center gap-x-3">
                 <ContactCard />
                 <h2 className="text-night text-base font-normal">
@@ -43,6 +43,7 @@ export default function SelectIdVerificationForm() {
               </div>
 
               <ChevronRight color="#707070" size={28} />
+              {/* </Link> */}
             </div>
           );
         })}
