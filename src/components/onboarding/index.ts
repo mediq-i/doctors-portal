@@ -6,6 +6,7 @@ import SelectIdVerificationForm from "./select-id-verification-form";
 import VerifyIdForm from "./verify-id-form";
 import ProfessionalInfoForm from "./professional-info-form";
 import UploadMedicalLicense from "./upload-medical-license";
+import UploadUniversityDegree from "./upload-university-degree";
 
 export {
   CreateAccountForm,
@@ -16,4 +17,5 @@ export {
   VerifyIdForm,
   ProfessionalInfoForm,
   UploadMedicalLicense,
+  UploadUniversityDegree,
 };

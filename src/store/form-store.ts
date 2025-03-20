@@ -64,6 +64,7 @@ interface FormData {
   documentFile?: File;
 
   medicalLicense?: File;
+  universityDegree?: File;
 
   // Additional steps can be added here
   [key: string]: any;
