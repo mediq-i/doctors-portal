@@ -19,18 +19,6 @@ export default function OnboardingController() {
   const isCompletionStep = currentStep === OnboardingStep.COMPLETION;
   const isCompletionRoute = currentRoute === "/onboarding/completion";
 
-  const isLastStep = currentStep === OnboardingStep.COMPLETION;
-
-  useEffect(() => {
-    console.log("Current step:", currentStep);
-    console.log("Current route:", currentRoute);
-    console.log(
-      "Expected route:",
-      stepToRouteMap[currentStep as OnboardingStep]
-    );
-    console.log("Is last step:", isLastStep);
-  }, [currentStep, currentRoute, isLastStep]);
-
   useEffect(() => {
     // Skip route synchronization if we're on the completion step/route
     if (isCompletionStep && isCompletionRoute) {
