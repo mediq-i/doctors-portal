@@ -4,6 +4,7 @@ import LoadingIcon from "./loading-icon";
 import OnboardIcon from "./onboard-icon";
 import ContactCard from "./contact-card";
 import CloudIcon from "./cloud-icon";
+import AllSetIcon from "./all-set-icon";
 
 export {
   LogoBlue,
@@ -12,4 +13,5 @@ export {
   OnboardIcon,
   ContactCard,
   CloudIcon,
+  AllSetIcon,
 };
