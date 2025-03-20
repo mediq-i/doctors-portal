@@ -9,22 +9,33 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  VerificationCodeSchema,
+  type VerificationCodeSchema,
   verificationCodeValidator,
   EmailSchema,
 } from "@/lib/validations";
 import { LoadingIcon } from "../icons";
 import { VerifyIcon } from "../icons";
+import { useNavigate } from "@tanstack/react-router";
 
-export default function VerifyEmailForm() {
+interface VerifyEmailFormProps {
+  onSubmit: (data: VerificationCodeSchema) => void;
+  defaultValues?: Partial<VerificationCodeSchema>;
+}
+
+export default function VerifyEmailForm({
+  onSubmit,
+  defaultValues = {},
+}: VerifyEmailFormProps) {
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<VerificationCodeSchema>({
     resolver: zodResolver(verificationCodeValidator),
+    defaultValues,
   });
 
+  const navigate = useNavigate();
   const email = "alvinokafor@gmail.com";
 
   const onClickResendOTP = async (data: EmailSchema) => {
@@ -37,12 +48,13 @@ export default function VerifyEmailForm() {
     }
   };
 
-  const onSubmit = async (data: VerificationCodeSchema) => {
+  const onSubmitVerificationCode = async (data: VerificationCodeSchema) => {
     // console.log({ ...data, session_id });
     try {
       console.log(data);
+      onSubmit(data);
       toast.success("Email Verification Successful");
-      //   router.push("/");
+      navigate({ to: "/onboarding/onboarding-steps" });
     } catch (error: any) {
       toast.error(error);
     }
@@ -61,7 +73,7 @@ export default function VerifyEmailForm() {
         </p>
       </div>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmitVerificationCode)}
         className="flex flex-col gap-y-8 justify-center items-center mt-6"
       >
         <Controller

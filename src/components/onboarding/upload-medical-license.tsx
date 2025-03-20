@@ -1,14 +1,7 @@
 import type React from "react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
 
@@ -16,9 +9,27 @@ interface FileWithPreview extends File {
   preview: string;
 }
 
-export default function UploadMedicalLicense() {
+interface DocumentUploadProps {
+  onSubmit: (data: { medicalLicense?: File }) => void;
+  defaultValues?: { medicalLicense?: File };
+}
+
+export default function UploadMedicalLicense({
+  onSubmit,
+  defaultValues = {},
+}: DocumentUploadProps) {
   const [file, setFile] = useState<FileWithPreview | null>(null);
-  const [documentType, setDocumentType] = useState<string>("national-id");
+
+  // Initialize file if defaultValues has documentFile
+  useEffect(() => {
+    if (defaultValues.medicalLicense && !file) {
+      const fileWithPreview = Object.assign(defaultValues.medicalLicense, {
+        preview: URL.createObjectURL(defaultValues.medicalLicense),
+      }) as FileWithPreview;
+
+      setFile(fileWithPreview);
+    }
+  }, [defaultValues.medicalLicense, file]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles?.length) {
@@ -54,8 +65,8 @@ export default function UploadMedicalLicense() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (file) {
-      console.log("Document type:", documentType);
       console.log("File:", file);
+      onSubmit({ medicalLicense: file || undefined });
     }
   };
 

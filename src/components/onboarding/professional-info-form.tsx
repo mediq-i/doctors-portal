@@ -16,7 +16,15 @@ import {
 } from "@/components/ui/select";
 import { medicalBoards, specialties } from "../data/constants";
 
-export default function ProfessionalInfoForm() {
+interface ProfessionalInfoFormProps {
+  onSubmit: (data: ProfessionalInfoFormValues) => void;
+  defaultValues?: Partial<ProfessionalInfoFormValues>;
+}
+
+export default function ProfessionalInfoForm({
+  onSubmit,
+  defaultValues = {},
+}: ProfessionalInfoFormProps) {
   const {
     register,
     handleSubmit,
@@ -24,11 +32,13 @@ export default function ProfessionalInfoForm() {
     formState: { errors, isSubmitting },
   } = useForm<ProfessionalInfoFormValues>({
     resolver: zodResolver(professionalInfoSchema),
+    defaultValues,
   });
 
-  const onSubmit = async (data: ProfessionalInfoFormValues) => {
+  const onSubmitFormInput = async (data: ProfessionalInfoFormValues) => {
     try {
       console.log("Form data:", data);
+      onSubmit(data);
       // Here you would typically send the data to your API
       // await submitProfessionalInfo(data)
 
@@ -50,7 +60,7 @@ export default function ProfessionalInfoForm() {
         </h1>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmitFormInput)} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="medicalLicenseNumber">Medical License Number</Label>
           <Input

@@ -19,7 +19,15 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { format, parse, isValid } from "date-fns";
 
-export default function PersonalInfoForm() {
+interface PersonalInfoFormProps {
+  onSubmit: (data: PersonalInfoFormValues) => void;
+  defaultValues?: Partial<PersonalInfoFormValues>;
+}
+
+export default function PersonalInfoForm({
+  onSubmit,
+  defaultValues = {},
+}: PersonalInfoFormProps) {
   // Use a ref to track if we're updating programmatically to prevent loops
   const [isInternalUpdate, setIsInternalUpdate] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -33,6 +41,7 @@ export default function PersonalInfoForm() {
     formState: { errors, isSubmitting },
   } = useForm<PersonalInfoFormValues>({
     resolver: zodResolver(personalInfoSchema),
+    defaultValues,
     mode: "onBlur", // Only validate on blur, not on every keystroke
   });
 
@@ -76,7 +85,7 @@ export default function PersonalInfoForm() {
     }
   }, [dateOfBirth, parseDateString, isInternalUpdate]);
 
-  const onSubmit = async (data: PersonalInfoFormValues) => {
+  const onSubmitUserInfo = async (data: PersonalInfoFormValues) => {
     try {
       // Convert the string date to a Date object or ISO string before sending to backend
       const formattedData = { ...data };
@@ -90,6 +99,7 @@ export default function PersonalInfoForm() {
 
       console.log("Form data:", data);
       console.log("Formatted data for backend:", formattedData);
+      onSubmit(data);
       //navigate to the next step
     } catch (error) {
       console.error(error);
@@ -177,7 +187,7 @@ export default function PersonalInfoForm() {
         <h1 className="text-3xl font-bold">Enter your Personal Information</h1>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmitUserInfo)} className="space-y-6">
         <div className="space-y-2">
           <Label
             htmlFor="legalFirstName"

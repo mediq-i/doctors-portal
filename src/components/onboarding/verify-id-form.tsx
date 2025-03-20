@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +16,31 @@ interface FileWithPreview extends File {
   preview: string;
 }
 
-export default function VerifyIdForm() {
+interface DocumentUploadProps {
+  onSubmit: (data: { documentType: string; documentFile?: File }) => void;
+  defaultValues?: { documentType?: string; documentFile?: File };
+}
+
+export default function VerifyIdForm({
+  onSubmit,
+  defaultValues = {},
+}: DocumentUploadProps) {
   const [file, setFile] = useState<FileWithPreview | null>(null);
-  const [documentType, setDocumentType] = useState<string>("national-id");
+  // const [documentType, setDocumentType] = useState<string>("national-id");
+  const [documentType, setDocumentType] = useState<string>(
+    defaultValues.documentType || "national-id"
+  );
+
+  // Initialize file if defaultValues has documentFile
+  useEffect(() => {
+    if (defaultValues.documentFile && !file) {
+      const fileWithPreview = Object.assign(defaultValues.documentFile, {
+        preview: URL.createObjectURL(defaultValues.documentFile),
+      }) as FileWithPreview;
+
+      setFile(fileWithPreview);
+    }
+  }, [defaultValues.documentFile, file]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles?.length) {
@@ -55,6 +77,10 @@ export default function VerifyIdForm() {
     e.preventDefault();
     if (file) {
       console.log("Document type:", documentType);
+      onSubmit({
+        documentType,
+        documentFile: file || undefined,
+      });
       console.log("File:", file);
     }
   };

@@ -15,8 +15,8 @@ export function ProgressBar({
   const progress = Math.min(Math.max((currentStep / totalSteps) * 100, 0), 100);
 
   return (
-    <div className={cn("w-full mb-8", className)}>
-      <div className="flex items-center gap-2 mb-2">
+    <div className={cn("", className)}>
+      <div className="flex items-center gap-2">
         {Array.from({ length: totalSteps }).map((_, index) => (
           <div
             key={index}
@@ -27,9 +27,9 @@ export function ProgressBar({
           />
         ))}
       </div>
-      <div className="text-xs text-muted-foreground text-right">
+      {/* <div className="text-xs text-muted-foreground text-right">
         Step {currentStep} of {totalSteps}
-      </div>
+      </div> */}
     </div>
   );
 }

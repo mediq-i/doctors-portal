@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
 import { ContactCard } from "../icons";
 import { ChevronRight } from "lucide-react";
+
+interface SelectIdFormProps {
+  onSubmit: () => void;
+}
 
 const IdItems = [
   {
@@ -14,7 +17,9 @@ const IdItems = [
   },
 ];
 
-export default function SelectIdVerificationForm() {
+export default function SelectIdVerificationForm({
+  onSubmit,
+}: SelectIdFormProps) {
   return (
     <div className="w-full md:max-w-md mx-auto lg:max-w-3xl pt-4">
       <div className="mb-6">
@@ -33,8 +38,8 @@ export default function SelectIdVerificationForm() {
             <div
               key={item.title}
               className="flex justify-between items-center h-14"
+              onClick={() => onSubmit()}
             >
-              {/* <Link to="/onboarding/personal-professional-information"> */}
               <div className="flex items-center gap-x-3">
                 <ContactCard />
                 <h2 className="text-night text-base font-normal">
@@ -43,7 +48,6 @@ export default function SelectIdVerificationForm() {
               </div>
 
               <ChevronRight color="#707070" size={28} />
-              {/* </Link> */}
             </div>
           );
         })}

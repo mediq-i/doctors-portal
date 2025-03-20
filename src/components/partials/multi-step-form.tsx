@@ -1,39 +1,69 @@
-import { useFormStore } from "@/store/form-store";
+import { useFormStore, OnboardingStep } from "@/store/form-store";
 import { FormLayout } from "./form-layout";
-import { CreateAccountForm, VerifyEmailForm } from "../onboarding";
+import {
+  CreateAccountForm,
+  VerifyEmailForm,
+  OnboardingStepsForm,
+  PersonalInfoForm,
+  SelectIdVerificationForm,
+  VerifyIdForm,
+  ProfessionalInfoForm,
+  UploadMedicalLicense,
+} from "../onboarding";
 
-const stepTitles: string[] = [
-  "Create your account",
-  "Enter your personal information",
-  "Enter your professional information",
-  "Verify your identity",
-  "Practice & work history",
-  "Education & training",
-  "References",
-  "Review & submit",
-  "Application complete",
-];
-
-function StepContent({ step }: { step: number }) {
-  const { formData, goToNextStep, goToPreviousStep, updateFormData } =
+function StepContent() {
+  const { formData, goToNextStep, updateFormData, currentStep } =
     useFormStore();
 
   // Handle form submission for each step
-  const handleStepSubmit = (data: any) => {
-    updateFormData(data);
+  const handleStepSubmit = (data?: any) => {
+    if (data) {
+      updateFormData(data);
+    }
     goToNextStep();
   };
 
-  switch (step) {
-    case 1:
+  switch (currentStep) {
+    case OnboardingStep.CREATE_ACCOUNT:
       return (
         <CreateAccountForm
           onSubmit={handleStepSubmit}
           defaultValues={formData}
         />
       );
-    // case 2:
-    //   return <VerifyEmailForm onSubmit={handleStepSubmit} defaultValues={formData} />
+    case OnboardingStep.VERIFY_EMAIL:
+      return (
+        <VerifyEmailForm onSubmit={handleStepSubmit} defaultValues={formData} />
+      );
+    case OnboardingStep.ONBOARDING_STEPS:
+      return <OnboardingStepsForm onSubmit={handleStepSubmit} />;
+    case OnboardingStep.PERSONAL_INFO:
+      return (
+        <PersonalInfoForm
+          onSubmit={handleStepSubmit}
+          defaultValues={formData}
+        />
+      );
+    case OnboardingStep.SELECT_ID_VERIFICATION:
+      return <SelectIdVerificationForm onSubmit={handleStepSubmit} />;
+    case OnboardingStep.VERIFY_ID:
+      return (
+        <VerifyIdForm onSubmit={handleStepSubmit} defaultValues={formData} />
+      );
+    case OnboardingStep.PROFESSIONAL_INFO:
+      return (
+        <ProfessionalInfoForm
+          onSubmit={handleStepSubmit}
+          defaultValues={formData}
+        />
+      );
+    case OnboardingStep.UPLOAD_MEDICAL_LICENSE:
+      return (
+        <UploadMedicalLicense
+          onSubmit={handleStepSubmit}
+          defaultValues={formData}
+        />
+      );
     default:
       return <div>Unknown step</div>;
   }
@@ -41,19 +71,13 @@ function StepContent({ step }: { step: number }) {
 
 // Main form container
 export default function MultiStepForm() {
-  const { currentStep, totalSteps } = useFormStore();
-
   // For the completion page (step 9), we still show the progress as complete
-  const displayStep = Math.min(currentStep, totalSteps + 1);
-  const isCompletionPage = currentStep > totalSteps;
+  //   const displayStep = Math.min(currentStep, totalSteps + 1);
+  //   const isCompletionPage = currentStep > totalSteps;
 
   return (
-    <FormLayout
-      currentStep={isCompletionPage ? totalSteps : currentStep}
-      totalSteps={totalSteps}
-      title={stepTitles[currentStep - 1]}
-    >
-      <StepContent step={currentStep} />
+    <FormLayout>
+      <StepContent />
     </FormLayout>
   );
 }

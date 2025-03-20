@@ -9,8 +9,8 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useFormStore } from "@/store/form-store";
-
+import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 interface CreateAccountFormProps {
   onSubmit: (data: CreateAccountSchema) => void;
   defaultValues?: Partial<CreateAccountSchema>;
@@ -22,7 +22,7 @@ export default function CreateAccountForm({
 }: CreateAccountFormProps) {
   const [InputType, Icon, setVisible] = useObfuscationToggle();
 
-  const goToPreviousStep = useFormStore((state) => state.goToPreviousStep);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -37,6 +37,8 @@ export default function CreateAccountForm({
     try {
       console.log(data);
       onSubmit(data);
+      console.log("after zustand form submission completed");
+      navigate({ to: "/onboarding/verify-email" });
     } catch (error) {
       console.error(error);
     }
@@ -107,7 +109,7 @@ export default function CreateAccountForm({
               type="button"
               variant="ghost"
               size="icon"
-              className="absolute right-1 top-0 h-full px-3 py-2 text-muted-foreground"
+              className="absolute right-1 top-0 h-full px-3 py-2 text-muted-foreground hover:bg-transparent"
               onClick={() => setVisible((prev) => !prev)}
             >
               {Icon}

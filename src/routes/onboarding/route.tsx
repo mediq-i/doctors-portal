@@ -2,13 +2,19 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import SEOWrapper from "@/utils/helpers/seo-wrapper";
 import { LogoBlue } from "@/components/icons";
 import { ArrowLeft } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
+import { ProgressBar } from "@/components/partials/progress-bar";
+import { useFormStore } from "@/store/form-store";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingLayout,
 });
 
 function OnboardingLayout() {
+  //Get the currentStep and total steps from the store
+  const { currentStep, totalSteps, goToPreviousStep } = useFormStore();
+  // const progressPercentage = (currentStep / totalSteps) * 100;
+
   return (
     <SEOWrapper
       metaData={{
@@ -50,9 +56,13 @@ function OnboardingLayout() {
             </div>
 
             <div className="flex items-center gap-x-5">
-              <ArrowLeft />
-              <Progress value={33} className="w-[350px] md:w-[400px] h-1.5" />
-              {/* <Progress value={33} className="w-full h-1.5" /> */}
+              <ArrowLeft onClick={goToPreviousStep} />
+
+              {/* <Progress
+                value={progressPercentage}
+                className="w-[350px] md:w-[400px] h-1.5"
+              /> */}
+              <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
             </div>
 
             {/* Outlet for nested routes (forms) */}
