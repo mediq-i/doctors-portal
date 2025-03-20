@@ -10,7 +10,7 @@ import {
 import MultiStepForm from "./multi-step-form";
 
 export default function OnboardingController() {
-  const { currentStep, goToStep, isLastStep } = useFormStore();
+  const { currentStep, goToStep } = useFormStore();
   const navigate = useNavigate();
   const routerState = useRouterState();
   const currentRoute = routerState.location.pathname;
@@ -18,6 +18,8 @@ export default function OnboardingController() {
   // Special case for completion step
   const isCompletionStep = currentStep === OnboardingStep.COMPLETION;
   const isCompletionRoute = currentRoute === "/onboarding/completion";
+
+  const isLastStep = currentStep === OnboardingStep.COMPLETION;
 
   useEffect(() => {
     console.log("Current step:", currentStep);

@@ -4,7 +4,7 @@ import { LogoBlue } from "@/components/icons";
 import { ArrowLeft } from "lucide-react";
 // import { Progress } from "@/components/ui/progress";
 import { ProgressBar } from "@/components/partials/progress-bar";
-import { useFormStore } from "@/store/form-store";
+import { useFormStore, OnboardingStep } from "@/store/form-store";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingLayout,
@@ -12,11 +12,10 @@ export const Route = createFileRoute("/onboarding")({
 
 function OnboardingLayout() {
   //Get the currentStep and total steps from the store
-  const { currentStep, totalSteps, goToPreviousStep, isLastStep } =
-    useFormStore();
-  // const progressPercentage = (currentStep / totalSteps) * 100;
+  const { currentStep, totalSteps, goToPreviousStep } = useFormStore();
+  const isLastStep = currentStep === OnboardingStep.COMPLETION;
 
-  console.log(isLastStep);
+  // const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
     <SEOWrapper

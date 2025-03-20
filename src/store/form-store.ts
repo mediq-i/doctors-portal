@@ -133,7 +133,7 @@ export const useFormStore = create<FormState>()(
 
       // Computed properties
       get isLastStep() {
-        return get().currentStep === OnboardingStep.COMPLETION;
+        return get().currentStep === 10;
       },
 
       get isFirstStep() {
