@@ -11,7 +11,7 @@ export default function OnboardingCompleted() {
         </h1>
         <p className="pb-4 text-base font-medium text-[#707070]">
           Your submission is under review, but you can now explore the
-          dashboard. We’ll notify you once your verification is complete.
+          dashboard. We'll notify you once your verification is complete.
         </p>
       </div>
 

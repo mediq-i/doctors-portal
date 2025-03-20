@@ -11,7 +11,8 @@ export enum OnboardingStep {
   VERIFY_ID = 6,
   PROFESSIONAL_INFO = 7,
   UPLOAD_MEDICAL_LICENSE = 8,
-  COMPLETION = 9,
+  UPLOAD_UNIVERSITY_DEGREE = 9,
+  COMPLETION = 10,
 }
 
 // Map steps to routes for navigation
@@ -27,6 +28,8 @@ export const stepToRouteMap = {
   [OnboardingStep.PROFESSIONAL_INFO]:
     "/onboarding/personal-professional-information",
   [OnboardingStep.UPLOAD_MEDICAL_LICENSE]:
+    "/onboarding/personal-professional-information",
+  [OnboardingStep.UPLOAD_UNIVERSITY_DEGREE]:
     "/onboarding/personal-professional-information",
   [OnboardingStep.COMPLETION]: "/onboarding/completion",
 };
@@ -89,8 +92,8 @@ interface FormState {
   isFirstStep: boolean;
 }
 
-// Total number of steps in the form excluding completion
-const TOTAL_STEPS = 8;
+// Total number of steps in the form including completion
+const TOTAL_STEPS = 10;
 
 // Create the store with persistence
 export const useFormStore = create<FormState>()(
@@ -130,7 +133,7 @@ export const useFormStore = create<FormState>()(
 
       // Computed properties
       get isLastStep() {
-        return get().currentStep === get().totalSteps;
+        return get().currentStep === OnboardingStep.COMPLETION;
       },
 
       get isFirstStep() {

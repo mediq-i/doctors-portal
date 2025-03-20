@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
+import { useNavigate } from "@tanstack/react-router";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -18,6 +19,8 @@ export default function UploadUniversityDegree({
   onSubmit,
   defaultValues = {},
 }: DocumentUploadProps) {
+  const navigate = useNavigate();
+
   const [file, setFile] = useState<FileWithPreview | null>(null);
 
   // Initialize file if defaultValues has documentFile
@@ -64,16 +67,18 @@ export default function UploadUniversityDegree({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (file) {
       console.log("File:", file);
       onSubmit({ universityDegree: file || undefined });
+      navigate({ to: "/onboarding/completion" });
     }
   };
 
   return (
     <div className="w-full max-w-md p-6 pl-2 ">
       <h1 className="pb-2 leading-8 lg:leading-10 text-xl md:text-2xl lg:text-3xl font-bold pt-6 max-w-lg">
-        Upload Medical License
+        Upload University Degree
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6 mt-6">

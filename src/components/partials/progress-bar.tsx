@@ -21,7 +21,7 @@ export function ProgressBar({
           <div
             key={index}
             className={cn(
-              "h-1 w-8 rounded-full transition-colors duration-300",
+              "h-1 w-6 rounded-full transition-colors duration-300",
               index < currentStep ? "bg-primary" : "bg-slate-200"
             )}
           />

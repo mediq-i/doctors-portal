@@ -9,6 +9,8 @@ import {
   VerifyIdForm,
   ProfessionalInfoForm,
   UploadMedicalLicense,
+  UploadUniversityDegree,
+  OnboardingCompleted,
 } from "../onboarding";
 
 function StepContent() {
@@ -64,6 +66,15 @@ function StepContent() {
           defaultValues={formData}
         />
       );
+    case OnboardingStep.UPLOAD_UNIVERSITY_DEGREE:
+      return (
+        <UploadUniversityDegree
+          onSubmit={handleStepSubmit}
+          defaultValues={formData}
+        />
+      );
+    case OnboardingStep.COMPLETION:
+      return <OnboardingCompleted />;
     default:
       return <div>Unknown step</div>;
   }
@@ -71,10 +82,6 @@ function StepContent() {
 
 // Main form container
 export default function MultiStepForm() {
-  // For the completion page (step 9), we still show the progress as complete
-  //   const displayStep = Math.min(currentStep, totalSteps + 1);
-  //   const isCompletionPage = currentStep > totalSteps;
-
   return (
     <FormLayout>
       <StepContent />

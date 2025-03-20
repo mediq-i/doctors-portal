@@ -49,19 +49,6 @@ export function OnboardingStepsForm({ onSubmit }: OnboardingStepsProps) {
           </div>
           <span className="text-base text-muted-foreground">5 min</span>
         </div>
-
-        {/* Step 3 */}
-        {/* <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center">
-              <p className="text-xs text-gunmetal">3</p>
-            </div>
-            <span className="text-base md:text-lg font-medium text-night">
-              Practice & work history
-            </span>
-          </div>
-          <span className="text-base text-muted-foreground">5 min</span>
-        </div> */}
       </div>
 
       {/* Start Button */}
@@ -71,11 +58,8 @@ export function OnboardingStepsForm({ onSubmit }: OnboardingStepsProps) {
       >
         <Button
           className="w-full bg-primary text-white hover:bg-primary/90 py-6 rounded-lg"
-          // onClick={() =>
-          //   navigate({ to: "/onboarding/personal-professional-information" })
-          // }
           onClick={() => {
-            onSubmit;
+            onSubmit();
             navigate({ to: "/onboarding/personal-professional-information" });
           }}
         >

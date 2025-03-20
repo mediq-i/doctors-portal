@@ -10,28 +10,62 @@ import {
 import MultiStepForm from "./multi-step-form";
 
 export default function OnboardingController() {
-  const { currentStep, goToStep } = useFormStore();
+  const { currentStep, goToStep, isLastStep } = useFormStore();
   const navigate = useNavigate();
   const routerState = useRouterState();
   const currentRoute = routerState.location.pathname;
 
-  // Synchronize the current route with the form step
+  // Special case for completion step
+  const isCompletionStep = currentStep === OnboardingStep.COMPLETION;
+  const isCompletionRoute = currentRoute === "/onboarding/completion";
+
   useEffect(() => {
+    console.log("Current step:", currentStep);
+    console.log("Current route:", currentRoute);
+    console.log(
+      "Expected route:",
+      stepToRouteMap[currentStep as OnboardingStep]
+    );
+    console.log("Is last step:", isLastStep);
+  }, [currentStep, currentRoute, isLastStep]);
+
+  useEffect(() => {
+    // Skip route synchronization if we're on the completion step/route
+    if (isCompletionStep && isCompletionRoute) {
+      return;
+    }
+
     // If we're on a route that doesn't match the current step, update the step
-    const expectedRoute = stepToRouteMap[currentStep];
+    const expectedRoute = stepToRouteMap[currentStep as OnboardingStep];
+
     if (expectedRoute && currentRoute !== expectedRoute) {
-      // If we're on a different route, set the step to the initial step for this route
-      const initialStep =
-        routeToInitialStepMap["/onboarding/personal-professional-information"];
-      if (initialStep) {
-        goToStep(initialStep);
+      // Check if the current route exists in the map
+      if (Object.keys(routeToInitialStepMap).includes(currentRoute)) {
+        const initialStep =
+          routeToInitialStepMap[
+            currentRoute as keyof typeof routeToInitialStepMap
+          ];
+        if (initialStep) {
+          goToStep(initialStep);
+        }
+      } else {
+        console.warn(`Route not found in map: ${currentRoute}`);
+        // Fallback to a default step if needed
+        goToStep(OnboardingStep.CREATE_ACCOUNT);
       }
     }
-  }, [currentRoute, currentStep, goToStep]);
+  }, [
+    currentRoute,
+    currentStep,
+    goToStep,
+    isCompletionStep,
+    isCompletionRoute,
+  ]);
 
   // Navigate to the appropriate route when the step changes
   useEffect(() => {
-    const targetRoute = stepToRouteMap[currentStep];
+    const targetRoute = stepToRouteMap[currentStep as OnboardingStep];
+
     if (targetRoute && currentRoute !== targetRoute) {
       navigate({ to: targetRoute });
     }

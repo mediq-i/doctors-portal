@@ -12,8 +12,11 @@ export const Route = createFileRoute("/onboarding")({
 
 function OnboardingLayout() {
   //Get the currentStep and total steps from the store
-  const { currentStep, totalSteps, goToPreviousStep } = useFormStore();
+  const { currentStep, totalSteps, goToPreviousStep, isLastStep } =
+    useFormStore();
   // const progressPercentage = (currentStep / totalSteps) * 100;
+
+  console.log(isLastStep);
 
   return (
     <SEOWrapper
@@ -55,15 +58,15 @@ function OnboardingLayout() {
               <LogoBlue />
             </div>
 
-            <div className="flex items-center gap-x-5">
-              <ArrowLeft onClick={goToPreviousStep} />
-
-              {/* <Progress
-                value={progressPercentage}
-                className="w-[350px] md:w-[400px] h-1.5"
-              /> */}
-              <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
-            </div>
+            {!isLastStep && (
+              <div className="flex items-center gap-x-5">
+                <ArrowLeft onClick={goToPreviousStep} />
+                <ProgressBar
+                  currentStep={currentStep}
+                  totalSteps={totalSteps}
+                />
+              </div>
+            )}
 
             {/* Outlet for nested routes (forms) */}
             <Outlet />
@@ -72,4 +75,11 @@ function OnboardingLayout() {
       </div>
     </SEOWrapper>
   );
+}
+
+{
+  /* <Progress
+                value={progressPercentage}
+                className="w-[350px] md:w-[400px] h-1.5"
+              /> */
 }
