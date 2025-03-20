@@ -6,6 +6,7 @@ import {
   ProfessionalInfoForm,
   UploadMedicalLicense,
 } from "@/components/onboarding";
+import MultiStepForm from "@/components/partials/multi-step-form";
 
 export const Route = createFileRoute(
   "/onboarding/personal-professional-information"
@@ -19,6 +20,7 @@ function RouteComponent() {
     // <SelectIdVerificationForm />
     // <VerifyIdForm />
     // <ProfessionalInfoForm />
-    <UploadMedicalLicense />
+    // <UploadMedicalLicense />
+    <MultiStepForm />
   );
 }

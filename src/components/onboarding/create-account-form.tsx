@@ -9,9 +9,20 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useFormStore } from "@/store/form-store";
 
-export default function CreateAccountForm() {
+interface CreateAccountFormProps {
+  onSubmit: (data: CreateAccountSchema) => void;
+  defaultValues?: Partial<CreateAccountSchema>;
+}
+
+export default function CreateAccountForm({
+  onSubmit,
+  defaultValues = {},
+}: CreateAccountFormProps) {
   const [InputType, Icon, setVisible] = useObfuscationToggle();
+
+  const goToPreviousStep = useFormStore((state) => state.goToPreviousStep);
 
   const {
     register,
@@ -19,11 +30,13 @@ export default function CreateAccountForm() {
     formState: { errors, isSubmitting },
   } = useForm<CreateAccountSchema>({
     resolver: zodResolver(createAccountSchema),
+    defaultValues,
   });
 
   const createAccountHandler = async (data: CreateAccountSchema) => {
     try {
       console.log(data);
+      onSubmit(data);
     } catch (error) {
       console.error(error);
     }
