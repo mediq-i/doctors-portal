@@ -20,6 +20,8 @@ import {
   ProfessionalInfoFormValues,
 } from "./personal-professional-info-schema";
 
+import { loginSchema, LoginFormValues } from "./login-schema";
+
 export {
   type CreateAccountSchema,
   createAccountSchema,
@@ -31,4 +33,6 @@ export {
   personalInfoSchema,
   type ProfessionalInfoFormValues,
   professionalInfoSchema,
+  type LoginFormValues,
+  loginSchema,
 };

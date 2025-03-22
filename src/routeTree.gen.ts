@@ -11,26 +11,28 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LoginImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding/route'
+import { Route as AuthRouteImport } from './routes/auth/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as OnboardingVerifyEmailImport } from './routes/onboarding/verify-email'
 import { Route as OnboardingPersonalProfessionalInformationImport } from './routes/onboarding/personal-professional-information'
 import { Route as OnboardingOnboardingStepsImport } from './routes/onboarding/onboarding-steps'
 import { Route as OnboardingCreateAccountImport } from './routes/onboarding/create-account'
 import { Route as OnboardingCompletionImport } from './routes/onboarding/completion'
+import { Route as AuthLoginImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordImport } from './routes/auth/forgot-password'
 
 // Create/Update Routes
-
-const LoginRoute = LoginImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const OnboardingRouteRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthRouteRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -71,6 +73,18 @@ const OnboardingCompletionRoute = OnboardingCompletionImport.update({
   getParentRoute: () => OnboardingRouteRoute,
 } as any)
 
+const AuthLoginRoute = AuthLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
+const AuthForgotPasswordRoute = AuthForgotPasswordImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -82,6 +96,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -89,12 +110,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRoute
     }
-    '/login': {
-      id: '/login'
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
       path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginImport
+      parentRoute: typeof AuthRouteImport
     }
     '/onboarding/completion': {
       id: '/onboarding/completion'
@@ -136,6 +164,20 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface AuthRouteRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
 interface OnboardingRouteRouteChildren {
   OnboardingCompletionRoute: typeof OnboardingCompletionRoute
   OnboardingCreateAccountRoute: typeof OnboardingCreateAccountRoute
@@ -159,8 +201,10 @@ const OnboardingRouteRouteWithChildren = OnboardingRouteRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteRouteWithChildren
   '/onboarding': typeof OnboardingRouteRouteWithChildren
-  '/login': typeof LoginRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
   '/onboarding/completion': typeof OnboardingCompletionRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
@@ -170,8 +214,10 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteRouteWithChildren
   '/onboarding': typeof OnboardingRouteRouteWithChildren
-  '/login': typeof LoginRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
   '/onboarding/completion': typeof OnboardingCompletionRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
@@ -182,8 +228,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteRouteWithChildren
   '/onboarding': typeof OnboardingRouteRouteWithChildren
-  '/login': typeof LoginRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
   '/onboarding/completion': typeof OnboardingCompletionRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
@@ -195,8 +243,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/onboarding'
-    | '/login'
+    | '/auth/forgot-password'
+    | '/auth/login'
     | '/onboarding/completion'
     | '/onboarding/create-account'
     | '/onboarding/onboarding-steps'
@@ -205,8 +255,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/onboarding'
-    | '/login'
+    | '/auth/forgot-password'
+    | '/auth/login'
     | '/onboarding/completion'
     | '/onboarding/create-account'
     | '/onboarding/onboarding-steps'
@@ -215,8 +267,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/onboarding'
-    | '/login'
+    | '/auth/forgot-password'
+    | '/auth/login'
     | '/onboarding/completion'
     | '/onboarding/create-account'
     | '/onboarding/onboarding-steps'
@@ -227,14 +281,14 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
   OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
-  LoginRoute: typeof LoginRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
   OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
-  LoginRoute: LoginRoute,
 }
 
 export const routeTree = rootRoute
@@ -248,12 +302,19 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/onboarding",
-        "/login"
+        "/auth",
+        "/onboarding"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/auth": {
+      "filePath": "auth/route.tsx",
+      "children": [
+        "/auth/forgot-password",
+        "/auth/login"
+      ]
     },
     "/onboarding": {
       "filePath": "onboarding/route.tsx",
@@ -265,8 +326,13 @@ export const routeTree = rootRoute
         "/onboarding/verify-email"
       ]
     },
-    "/login": {
-      "filePath": "login.tsx"
+    "/auth/forgot-password": {
+      "filePath": "auth/forgot-password.tsx",
+      "parent": "/auth"
+    },
+    "/auth/login": {
+      "filePath": "auth/login.tsx",
+      "parent": "/auth"
     },
     "/onboarding/completion": {
       "filePath": "onboarding/completion.tsx",
