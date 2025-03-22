@@ -43,7 +43,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto border border-blue-100 rounded-lg p-8">
+    <div className="w-full max-w-md mx-auto p-8">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold mb-2">Welcome back</h1>
         <p className="text-gray-500 text-sm">
