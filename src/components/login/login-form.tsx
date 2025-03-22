@@ -5,14 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { type LoginFormValues, loginSchema } from "@/lib/validations";
 
 export default function LoginForm() {
-  const [showPasscode, setShowPasscode] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -20,20 +20,16 @@ export default function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      passcode: "",
-      rememberMe: false,
-    },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
       // Here you would typically send the data to your API
+      console.log("entered submit function");
       console.log("Form data:", data);
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      //   await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Redirect to dashboard or home page after successful login
       // router.push('/dashboard')
@@ -43,12 +39,10 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-8">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold mb-2">Welcome back</h1>
-        <p className="text-gray-500 text-sm">
-          Enter the email address and passcode
-        </p>
+    <div className="w-full md:max-w-md mx-auto lg:max-w-3xl pt-4 px-0 sm:px-6 xl:px-10">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
+        <p className="text-dimgrey">Enter your email address and password</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -61,7 +55,7 @@ export default function LoginForm() {
             type="email"
             placeholder="Email address"
             {...register("email")}
-            className={errors.email ? "border-red-500" : ""}
+            className={`${errors.email ? "border-red-500" : ""} py-5`}
           />
           {errors.email && (
             <p className="text-red-500 text-xs">{errors.email.message}</p>
@@ -69,37 +63,37 @@ export default function LoginForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="passcode" className="text-sm">
-            Passcode
+          <Label htmlFor="password" className="text-sm">
+            Password
           </Label>
           <div className="relative">
             <Input
-              id="passcode"
-              type={showPasscode ? "text" : "password"}
-              placeholder="Passcode"
-              {...register("passcode")}
-              className={errors.passcode ? "border-red-500 pr-10" : "pr-10"}
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              {...register("password")}
+              className={`${errors.password ? "border-red-500 pr-10" : "pr-10"} py-5`}
             />
             <button
               type="button"
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-              onClick={() => setShowPasscode(!showPasscode)}
+              onClick={() => setShowPassword(!showPassword)}
             >
-              {showPasscode ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {errors.passcode && (
-            <p className="text-red-500 text-xs">{errors.passcode.message}</p>
+          {errors.password && (
+            <p className="text-red-500 text-xs">{errors.password.message}</p>
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between pt-2 pb-6">
+          {/* <div className="flex items-center space-x-2">
             <Checkbox id="rememberMe" {...register("rememberMe")} />
             <Label htmlFor="rememberMe" className="text-sm font-normal">
               Remember me
             </Label>
-          </div>
+          </div> */}
           <Link
             to="/auth/forgot-password"
             className="text-blue-500 text-sm hover:underline"
@@ -110,14 +104,14 @@ export default function LoginForm() {
 
         <Button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600"
+          className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Logging in..." : "Continue"}
         </Button>
 
-        <div className="text-center text-sm text-gray-500 mt-4">
-          <span>or</span>
+        {/* <div className="text-center text-sm text-gray-500 mt-4">
+          <span className="text-dimgrey">or</span>
           <div className="mt-2">
             Don't have an account?{" "}
             <Link
@@ -127,6 +121,22 @@ export default function LoginForm() {
               Create account
             </Link>
           </div>
+        </div> */}
+        <div className="relative flex items-center justify-center my-4">
+          <div className="absolute border-t border-gray-300 w-full"></div>
+          <span className="relative bg-white px-4 text-sm text-gray-500">
+            or
+          </span>
+        </div>
+
+        <div className="text-center text-base text-gray-500 pt-2">
+          Don't have an account?{" "}
+          <Link
+            to="/onboarding/create-account"
+            className="text-blue-500 hover:underline"
+          >
+            Create account
+          </Link>
         </div>
       </form>
     </div>
