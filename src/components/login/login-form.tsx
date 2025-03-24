@@ -10,14 +10,16 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { type LoginFormValues, loginSchema } from "@/lib/validations";
+import { AuthAdapter, authMutation } from "../adapters";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const { isPending, mutateAsync } = authMutation(AuthAdapter.loginAdmin, "");
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
@@ -25,8 +27,12 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       // Here you would typically send the data to your API
-      console.log("entered submit function");
+      // console.log("entered submit function");
       console.log("Form data:", data);
+
+      const res = await mutateAsync(data);
+
+      console.log(res?.data);
 
       // Simulate API call
       //   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -105,9 +111,9 @@ export default function LoginForm() {
         <Button
           type="submit"
           className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? "Logging in..." : "Continue"}
+          {isPending ? "Logging in..." : "Continue"}
         </Button>
 
         {/* <div className="text-center text-sm text-gray-500 mt-4">
