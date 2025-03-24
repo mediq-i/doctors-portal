@@ -11,6 +11,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { type LoginFormValues, loginSchema } from "@/lib/validations";
 import { AuthAdapter, authMutation } from "../adapters";
+import { getErrorMessage } from "@/utils";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,21 +28,14 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      // Here you would typically send the data to your API
-      // console.log("entered submit function");
-      console.log("Form data:", data);
-
       const res = await mutateAsync(data);
 
       console.log(res?.data);
 
-      // Simulate API call
-      //   await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // Redirect to dashboard or home page after successful login
       // router.push('/dashboard')
     } catch (error) {
-      console.error("Login error:", error);
+      toast.error(getErrorMessage(error));
     }
   };
 

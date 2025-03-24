@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
+// import App from "./App.tsx";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/sonner";
@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <Toaster />
+        <Toaster position="top-right" richColors />
         <RouterProvider router={router} />
       </QueryClientProvider>
     </HelmetProvider>
