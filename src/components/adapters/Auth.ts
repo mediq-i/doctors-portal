@@ -4,12 +4,12 @@ import { ApiService } from "@/services";
 import {
   LoginFormValues,
   CreateAccountSchema,
-  VerificationCodeSchema,
+  EmailSchema,
 } from "@/lib/validations";
 import { VerifyEmailTypes } from "@/lib/types";
 
 //API SERVICE INITIALIZER
-const authService = new ApiService<{}, {}>("/auth");
+const authService = new ApiService<{}, {}>("/auth/");
 
 // mutation utility
 function authMutation<T>(
@@ -54,6 +54,10 @@ const AuthAdapter = {
       "JSON",
       "POST"
     );
+    return res;
+  },
+  resendOtp: async function (payload: EmailSchema) {
+    const res = await authService.mutate("resend-otp", payload, "JSON", "POST");
     return res;
   },
 };

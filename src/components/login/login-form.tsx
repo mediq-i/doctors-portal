@@ -87,13 +87,7 @@ export default function LoginForm() {
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-2 pb-6">
-          {/* <div className="flex items-center space-x-2">
-            <Checkbox id="rememberMe" {...register("rememberMe")} />
-            <Label htmlFor="rememberMe" className="text-sm font-normal">
-              Remember me
-            </Label>
-          </div> */}
+        <div className="flex pt-2 pb-6 justify-end">
           <Link
             to="/auth/forgot-password"
             className="text-blue-500 text-sm hover:underline"
@@ -110,18 +104,6 @@ export default function LoginForm() {
           {isPending ? "Logging in..." : "Continue"}
         </Button>
 
-        {/* <div className="text-center text-sm text-gray-500 mt-4">
-          <span className="text-dimgrey">or</span>
-          <div className="mt-2">
-            Don't have an account?{" "}
-            <Link
-              to="/onboarding/create-account"
-              className="text-blue-500 hover:underline"
-            >
-              Create account
-            </Link>
-          </div>
-        </div> */}
         <div className="relative flex items-center justify-center my-4">
           <div className="absolute border-t border-gray-300 w-full"></div>
           <span className="relative bg-white px-4 text-sm text-gray-500">

@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type VerificationCodeSchema,
   verificationCodeValidator,
-  EmailSchema,
 } from "@/lib/validations";
 import { LoadingIcon } from "../icons";
 import { VerifyIcon } from "../icons";
@@ -40,16 +39,20 @@ export default function VerifyEmailForm({
 
   const { isPending, mutateAsync } = authMutation(AuthAdapter.verifyEmail, "");
 
-  const navigate = useNavigate();
-  const email = "alvinokafor@gmail.com";
+  const resendOTPMutation = authMutation(AuthAdapter.resendOtp, "");
 
-  const onClickResendOTP = async (data: EmailSchema) => {
+  const { email } = useAuthStore.getState();
+
+  const navigate = useNavigate();
+
+  const onClickResendOTP = async () => {
     try {
-      console.log(data);
+      const res = resendOTPMutation.mutateAsync({ email: email! });
+      console.log(res);
       toast.success("Please check your mail for a new OTP");
     } catch (error: any) {
       // toast.error(error.response.data.message);
-      toast.error(error);
+      toast.error(getErrorMessage(error));
     }
   };
 
@@ -138,12 +141,12 @@ export default function VerifyEmailForm({
       <div className="mt-8 flex justify-center">
         <Button
           className="text-gunmetal text-sm flex gap-x-2 justify-center bg-transparent py-2.5 rounded-lg transition-all duration-300 hover:underline hover:bg-transparent hover:scale-105"
-          onClick={() => onClickResendOTP({ email: email ?? "" })}
-          disabled={isPending}
+          onClick={() => onClickResendOTP()}
+          disabled={resendOTPMutation.isPending}
         >
           {/* Resend code in
             <span className="text-sm text-primary-shade">02:00</span> */}
-          {isPending ? "Please Wait..." : "Resend OTP code"}
+          {resendOTPMutation.isPending ? "Please Wait..." : "Resend OTP code"}
         </Button>
       </div>
     </section>
