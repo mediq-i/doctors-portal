@@ -29,7 +29,6 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const res = await mutateAsync(data);
-
       console.log(res?.data);
 
       // Redirect to dashboard or home page after successful login

@@ -5,5 +5,5 @@ interface FormLayoutProps {
 }
 
 export function FormLayout({ children }: FormLayoutProps) {
-  return <div className="w-full max-w-md mx-auto p-6">{children}</div>;
+  return <div className="w-full max-w-md p-6">{children}</div>;
 }

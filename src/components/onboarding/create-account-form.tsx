@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import { AuthAdapter, authMutation } from "../adapters";
+import { getErrorMessage } from "@/utils";
+import { useAuthStore } from "@/store/auth-store";
 interface CreateAccountFormProps {
   onSubmit: (data: CreateAccountSchema) => void;
   defaultValues?: Partial<CreateAccountSchema>;
@@ -21,13 +24,14 @@ export default function CreateAccountForm({
   defaultValues = {},
 }: CreateAccountFormProps) {
   const [InputType, Icon, setVisible] = useObfuscationToggle();
+  const { isPending, mutateAsync } = authMutation(AuthAdapter.signUp, "");
 
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<CreateAccountSchema>({
     resolver: zodResolver(createAccountSchema),
     defaultValues,
@@ -35,17 +39,23 @@ export default function CreateAccountForm({
 
   const createAccountHandler = async (data: CreateAccountSchema) => {
     try {
-      console.log(data);
+      const res = await mutateAsync(data);
+      const { auth_id, email, firstName, lastName, userType } = res?.data;
+
+      useAuthStore
+        .getState()
+        .setAuthData({ auth_id, email, firstName, lastName, userType });
+
+      console.log(res?.data);
       onSubmit(data);
-      console.log("after zustand form submission completed");
-      navigate({ to: "/onboarding/verify-email" });
+      navigate({ to: `/onboarding/verify-email` });
     } catch (error) {
-      console.error(error);
+      toast.error(getErrorMessage(error));
     }
   };
 
   return (
-    <div className="w-full md:max-w-md mx-auto lg:max-w-3xl pt-4">
+    <div className="w-full pt-4 md:max-w-md lg:max-w-3xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Create your account</h1>
       </div>
@@ -132,15 +142,15 @@ export default function CreateAccountForm({
         <Button
           type="submit"
           className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? "Creating account..." : "Start"}
+          {isPending ? "Creating account..." : "Start"}
         </Button>
       </form>
 
       <div className="mt-6 text-center text-dimgrey font-semibold text-base">
         Already have an account?{" "}
-        <Link to="/login" className="text-primary hover:underline">
+        <Link to="/auth/login" className="text-primary hover:underline">
           Login
         </Link>
       </div>

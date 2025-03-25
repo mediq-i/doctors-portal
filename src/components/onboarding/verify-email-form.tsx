@@ -16,6 +16,9 @@ import {
 import { LoadingIcon } from "../icons";
 import { VerifyIcon } from "../icons";
 import { useNavigate } from "@tanstack/react-router";
+import { AuthAdapter, authMutation } from "../adapters";
+import { getErrorMessage } from "@/utils";
+import { useAuthStore } from "@/store/auth-store";
 
 interface VerifyEmailFormProps {
   onSubmit: (data: VerificationCodeSchema) => void;
@@ -29,11 +32,13 @@ export default function VerifyEmailForm({
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<VerificationCodeSchema>({
     resolver: zodResolver(verificationCodeValidator),
     defaultValues,
   });
+
+  const { isPending, mutateAsync } = authMutation(AuthAdapter.verifyEmail, "");
 
   const navigate = useNavigate();
   const email = "alvinokafor@gmail.com";
@@ -49,14 +54,31 @@ export default function VerifyEmailForm({
   };
 
   const onSubmitVerificationCode = async (data: VerificationCodeSchema) => {
-    // console.log({ ...data, session_id });
+    const { auth_id, email, firstName, lastName, userType } =
+      useAuthStore.getState();
+
+    if (!auth_id || !email) {
+      toast.error("Missing user details. Please sign up again.");
+      return;
+    }
+
+    const verificationPayload = {
+      auth_id,
+      email,
+      firstName,
+      lastName,
+      userType,
+      otp: data.otp,
+    };
+
     try {
-      console.log(data);
+      const res = await mutateAsync(verificationPayload);
+      console.log("verify email response: ", res?.data);
       onSubmit(data);
       toast.success("Email Verification Successful");
       navigate({ to: "/onboarding/onboarding-steps" });
     } catch (error: any) {
-      toast.error(error);
+      toast.error(getErrorMessage(error));
     }
   };
 
@@ -77,7 +99,7 @@ export default function VerifyEmailForm({
         className="flex flex-col gap-y-8 justify-center items-center mt-6"
       >
         <Controller
-          name="code"
+          name="otp"
           control={control}
           rules={{ required: true, minLength: 6, maxLength: 6 }}
           render={({ field }) => (
@@ -100,16 +122,16 @@ export default function VerifyEmailForm({
             </InputOTP>
           )}
         />
-        {errors.code && (
-          <p className="mt-1 text-sm text-red-600">{errors.code.message}</p>
+        {errors.otp && (
+          <p className="mt-1 text-sm text-red-600">{errors.otp.message}</p>
         )}
 
         <Button
           type="submit"
           className="w-full text-center text-base bg-primary border text-white py-6 rounded-lg transition-all duration-600 hover:text-neutral-50 hover:shadow-md"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? <LoadingIcon /> : "Continue"}
+          {isPending ? <LoadingIcon /> : "Continue"}
         </Button>
       </form>
 
@@ -117,11 +139,11 @@ export default function VerifyEmailForm({
         <Button
           className="text-gunmetal text-sm flex gap-x-2 justify-center bg-transparent py-2.5 rounded-lg transition-all duration-300 hover:underline hover:bg-transparent hover:scale-105"
           onClick={() => onClickResendOTP({ email: email ?? "" })}
-          disabled={isSubmitting}
+          disabled={isPending}
         >
           {/* Resend code in
             <span className="text-sm text-primary-shade">02:00</span> */}
-          {isSubmitting ? "Please Wait..." : "Resend OTP code"}
+          {isPending ? "Please Wait..." : "Resend OTP code"}
         </Button>
       </div>
     </section>
