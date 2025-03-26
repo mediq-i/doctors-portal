@@ -1,26 +1,27 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, CheckCircle, Mail } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-
-// Define the validation schema using Zod
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
-
-// Infer the type from the schema
-type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordFormValues,
+} from "@/lib/validations";
+import { AuthAdapter, authMutation } from "../adapters";
+import { getErrorMessage } from "@/utils";
+import { toast } from "sonner";
+import { useState } from "react";
 
 export default function ForgotPasswordForm() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
+  const { isSuccess, mutateAsync } = authMutation(
+    AuthAdapter.sendPasswordRecoveryEmail,
+    ""
+  );
 
   const {
     register,
@@ -35,27 +36,22 @@ export default function ForgotPasswordForm() {
 
   const onSubmit = async (data: ForgotPasswordFormValues) => {
     try {
-      // Here you would typically send the data to your API
-      console.log("Form data:", data);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Store the email for the success message
+      const res = await mutateAsync(data);
+      console.log(res);
+      toast.success(
+        "Please check your mail for the next steps on how to proceed"
+      );
       setSubmittedEmail(data.email);
-
-      // Show success state
-      setIsSubmitted(true);
     } catch (error) {
-      console.error("Password reset error:", error);
+      toast.error(getErrorMessage(error));
     }
   };
 
   return (
-    <div className="w-full max-w-md border border-blue-100 rounded-lg p-8">
-      {!isSubmitted ? (
+    <div className="w-full md:max-w-md mx-auto lg:max-w-3xl pt-4 px-0 sm:px-6 xl:px-10">
+      {!isSuccess ? (
         <>
-          <div className="text-center mb-6">
+          <div className="mb-6">
             <h1 className="text-2xl font-bold mb-2">Forgot Password</h1>
             <p className="text-gray-500 text-sm">
               Enter your email address and we'll send you a link to reset your
@@ -73,7 +69,7 @@ export default function ForgotPasswordForm() {
                 type="email"
                 placeholder="Enter your email address"
                 {...register("email")}
-                className={errors.email ? "border-red-500" : ""}
+                className={`${errors.email ? "border-red-500" : ""} py-6`}
               />
               {errors.email && (
                 <p className="text-red-500 text-xs">{errors.email.message}</p>
@@ -82,7 +78,7 @@ export default function ForgotPasswordForm() {
 
             <Button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600"
+              className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Sending..." : "Send Reset Link"}
@@ -109,8 +105,8 @@ export default function ForgotPasswordForm() {
 
           <h2 className="text-xl font-semibold mb-2">Check your email</h2>
 
-          <div className="bg-blue-50 rounded-lg p-4 mb-4 flex items-start">
-            <Mail className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+          <div className="bg-blue-50 rounded-lg p-4 mb-4 flex">
+            <Mail className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-gray-700">
               We've sent a password reset link to{" "}
               <span className="font-medium">{submittedEmail}</span>. Please

@@ -5,6 +5,7 @@ import {
   LoginFormValues,
   CreateAccountSchema,
   EmailSchema,
+  ForgotPasswordFormValues,
 } from "@/lib/validations";
 import { VerifyEmailTypes } from "@/lib/types";
 
@@ -58,6 +59,17 @@ const AuthAdapter = {
   },
   resendOtp: async function (payload: EmailSchema) {
     const res = await authService.mutate("resend-otp", payload, "JSON", "POST");
+    return res;
+  },
+  sendPasswordRecoveryEmail: async function (
+    payload: ForgotPasswordFormValues
+  ) {
+    const res = await authService.mutate(
+      "password-recovery",
+      payload,
+      "JSON",
+      "POST"
+    );
     return res;
   },
 };

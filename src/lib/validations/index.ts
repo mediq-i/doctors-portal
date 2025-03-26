@@ -22,6 +22,8 @@ import {
 
 import { loginSchema, LoginFormValues } from "./login-schema";
 
+import { forgotPasswordSchema, ForgotPasswordFormValues } from "./auth-schemas";
+
 export {
   type CreateAccountSchema,
   createAccountSchema,
@@ -35,4 +37,6 @@ export {
   professionalInfoSchema,
   type LoginFormValues,
   loginSchema,
+  type ForgotPasswordFormValues,
+  forgotPasswordSchema,
 };

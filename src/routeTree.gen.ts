@@ -19,6 +19,7 @@ import { Route as OnboardingPersonalProfessionalInformationImport } from './rout
 import { Route as OnboardingOnboardingStepsImport } from './routes/onboarding/onboarding-steps'
 import { Route as OnboardingCreateAccountImport } from './routes/onboarding/create-account'
 import { Route as OnboardingCompletionImport } from './routes/onboarding/completion'
+import { Route as AuthResetPasswordImport } from './routes/auth/reset-password'
 import { Route as AuthLoginImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordImport } from './routes/auth/forgot-password'
 
@@ -73,6 +74,12 @@ const OnboardingCompletionRoute = OnboardingCompletionImport.update({
   getParentRoute: () => OnboardingRouteRoute,
 } as any)
 
+const AuthResetPasswordRoute = AuthResetPasswordImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
 const AuthLoginRoute = AuthLoginImport.update({
   id: '/login',
   path: '/login',
@@ -124,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginImport
       parentRoute: typeof AuthRouteImport
     }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordImport
+      parentRoute: typeof AuthRouteImport
+    }
     '/onboarding/completion': {
       id: '/onboarding/completion'
       path: '/completion'
@@ -167,11 +181,13 @@ declare module '@tanstack/react-router' {
 interface AuthRouteRouteChildren {
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -205,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRouteRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/completion': typeof OnboardingCompletionRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
@@ -218,6 +235,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRouteRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/completion': typeof OnboardingCompletionRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
@@ -232,6 +250,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRouteRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/completion': typeof OnboardingCompletionRoute
   '/onboarding/create-account': typeof OnboardingCreateAccountRoute
   '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
@@ -247,6 +266,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/auth/forgot-password'
     | '/auth/login'
+    | '/auth/reset-password'
     | '/onboarding/completion'
     | '/onboarding/create-account'
     | '/onboarding/onboarding-steps'
@@ -259,6 +279,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/auth/forgot-password'
     | '/auth/login'
+    | '/auth/reset-password'
     | '/onboarding/completion'
     | '/onboarding/create-account'
     | '/onboarding/onboarding-steps'
@@ -271,6 +292,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/auth/forgot-password'
     | '/auth/login'
+    | '/auth/reset-password'
     | '/onboarding/completion'
     | '/onboarding/create-account'
     | '/onboarding/onboarding-steps'
@@ -313,7 +335,8 @@ export const routeTree = rootRoute
       "filePath": "auth/route.tsx",
       "children": [
         "/auth/forgot-password",
-        "/auth/login"
+        "/auth/login",
+        "/auth/reset-password"
       ]
     },
     "/onboarding": {
@@ -332,6 +355,10 @@ export const routeTree = rootRoute
     },
     "/auth/login": {
       "filePath": "auth/login.tsx",
+      "parent": "/auth"
+    },
+    "/auth/reset-password": {
+      "filePath": "auth/reset-password.tsx",
       "parent": "/auth"
     },
     "/onboarding/completion": {
