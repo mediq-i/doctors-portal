@@ -1,3 +1,3 @@
-import { type VerifyEmailTypes } from "./auth-types";
+import { type VerifyEmailTypes, type ResetPasswordTypes } from "./auth-types";
 
-export { VerifyEmailTypes };
+export { VerifyEmailTypes, ResetPasswordTypes };

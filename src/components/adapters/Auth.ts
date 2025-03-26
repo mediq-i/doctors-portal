@@ -7,7 +7,7 @@ import {
   EmailSchema,
   ForgotPasswordFormValues,
 } from "@/lib/validations";
-import { VerifyEmailTypes } from "@/lib/types";
+import { VerifyEmailTypes, ResetPasswordTypes } from "@/lib/types";
 
 //API SERVICE INITIALIZER
 const authService = new ApiService<{}, {}>("/auth/");
@@ -66,6 +66,15 @@ const AuthAdapter = {
   ) {
     const res = await authService.mutate(
       "password-recovery",
+      payload,
+      "JSON",
+      "POST"
+    );
+    return res;
+  },
+  resetPassword: async function (payload: ResetPasswordTypes) {
+    const res = await authService.mutate(
+      "reset-password",
       payload,
       "JSON",
       "POST"

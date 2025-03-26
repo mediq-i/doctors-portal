@@ -6,3 +6,8 @@ export interface VerifyEmailTypes {
   userType: string | null;
   otp: string;
 }
+
+export interface ResetPasswordTypes {
+  password: string;
+  refreshToken: string | null;
+}

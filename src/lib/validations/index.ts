@@ -24,6 +24,8 @@ import { loginSchema, LoginFormValues } from "./login-schema";
 
 import { forgotPasswordSchema, ForgotPasswordFormValues } from "./auth-schemas";
 
+import { resetPasswordSchema, ResetPasswordFormValues } from "./auth-schemas";
+
 export {
   type CreateAccountSchema,
   createAccountSchema,
@@ -39,4 +41,6 @@ export {
   loginSchema,
   type ForgotPasswordFormValues,
   forgotPasswordSchema,
+  type ResetPasswordFormValues,
+  resetPasswordSchema,
 };

@@ -1,43 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, CheckCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
-// Define the validation schema using Zod
-const resetPasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
-// Infer the type from the schema
-type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
+import {
+  resetPasswordSchema,
+  type ResetPasswordFormValues,
+} from "@/lib/validations";
+import { AuthAdapter, authMutation } from "../adapters";
+import { getErrorMessage } from "@/utils";
+import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function ResetPasswordForm() {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [refreshToken, setRefreshToken] = useState<string | null>("");
+  const { isPending, isSuccess, mutateAsync } = authMutation(
+    AuthAdapter.resetPassword,
+    ""
+  );
+
+  useEffect(() => {
+    // Get the full URL fragment
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get("access_token"); // Extract access_token
+    const refreshToken = hashParams.get("refresh_token"); // Extract refresh_token
+    setRefreshToken(refreshToken);
+
+    if (accessToken) {
+      localStorage.setItem("token", accessToken);
+    } else if (!refreshToken) {
+      toast.error("No refresh token found");
+    } else {
+      toast.error("No access token found");
+    }
+  }, []);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
@@ -47,23 +58,25 @@ export default function ResetPasswordForm() {
   });
 
   const onSubmit = async (data: ResetPasswordFormValues) => {
+    const resetPasswordPayload = {
+      refreshToken,
+      password: data.password,
+    };
+
     try {
-      // Here you would typically send the data to your API
-      console.log("Form data:", data);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Show success state
-      setIsSubmitted(true);
+      const res = await mutateAsync(resetPasswordPayload);
+      console.log(res);
+      toast.success("Reset password Successful");
+      navigate({ to: "/auth/login" });
     } catch (error) {
       console.error("Password reset error:", error);
+      toast.error(getErrorMessage(error));
     }
   };
 
   return (
     <div className="w-full max-w-md mx-auto border border-blue-100 rounded-lg p-8">
-      {!isSubmitted ? (
+      {!isSuccess ? (
         <>
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold mb-2">Reset Password</h1>
@@ -148,9 +161,9 @@ export default function ResetPasswordForm() {
             <Button
               type="submit"
               className="w-full bg-blue-500 hover:bg-blue-600"
-              disabled={isSubmitting}
+              disabled={isPending}
             >
-              {isSubmitting ? "Resetting..." : "Reset Password"}
+              {isPending ? "Resetting..." : "Reset Password"}
             </Button>
           </form>
         </>
