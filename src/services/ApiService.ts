@@ -11,14 +11,14 @@ class ApiService<T, R> {
     this.url = url;
   }
 
-  //getter method to fetch the auth token dynamically
-  // private get token(): string | null {
-  //   if (typeof window !== "undefined") {
-  //     const token = localStorage.getItem("token");
-  //     return token;
-  //   }
-  //   return null;
-  // }
+  // getter method to fetch the auth token dynamically
+  private get token(): string | null {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      return token;
+    }
+    return null;
+  }
 
   //fetches all data
   getAll = async (params: string): Promise<T> => {
@@ -49,6 +49,7 @@ class ApiService<T, R> {
     const config = {
       headers: {
         "Content-Type": contentType,
+        Authorization: this.token ? `Bearer ${this.token}` : "",
       },
     };
 
@@ -57,12 +58,12 @@ class ApiService<T, R> {
         `${slug ? this.url + "/" + slug : this.url}`,
         payload,
         config
-        //   {
-        //     headers: {
-        //       Authorization: this.token ? `Bearer ${this.token}` : "",
-        //       "Content-Type": contentType,
-        //     },
-        //   }
+        // {
+        //   headers: {
+        //     Authorization: this.token ? `Bearer ${this.token}` : "",
+        //     "Content-Type": contentType,
+        //   },
+        // }
       );
     } else if (method === "PATCH") {
       response = await apiInstance.patch(
