@@ -1,11 +1,70 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "@/layouts";
+import {
+  DocumentUploadForm,
+  IDVerificationForm,
+  PersonalInfoForm,
+  ProfessionalInfoForm,
+  SettingsSection,
+} from "@/components/settings";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/settings")({
   component: RouteComponent,
 });
 
+// Mock data - replace with actual data fetching in production
+const mockPersonalInfo = {
+  firstName: "Sarah",
+  lastName: "Wilson",
+  email: "sarah.wilson@example.com",
+  phone: "+1 (555) 123-4567",
+  gender: "female",
+  address: "123 Medical Center Drive",
+  city: "Boston",
+  state: "Massachusetts",
+  country: "United States",
+  bio: "Board-certified cardiologist with over 10 years of experience in treating cardiovascular diseases. Specializing in preventive cardiology and heart failure management.",
+};
+
+const mockIdVerification = {
+  idType: "passport" as const,
+  idNumber: "P1234567",
+  idExpiryDate: "2028-06-15",
+  idDocument: "/placeholder.svg?height=300&width=400",
+};
+
+const mockProfessionalInfo = {
+  licenseNumber: "MD123456",
+  issuingBoard: "Massachusetts Board of Registration in Medicine",
+  primarySpecialty: "Cardiology",
+  subSpecialties: ["Interventional Cardiology", "Echocardiography"],
+  yearsOfExperience: 10,
+  professionalAssociations: [
+    "American College of Cardiology",
+    "American Heart Association",
+    "Massachusetts Medical Society",
+  ],
+};
+
+const mockMedicalLicense = {
+  documentUrl: "/placeholder.svg?height=300&width=400",
+  documentName: "Medical_License_Wilson.pdf",
+  uploadDate: "2023-01-15",
+  expiryDate: "2025-01-15",
+};
+
+const mockUniversityDegree = {
+  documentUrl: "/placeholder.svg?height=300&width=400",
+  documentName: "MD_Degree_Harvard_Wilson.pdf",
+  uploadDate: "2023-01-15",
+};
+
 function RouteComponent() {
+  const handleSaveSection = (section: string) => {
+    toast(`${section} updated`);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -16,7 +75,7 @@ function RouteComponent() {
           </p>
         </div>
 
-        {/* <div className="space-y-6">
+        <div className="space-y-6">
           <SettingsSection
             title="Personal Information"
             description="Update your personal details and contact information"
@@ -42,7 +101,10 @@ function RouteComponent() {
             <ProfessionalInfoForm initialData={mockProfessionalInfo} />
           </SettingsSection>
 
-          <SettingsSection title="Medical License" description="Update your medical license documentation">
+          <SettingsSection
+            title="Medical License"
+            description="Update your medical license documentation"
+          >
             <DocumentUploadForm
               documentType="medicalLicense"
               documentName="Medical License"
@@ -50,14 +112,17 @@ function RouteComponent() {
             />
           </SettingsSection>
 
-          <SettingsSection title="University Degree" description="Update your university degree documentation">
+          <SettingsSection
+            title="University Degree"
+            description="Update your university degree documentation"
+          >
             <DocumentUploadForm
               documentType="universityDegree"
               documentName="University Degree"
               initialData={mockUniversityDegree}
             />
           </SettingsSection>
-        </div> */}
+        </div>
       </div>
     </DashboardLayout>
   );
