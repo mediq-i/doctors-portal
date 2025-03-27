@@ -53,12 +53,14 @@ export default function OnboardingController() {
   // ]);
 
   useEffect(() => {
+    // Skip route synchronization if we're on the completion step/route
     if (isCompletionStep && isCompletionRoute) {
       return;
     }
 
     const expectedRoute = stepToRouteMap[currentStep as OnboardingStep];
 
+    // If we're on a route that doesn't match the current step, update the step
     if (expectedRoute && currentRoute !== expectedRoute) {
       if (Object.keys(routeToInitialStepMap).includes(currentRoute)) {
         const initialStep =

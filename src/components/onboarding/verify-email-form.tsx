@@ -54,6 +54,7 @@ export default function VerifyEmailForm({
       toast.success("Please check your email for a new otp");
     } catch (error: any) {
       // toast.error(error.response.data.message);
+      console.log(error);
       toast.error(getErrorMessage(error));
     }
   };
@@ -79,8 +80,8 @@ export default function VerifyEmailForm({
       if (!firstName) return null;
       const res = await mutateAsync(verificationPayload);
       console.log("verify email response: ", res?.data);
-      localStorage.setItem("access_token", res?.data.sesion.access_token);
-      localStorage.setItem("refreshtoken", res?.data.sesion.access_token);
+      localStorage.setItem("access_token", res?.data.session.access_token);
+      localStorage.setItem("refreshtoken", res?.data.session.access_token);
 
       onSubmit(data);
       toast.success(
@@ -89,6 +90,7 @@ export default function VerifyEmailForm({
       navigate({ to: "/onboarding/onboarding-steps" });
     } catch (error: any) {
       toast.error(getErrorMessage(error));
+      console.log(error);
     }
   };
 

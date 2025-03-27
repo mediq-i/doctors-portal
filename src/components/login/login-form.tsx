@@ -11,10 +11,13 @@ import { type LoginFormValues, loginSchema } from "@/lib/validations";
 import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { isPending, mutateAsync } = authMutation(AuthAdapter.loginAdmin, "");
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -28,9 +31,10 @@ export default function LoginForm() {
     try {
       const res = await mutateAsync(data);
       console.log(res?.data);
-      localStorage.setItem("access_token", res?.data.sesion.access_token);
+      localStorage.setItem("access_token", res?.data.session.access_token);
+      toast.success("Login Successful. Welcome!");
       // Redirect to dashboard or home page after successful login
-      // router.push('/dashboard')
+      navigate({ to: "/" });
     } catch (error) {
       toast.error(getErrorMessage(error));
     }
