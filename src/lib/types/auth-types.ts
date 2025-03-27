@@ -1,9 +1,9 @@
 export interface VerifyEmailTypes {
-  auth_id: string | null;
-  email: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  userType: string | null;
+  auth_id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  userType: string;
   otp: string;
 }
 

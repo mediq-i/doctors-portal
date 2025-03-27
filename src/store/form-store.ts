@@ -48,7 +48,9 @@ interface FormData {
   // Account creation
   email?: string;
   password?: string;
-  code?: string;
+  otp?: string;
+  firstName?: string;
+  lastName?: string;
 
   // Personal info
   legalFirstName?: string;
@@ -121,8 +123,17 @@ export const useFormStore = create<FormState>()(
         return prevStep;
       },
 
+      // goToStep: (step) => {
+      //   set({ currentStep: step });
+      // },
       goToStep: (step) => {
-        set({ currentStep: step });
+        set((state) => {
+          if (state.currentStep !== step) {
+            // ✅ Prevents unnecessary re-renders
+            return { currentStep: step };
+          }
+          return state; // No change, no re-render
+        });
       },
 
       resetForm: () =>

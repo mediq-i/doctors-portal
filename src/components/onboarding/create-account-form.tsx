@@ -40,13 +40,12 @@ export default function CreateAccountForm({
   const createAccountHandler = async (data: CreateAccountSchema) => {
     try {
       const res = await mutateAsync(data);
-      const { auth_id, email, firstName, lastName, userType } = res?.data;
+      const { auth_id } = res?.data;
 
-      useAuthStore
-        .getState()
-        .setAuthData({ auth_id, email, firstName, lastName, userType });
+      useAuthStore.getState().setAuthData({ auth_id });
 
       console.log(res?.data);
+      toast.success("Please check your mail for an OTP");
       onSubmit(data);
       navigate({ to: `/onboarding/verify-email` });
     } catch (error) {

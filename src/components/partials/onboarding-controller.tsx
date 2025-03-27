@@ -19,29 +19,60 @@ export default function OnboardingController() {
   const isCompletionStep = currentStep === OnboardingStep.COMPLETION;
   const isCompletionRoute = currentRoute === "/onboarding/completion";
 
+  // useEffect(() => {
+  //   // Skip route synchronization if we're on the completion step/route
+  //   if (isCompletionStep && isCompletionRoute) {
+  //     return;
+  //   }
+
+  //   // If we're on a route that doesn't match the current step, update the step
+  //   const expectedRoute = stepToRouteMap[currentStep as OnboardingStep];
+
+  //   if (expectedRoute && currentRoute !== expectedRoute) {
+  //     // Check if the current route exists in the map
+  //     if (Object.keys(routeToInitialStepMap).includes(currentRoute)) {
+  //       const initialStep =
+  //         routeToInitialStepMap[
+  //           currentRoute as keyof typeof routeToInitialStepMap
+  //         ];
+  //       if (initialStep) {
+  //         goToStep(initialStep);
+  //       }
+  //     } else {
+  //       console.warn(`Route not found in map: ${currentRoute}`);
+  //       // Fallback to a default step if needed
+  //       goToStep(OnboardingStep.CREATE_ACCOUNT);
+  //     }
+  //   }
+  // }, [
+  //   currentRoute,
+  //   currentStep,
+  //   goToStep,
+  //   isCompletionStep,
+  //   isCompletionRoute,
+  // ]);
+
   useEffect(() => {
-    // Skip route synchronization if we're on the completion step/route
     if (isCompletionStep && isCompletionRoute) {
       return;
     }
 
-    // If we're on a route that doesn't match the current step, update the step
     const expectedRoute = stepToRouteMap[currentStep as OnboardingStep];
 
     if (expectedRoute && currentRoute !== expectedRoute) {
-      // Check if the current route exists in the map
       if (Object.keys(routeToInitialStepMap).includes(currentRoute)) {
         const initialStep =
           routeToInitialStepMap[
             currentRoute as keyof typeof routeToInitialStepMap
           ];
-        if (initialStep) {
+
+        if (currentStep !== initialStep) {
           goToStep(initialStep);
         }
       } else {
-        console.warn(`Route not found in map: ${currentRoute}`);
-        // Fallback to a default step if needed
-        goToStep(OnboardingStep.CREATE_ACCOUNT);
+        if (currentStep !== OnboardingStep.CREATE_ACCOUNT) {
+          goToStep(OnboardingStep.CREATE_ACCOUNT);
+        }
       }
     }
   }, [

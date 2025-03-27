@@ -28,8 +28,7 @@ export default function LoginForm() {
     try {
       const res = await mutateAsync(data);
       console.log(res?.data);
-      localStorage.setItem("token", res?.data.token);
-
+      localStorage.setItem("access_token", res?.data.sesion.access_token);
       // Redirect to dashboard or home page after successful login
       // router.push('/dashboard')
     } catch (error) {

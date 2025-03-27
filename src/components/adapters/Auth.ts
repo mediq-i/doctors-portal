@@ -8,9 +8,14 @@ import {
   ForgotPasswordFormValues,
 } from "@/lib/validations";
 import { VerifyEmailTypes, ResetPasswordTypes } from "@/lib/types";
+import { AxiosResponse } from "axios";
+
+interface SignUpResponse {
+  auth_id: string;
+}
 
 //API SERVICE INITIALIZER
-const authService = new ApiService<{}, {}>("/auth/");
+const authService = new ApiService<{}, {}>("/auth");
 
 // mutation utility
 function authMutation<T>(
@@ -46,7 +51,7 @@ const AuthAdapter = {
       "JSON",
       "POST"
     );
-    return res;
+    return res as AxiosResponse<SignUpResponse, any>;
   },
   verifyEmail: async function (payload: VerifyEmailTypes) {
     const res = await authService.mutate(
@@ -77,7 +82,7 @@ const AuthAdapter = {
       "reset-password",
       payload,
       "JSON",
-      "POST"
+      "PATCH"
     );
     return res;
   },

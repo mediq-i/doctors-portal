@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, CheckCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-
+import { useNavigate } from "@tanstack/react-router";
 import {
   resetPasswordSchema,
   type ResetPasswordFormValues,
@@ -14,7 +14,6 @@ import {
 import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
 
 export default function ResetPasswordForm() {
   const navigate = useNavigate();
@@ -33,6 +32,9 @@ export default function ResetPasswordForm() {
     const accessToken = hashParams.get("access_token"); // Extract access_token
     const refreshToken = hashParams.get("refresh_token"); // Extract refresh_token
     setRefreshToken(refreshToken);
+
+    console.log("access token: ", accessToken);
+    console.log("refreshToken", refreshToken);
 
     if (accessToken) {
       localStorage.setItem("token", accessToken);
@@ -144,7 +146,7 @@ export default function ResetPasswordForm() {
               )}
             </div>
 
-            <div className="bg-blue-50 p-3 rounded-md">
+            {/* <div className="bg-blue-50 p-3 rounded-md">
               <p className="text-sm font-medium text-gray-700 mb-2">
                 Password requirements:
               </p>
@@ -154,7 +156,7 @@ export default function ResetPasswordForm() {
                 <li>At least one lowercase letter</li>
                 <li>At least one number</li>
               </ul>
-            </div>
+            </div> */}
 
             <Button
               type="submit"
