@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "@/layouts";
+import { WalletSection } from "@/components/dashboard";
 
 export const Route = createFileRoute("/dashboard")({
   component: RouteComponent,
@@ -16,7 +17,9 @@ function RouteComponent() {
           </p>
         </div>
 
-        {/* <WalletSection pendingBalance={450.0} availableBalance={1250.75} />
+        <WalletSection />
+
+        {/* 
 
         <AvailabilitySection />
 

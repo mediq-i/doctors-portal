@@ -5,6 +5,7 @@ import type React from "react";
 // import { usePathname } from "next/navigation"
 import { Link, useMatches } from "@tanstack/react-router";
 import { Calendar, Home, LogOut, Settings } from "lucide-react";
+import { LogoBlue } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,12 +50,7 @@ export function Sidebar() {
       <div>
         <div className="flex justify-center md:justify-start md:px-6">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-              <span className="text-lg font-bold text-white">M</span>
-            </div>
-            <span className="hidden text-xl font-bold md:inline-block">
-              mediq-i
-            </span>
+            <LogoBlue />
           </Link>
         </div>
         <div className="mt-10 space-y-1 px-2">
