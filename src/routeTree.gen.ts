@@ -11,8 +11,11 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings/route'
 import { Route as OnboardingRouteImport } from './routes/onboarding/route'
+import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as AuthRouteImport } from './routes/auth/route'
+import { Route as AppointmentsRouteImport } from './routes/appointments/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as OnboardingVerifyEmailImport } from './routes/onboarding/verify-email'
 import { Route as OnboardingPersonalProfessionalInformationImport } from './routes/onboarding/personal-professional-information'
@@ -25,15 +28,33 @@ import { Route as AuthForgotPasswordImport } from './routes/auth/forgot-password
 
 // Create/Update Routes
 
+const SettingsRouteRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const OnboardingRouteRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardRouteRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthRouteRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AppointmentsRouteRoute = AppointmentsRouteImport.update({
+  id: '/appointments',
+  path: '/appointments',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -103,6 +124,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/appointments': {
+      id: '/appointments'
+      path: '/appointments'
+      fullPath: '/appointments'
+      preLoaderRoute: typeof AppointmentsRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -110,11 +138,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRoute
     }
     '/auth/forgot-password': {
@@ -217,8 +259,11 @@ const OnboardingRouteRouteWithChildren = OnboardingRouteRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/appointments': typeof AppointmentsRouteRoute
   '/auth': typeof AuthRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRoute
   '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/settings': typeof SettingsRouteRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -231,8 +276,11 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/appointments': typeof AppointmentsRouteRoute
   '/auth': typeof AuthRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRoute
   '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/settings': typeof SettingsRouteRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -246,8 +294,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/appointments': typeof AppointmentsRouteRoute
   '/auth': typeof AuthRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRoute
   '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/settings': typeof SettingsRouteRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -262,8 +313,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/appointments'
     | '/auth'
+    | '/dashboard'
     | '/onboarding'
+    | '/settings'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
@@ -275,8 +329,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/appointments'
     | '/auth'
+    | '/dashboard'
     | '/onboarding'
+    | '/settings'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
@@ -288,8 +345,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/appointments'
     | '/auth'
+    | '/dashboard'
     | '/onboarding'
+    | '/settings'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
@@ -303,14 +363,20 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppointmentsRouteRoute: typeof AppointmentsRouteRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  DashboardRouteRoute: typeof DashboardRouteRoute
   OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
+  SettingsRouteRoute: typeof SettingsRouteRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppointmentsRouteRoute: AppointmentsRouteRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  DashboardRouteRoute: DashboardRouteRoute,
   OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
+  SettingsRouteRoute: SettingsRouteRoute,
 }
 
 export const routeTree = rootRoute
@@ -324,12 +390,18 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/appointments",
         "/auth",
-        "/onboarding"
+        "/dashboard",
+        "/onboarding",
+        "/settings"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/appointments": {
+      "filePath": "appointments/route.tsx"
     },
     "/auth": {
       "filePath": "auth/route.tsx",
@@ -338,6 +410,9 @@ export const routeTree = rootRoute
         "/auth/login",
         "/auth/reset-password"
       ]
+    },
+    "/dashboard": {
+      "filePath": "dashboard/route.tsx"
     },
     "/onboarding": {
       "filePath": "onboarding/route.tsx",
@@ -348,6 +423,9 @@ export const routeTree = rootRoute
         "/onboarding/personal-professional-information",
         "/onboarding/verify-email"
       ]
+    },
+    "/settings": {
+      "filePath": "settings/route.tsx"
     },
     "/auth/forgot-password": {
       "filePath": "auth/forgot-password.tsx",
