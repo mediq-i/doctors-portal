@@ -1,205 +1,63 @@
-"use client";
-
 import { useState } from "react";
-import { Calendar, Clock } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { type Appointment } from "@/components/dashboard/appointment-card";
+import AppointmentCard from "@/components/dashboard/appointment-card";
+import AppointmentDetailsModal from "@/components/dashboard/appointment-details-modal";
 
-const DAYS = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-const TIME_SLOTS = [
-  "8:00 AM - 9:00 AM",
-  "9:00 AM - 10:00 AM",
-  "10:00 AM - 11:00 AM",
-  "11:00 AM - 12:00 PM",
-  "1:00 PM - 2:00 PM",
-  "2:00 PM - 3:00 PM",
-  "3:00 PM - 4:00 PM",
-  "4:00 PM - 5:00 PM",
-];
-
-interface AvailabilityDay {
-  day: string;
-  available: boolean;
-  timeSlots: string[];
+interface AppointmentsSectionProps {
+  appointments: Appointment[];
 }
 
-export function AvailabilitySection() {
-  const [availability, setAvailability] = useState<AvailabilityDay[]>(
-    DAYS.map((day) => ({
-      day,
-      available: false,
-      timeSlots: [],
-    }))
-  );
-  const [selectedDay, setSelectedDay] = useState<string>(DAYS[0]);
+export default function AppointmentsSection({
+  appointments,
+}: AppointmentsSectionProps) {
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleDayToggle = (day: string, checked: boolean) => {
-    setAvailability(
-      availability.map((item) =>
-        item.day === day ? { ...item, available: checked } : item
-      )
-    );
+  const handleViewDetails = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setIsModalOpen(true);
   };
 
-  const handleTimeSlotToggle = (
-    day: string,
-    timeSlot: string,
-    checked: boolean
-  ) => {
-    setAvailability(
-      availability.map((item) => {
-        if (item.day === day) {
-          return {
-            ...item,
-            timeSlots: checked
-              ? [...item.timeSlots, timeSlot]
-              : item.timeSlots.filter((slot) => slot !== timeSlot),
-          };
-        }
-        return item;
-      })
-    );
-  };
-
-  const currentDayData = availability.find(
-    (item) => item.day === selectedDay
-  ) || {
-    day: selectedDay,
-    available: false,
-    timeSlots: [],
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold">Availability Settings</h2>
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Available Days
-            </CardTitle>
-            <CardDescription>
-              Select the days you are available for appointments
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {DAYS.map((day) => {
-                const dayData = availability.find((item) => item.day === day);
-                return (
-                  <div key={day} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`day-${day}`}
-                      checked={dayData?.available}
-                      onCheckedChange={(checked) =>
-                        handleDayToggle(day, checked as boolean)
-                      }
-                    />
-                    <Label
-                      htmlFor={`day-${day}`}
-                      className="flex w-full cursor-pointer justify-between"
-                    >
-                      <span>{day}</span>
-                      {dayData?.available && (
-                        <span className="text-xs text-muted-foreground">
-                          {dayData.timeSlots.length} time slots
-                        </span>
-                      )}
-                    </Label>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Time Slots
-            </CardTitle>
-            <CardDescription>
-              Set your available time slots for each day
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Select value={selectedDay} onValueChange={setSelectedDay}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a day" />
-                </SelectTrigger>
-                <SelectContent>
-                  {DAYS.map((day) => (
-                    <SelectItem key={day} value={day}>
-                      {day}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <div className="space-y-2">
-                {currentDayData.available ? (
-                  TIME_SLOTS.map((timeSlot) => (
-                    <div key={timeSlot} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`time-${timeSlot}`}
-                        checked={currentDayData.timeSlots.includes(timeSlot)}
-                        onCheckedChange={(checked) =>
-                          handleTimeSlotToggle(
-                            selectedDay,
-                            timeSlot,
-                            checked as boolean
-                          )
-                        }
-                      />
-                      <Label
-                        htmlFor={`time-${timeSlot}`}
-                        className="cursor-pointer"
-                      >
-                        {timeSlot}
-                      </Label>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Please mark this day as available first
-                  </p>
-                )}
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button className="w-full">Save Availability</Button>
-          </CardFooter>
-        </Card>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Upcoming Appointments</h2>
+        <Button variant="ghost" size="sm" className="gap-1">
+          View All <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
+
+      {appointments.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {appointments.map((appointment) => (
+            <AppointmentCard
+              key={appointment.id}
+              appointment={appointment}
+              onViewDetails={handleViewDetails}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-dashed p-8 text-center">
+          <p className="text-muted-foreground">No upcoming appointments</p>
+        </div>
+      )}
+
+      {selectedAppointment && (
+        <AppointmentDetailsModal
+          appointment={selectedAppointment}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 }

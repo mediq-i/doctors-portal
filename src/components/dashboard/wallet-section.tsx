@@ -1,11 +1,6 @@
 import { CreditCard, DollarSign } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 
-// interface WalletSectionProps {
-//   pendingBalance: number
-//   availableBalance: number
-// }
-
 const pendingBalance = 450.0;
 const availableBalance = 1250.75;
 
