@@ -52,27 +52,27 @@ export default function VerifyEmailForm() {
   };
 
   const onSubmitVerificationCode = async (data: VerificationCodeSchema) => {
-    const { auth_id } = useAuthStore.getState();
+    // const { auth_id } = useAuthStore.getState();
 
-    if (!auth_id || !email || !firstName || !lastName) {
-      toast.error("Missing user details. Please sign up again.");
-      return;
-    }
+    // if (!auth_id || !email || !firstName || !lastName) {
+    //   toast.error("Missing user details. Please sign up again.");
+    //   return;
+    // }
 
-    const verificationPayload = {
-      auth_id,
-      email,
-      firstName,
-      lastName,
-      userType: "service_provider",
-      otp: data.otp,
-    };
+    // const verificationPayload = {
+    //   auth_id,
+    //   email,
+    //   firstName,
+    //   lastName,
+    //   userType: "service_provider",
+    //   otp: data.otp,
+    // };
 
     try {
-      const res = await mutateAsync(verificationPayload);
-      console.log("verify email response: ", res?.data);
-      localStorage.setItem("access_token", res?.data.session.access_token);
-      localStorage.setItem("refreshtoken", res?.data.session.access_token);
+      // const res = await mutateAsync(verificationPayload);
+      // console.log("verify email response: ", res?.data);
+      // localStorage.setItem("access_token", res?.data.session.access_token);
+      // localStorage.setItem("refreshtoken", res?.data.session.access_token);
 
       // onSubmit(data);
       toast.success(
