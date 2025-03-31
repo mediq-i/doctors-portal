@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
@@ -11,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
+import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
+import { fileCache } from "@/utils";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -26,19 +30,43 @@ export default function VerifyIdForm({
   defaultValues = {},
 }: DocumentUploadProps) {
   const [file, setFile] = useState<FileWithPreview | null>(null);
-  // const [documentType, setDocumentType] = useState<string>("national-id");
   const [documentType, setDocumentType] = useState<string>(
     defaultValues.documentType || "national-id"
   );
+  const updateFormData = usePersonalProfessionalInfoStore(
+    (state) => state.updateFormData
+  );
 
-  // Initialize file if defaultValues has documentFile
+  // Initialize file if defaultValues has documentFile or from cache
   useEffect(() => {
+    // Try to get file from defaultValues
     if (defaultValues.documentFile && !file) {
-      const fileWithPreview = Object.assign(defaultValues.documentFile, {
-        preview: URL.createObjectURL(defaultValues.documentFile),
-      }) as FileWithPreview;
+      try {
+        if (!(defaultValues.documentFile instanceof File)) {
+          throw new Error("defaultValues.documentFile is not a File");
+        }
+        const fileWithPreview = Object.assign(defaultValues.documentFile, {
+          preview: URL.createObjectURL(defaultValues.documentFile),
+        }) as FileWithPreview;
+        setFile(fileWithPreview);
+      } catch (error) {
+        console.error("Error creating object URL from defaultValues:", error);
+      }
+    }
 
-      setFile(fileWithPreview);
+    // Try to get file from cache if not in defaultValues
+    if (!file) {
+      const cachedFile = fileCache.get("documentFile");
+      if (cachedFile) {
+        try {
+          const fileWithPreview = Object.assign(cachedFile, {
+            preview: URL.createObjectURL(cachedFile),
+          }) as FileWithPreview;
+          setFile(fileWithPreview);
+        } catch (error) {
+          console.error("Error creating object URL from cache:", error);
+        }
+      }
     }
   }, [defaultValues.documentFile, file]);
 
@@ -50,6 +78,9 @@ export default function VerifyIdForm({
       }) as FileWithPreview;
 
       setFile(fileWithPreview);
+
+      // Store the file in our cache
+      fileCache.set("documentFile", selectedFile);
     }
   }, []);
 
@@ -60,7 +91,7 @@ export default function VerifyIdForm({
       "image/png": [],
       "application/pdf": [],
     },
-    maxSize: 50485760, // 10MB
+    maxSize: 50485760, // 50MB
     maxFiles: 1,
     noClick: !!file, // Disable click when file is already selected
     noKeyboard: !!file, // Disable keyboard when file is already selected
@@ -70,6 +101,9 @@ export default function VerifyIdForm({
     if (file) {
       URL.revokeObjectURL(file.preview);
       setFile(null);
+
+      // Remove from cache
+      fileCache.delete("documentFile");
     }
   };
 
@@ -77,10 +111,21 @@ export default function VerifyIdForm({
     e.preventDefault();
     if (file) {
       console.log("Document type:", documentType);
+
+      // Store document type and file metadata in Zustand store
+      updateFormData({
+        documentType,
+        documentFileName: file.name,
+        documentFileSize: file.size,
+        documentFileType: file.type,
+      });
+
+      // Call the onSubmit prop with the document type and file
       onSubmit({
         documentType,
-        documentFile: file || undefined,
+        documentFile: file,
       });
+
       console.log("File:", file);
     }
   };
@@ -162,7 +207,6 @@ export default function VerifyIdForm({
               <>
                 {isDragActive ? (
                   <div className="flex flex-col items-center ">
-                    {/* <Upload className="h-10 w-10 text-primary mb-2" /> */}
                     <CloudIcon />
                     <p className="text-sm font-medium text-primary mt-4">
                       Drop your file here
@@ -170,14 +214,13 @@ export default function VerifyIdForm({
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    {/* <Upload className="h-10 w-10 text-gray-400 mb-2" /> */}
                     <CloudIcon />
                     <p className="text-sm font-medium mt-4">
                       <span className="text-primary">Choose a file </span>
                       or drag & drop it here
                     </p>
                     <p className="text-xs text-gray-500 mt-2">
-                      JPEG, PNG, DOC and MP4 formats, up to 50MB
+                      JPEG, PNG, PDF formats, up to 50MB
                     </p>
                   </div>
                 )}

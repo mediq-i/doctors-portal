@@ -6,6 +6,12 @@ import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
 import { useNavigate } from "@tanstack/react-router";
 import { LoadingIcon } from "../icons";
+import {
+  serviceProviderMutation,
+  ServiceProviderAdapter,
+} from "../adapters/ServiceProvider";
+import { getErrorMessage, fileCache } from "@/utils";
+import { toast } from "sonner";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -23,14 +29,28 @@ export default function UploadUniversityDegree({
   const navigate = useNavigate();
 
   const [file, setFile] = useState<FileWithPreview | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isPending = false; // Replace with actual pending state if needed
+  const { isPending, mutateAsync } = serviceProviderMutation(
+    ServiceProviderAdapter.updateServiceProvider,
+    ""
+  );
 
   // Initialize file if defaultValues has documentFile
   useEffect(() => {
     if (defaultValues.universityDegree && !file) {
       const fileWithPreview = Object.assign(defaultValues.universityDegree, {
         preview: URL.createObjectURL(defaultValues.universityDegree),
+      }) as FileWithPreview;
+
+      setFile(fileWithPreview);
+    }
+
+    // Check if we have a cached file
+    const cachedFile = fileCache.get("universityDegree");
+    if (cachedFile && !file) {
+      const fileWithPreview = Object.assign(cachedFile, {
+        preview: URL.createObjectURL(cachedFile),
       }) as FileWithPreview;
 
       setFile(fileWithPreview);
@@ -45,6 +65,9 @@ export default function UploadUniversityDegree({
       }) as FileWithPreview;
 
       setFile(fileWithPreview);
+
+      // Store the file in our cache
+      fileCache.set("universityDegree", selectedFile);
     }
   }, []);
 
@@ -55,7 +78,7 @@ export default function UploadUniversityDegree({
       "image/png": [],
       "application/pdf": [],
     },
-    maxSize: 50485760, // 10MB
+    maxSize: 50485760, // 50MB
     maxFiles: 1,
     noClick: !!file, // Disable click when file is already selected
     noKeyboard: !!file, // Disable keyboard when file is already selected
@@ -65,21 +88,132 @@ export default function UploadUniversityDegree({
     if (file) {
       URL.revokeObjectURL(file.preview);
       setFile(null);
+
+      // Remove from cache
+      fileCache.delete("universityDegree");
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (file) {
-      console.log("File:", file);
+    try {
+      setIsSubmitting(true);
+
+      // Call the onSubmit prop with the file
       onSubmit({ universityDegree: file || undefined });
+
+      // Retrieve stored form data from localStorage
+      const storedData = localStorage.getItem(
+        "personal-professional-info-store"
+      );
+      if (!storedData) {
+        console.error("No stored form data found.");
+        toast.error(
+          "No stored form data found. Please complete previous steps first."
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
+      const parsedData = JSON.parse(storedData);
+      const formData = new FormData();
+
+      // Append text fields
+      if (parsedData.state.formData.medicalLicenseNumber) {
+        formData.append(
+          "medical_license_no",
+          parsedData.state.formData.medicalLicenseNumber
+        );
+      }
+
+      if (parsedData.state.formData.yearsOfExperience) {
+        formData.append(
+          "years_of_experience",
+          parsedData.state.formData.yearsOfExperience
+        );
+      }
+
+      if (parsedData.state.formData.documentType) {
+        formData.append(
+          "identification_type",
+          parsedData.state.formData.documentType
+        );
+      }
+
+      if (parsedData.state.formData.issuingMedicalBoard) {
+        formData.append(
+          "issuing_medical_board",
+          parsedData.state.formData.issuingMedicalBoard
+        );
+      }
+
+      if (parsedData.state.formData.professionalAssociations) {
+        formData.append(
+          "professional_associations",
+          parsedData.state.formData.professionalAssociations
+        );
+      }
+
+      if (parsedData.state.formData.specialty) {
+        formData.append("specialty", parsedData.state.formData.specialty);
+      }
+
+      // Handle languages array properly
+      if (parsedData.state.formData.languages) {
+        // If languages is an array, join it with commas
+        if (Array.isArray(parsedData.state.formData.languages)) {
+          formData.append(
+            "languages",
+            parsedData.state.formData.languages.join(", ")
+          );
+        } else {
+          // If it's already a string, use it directly
+          formData.append("languages", parsedData.state.formData.languages);
+        }
+      }
+
+      // Append file fields - Get files from our cache
+      const identificationFile = fileCache.get("documentFile");
+      if (identificationFile) {
+        formData.append("identification_file", identificationFile);
+      } else {
+        console.warn("Identification file not found in cache");
+      }
+
+      const medicalLicenseFile = fileCache.get("medicalLicense");
+      if (medicalLicenseFile) {
+        formData.append("medical_license_file", medicalLicenseFile);
+      } else {
+        console.warn("Medical license file not found in cache");
+      }
+
+      // The university degree file from this step
+      if (file) {
+        formData.append("university_degree_file", file);
+      }
+
+      // Log the FormData for debugging
+      for (const pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+      // Submit the form data
+      const res = await mutateAsync(formData);
+      console.log("File upload response: ", res?.data);
+
+      // Navigate to completion page on success
       navigate({ to: "/onboarding/completion" });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error(getErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md p-6 pl-2 ">
+    <div className="w-full max-w-md p-6 pl-2">
       <h1 className="pb-2 leading-8 lg:leading-10 text-xl md:text-2xl lg:text-3xl font-bold pt-6 max-w-lg">
         Upload University Degree
       </h1>
@@ -136,7 +270,6 @@ export default function UploadUniversityDegree({
               <>
                 {isDragActive ? (
                   <div className="flex flex-col items-center ">
-                    {/* <Upload className="h-10 w-10 text-primary mb-2" /> */}
                     <CloudIcon />
                     <p className="text-sm font-medium text-primary mt-4">
                       Drop your file here
@@ -144,14 +277,13 @@ export default function UploadUniversityDegree({
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    {/* <Upload className="h-10 w-10 text-gray-400 mb-2" /> */}
                     <CloudIcon />
                     <p className="text-sm font-medium mt-4">
                       <span className="text-primary">Choose a file </span>
                       or drag & drop it here
                     </p>
                     <p className="text-xs text-gray-500 mt-2">
-                      JPEG, PNG, DOC and MP4 formats, up to 50MB
+                      JPEG, PNG, PDF formats, up to 50MB
                     </p>
                   </div>
                 )}
@@ -176,10 +308,10 @@ export default function UploadUniversityDegree({
 
         <Button
           type="submit"
-          disabled={!file}
+          disabled={!file || isSubmitting || isPending}
           className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
         >
-          {isPending ? <LoadingIcon /> : "Submit"}
+          {isSubmitting || isPending ? <LoadingIcon /> : "Submit"}
         </Button>
       </form>
     </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -18,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format, parse, isValid } from "date-fns";
+import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
 
 interface PersonalInfoFormProps {
   onSubmit: (data: PersonalInfoFormValues) => void;
@@ -32,6 +35,9 @@ export default function PersonalInfoForm({
   const [isInternalUpdate, setIsInternalUpdate] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const updateFormData = usePersonalProfessionalInfoStore(
+    (state) => state.updateFormData
+  );
 
   const {
     register,
@@ -87,9 +93,10 @@ export default function PersonalInfoForm({
 
   const onSubmitUserInfo = async (data: PersonalInfoFormValues) => {
     try {
-      // Convert the string date to a Date object or ISO string before sending to backend
+      // Create a copy of the data for formatting
       const formattedData = { ...data };
 
+      // Format date of birth
       if (data.dateOfBirth) {
         const parsedDate = parseDateString(data.dateOfBirth);
         if (parsedDate) {
@@ -97,10 +104,19 @@ export default function PersonalInfoForm({
         }
       }
 
+      // Update other fields if languages is empty
+      updateFormData({
+        legalFirstName: data.legalFirstName,
+        legalLastName: data.legalLastName,
+        dateOfBirth: formattedData.dateOfBirth,
+        languages: data.languages,
+      });
+
       console.log("Form data:", data);
       console.log("Formatted data for backend:", formattedData);
+
+      // Call the onSubmit prop with the original form data
       onSubmit(data);
-      //navigate to the next step
     } catch (error) {
       console.error(error);
     }
@@ -266,6 +282,26 @@ export default function PersonalInfoForm({
               {errors.dateOfBirth.message}
             </p>
           )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="languages" className="text-sm text-muted-foreground">
+            Languages
+          </Label>
+          <Input
+            id="languages"
+            placeholder="Please enter all the languages you speak separated by commas"
+            {...register("languages")}
+            className={`${errors.languages ? "border-destructive" : ""} py-5`}
+          />
+          {errors.languages && (
+            <p className="text-sm text-destructive">
+              {errors.languages.message}
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Example: English, French, Spanish
+          </p>
         </div>
 
         <Button

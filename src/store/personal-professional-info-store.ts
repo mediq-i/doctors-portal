@@ -7,6 +7,7 @@ interface FormData {
   // Personal info
   legalFirstName?: string;
   legalLastName?: string;
+  languages?: string;
   dateOfBirth?: string;
 
   // Professional info
@@ -21,6 +22,19 @@ interface FormData {
   documentFile?: File;
   medicalLicense?: File;
   universityDegree?: File;
+
+  // File metadata (since we can't store the actual files)
+  documentFileName?: string;
+  documentFileSize?: number;
+  documentFileType?: string;
+
+  medicalLicenseFileName?: string;
+  medicalLicenseFileSize?: number;
+  medicalLicenseFileType?: string;
+
+  universityDegreeFileName?: string;
+  universityDegreeFileSize?: number;
+  universityDegreeFileType?: string;
 }
 
 // Define the store state and actions
