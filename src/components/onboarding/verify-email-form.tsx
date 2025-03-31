@@ -19,31 +19,33 @@ import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { useFormStore } from "@/store/form-store";
+import { useUserDetailsStore } from "@/store/user-details-store";
 
 interface VerifyEmailFormProps {
   onSubmit: (data: VerificationCodeSchema) => void;
   defaultValues?: Partial<VerificationCodeSchema>;
 }
 
-export default function VerifyEmailForm({
-  onSubmit,
-  defaultValues = {},
-}: VerifyEmailFormProps) {
+export default function VerifyEmailForm() {
+  //   {
+  //   onSubmit,
+  //   defaultValues = {},
+  // }: VerifyEmailFormProps
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<VerificationCodeSchema>({
     resolver: zodResolver(verificationCodeValidator),
-    defaultValues,
   });
 
   const { isPending, mutateAsync } = authMutation(AuthAdapter.verifyEmail, "");
 
   const resendOTPMutation = authMutation(AuthAdapter.resendOtp, "");
 
-  const { formData } = useFormStore.getState();
-  const { email, firstName, lastName } = formData;
+  // const { formData } = useFormStore.getState();
+  // const { email, firstName, lastName } = formData;
+  const { email, firstName, lastName } = useUserDetailsStore((state) => state);
 
   const navigate = useNavigate();
 
@@ -62,7 +64,7 @@ export default function VerifyEmailForm({
   const onSubmitVerificationCode = async (data: VerificationCodeSchema) => {
     const { auth_id } = useAuthStore.getState();
 
-    if (!auth_id || !email) {
+    if (!auth_id || !email || !firstName || !lastName) {
       toast.error("Missing user details. Please sign up again.");
       return;
     }
@@ -77,13 +79,12 @@ export default function VerifyEmailForm({
     };
 
     try {
-      if (!firstName) return null;
       const res = await mutateAsync(verificationPayload);
       console.log("verify email response: ", res?.data);
       localStorage.setItem("access_token", res?.data.session.access_token);
       localStorage.setItem("refreshtoken", res?.data.session.access_token);
 
-      onSubmit(data);
+      // onSubmit(data);
       toast.success(
         "Email Verification Successful. Your account has been created"
       );
