@@ -11,9 +11,6 @@ export function ProgressBar({
   currentStep,
   className,
 }: ProgressBarProps) {
-  // Calculate progress percentage
-  // const progress = Math.min(Math.max((currentStep / totalSteps) * 100, 0), 100);
-
   return (
     <div className={cn("", className)}>
       <div className="flex items-center gap-2">

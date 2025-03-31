@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { AllSetIcon } from "../icons";
-// import { Link } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 
 export default function OnboardingCompleted() {
@@ -22,14 +21,12 @@ export default function OnboardingCompleted() {
         </p>
       </div>
 
-      {/* <Link to="/dashboard"> */}
       <Button
         onClick={handleDashboardNavigation}
         className="w-full text-center text-base bg-primary border text-white py-6 rounded-lg transition-all duration-600 hover:text-neutral-50 hover:shadow-md"
       >
         Proceed to dashboard
       </Button>
-      {/* </Link> */}
     </section>
   );
 }

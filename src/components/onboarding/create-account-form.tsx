@@ -36,19 +36,16 @@ export default function CreateAccountForm() {
 
   const createAccountHandler = async (data: CreateAccountSchema) => {
     try {
-      // const res = await mutateAsync(data);
-      // const { auth_id } = res?.data;
+      const res = await mutateAsync(data);
+      const { auth_id } = res?.data;
 
-      // useAuthStore.getState().setAuthData({ auth_id });
+      useAuthStore.getState().setAuthData({ auth_id });
       // Exclude the password before storing user data
-      console.log("data", data);
       const { password, ...userData } = data;
-      console.log("userData", userData);
-
       setData(userData); // Store user details *without* the password
 
       // console.log(res?.data);
-      // toast.success("Please check your mail for an OTP");
+      toast.success("Please check your mail for an OTP");
       nextStep();
       navigate({ to: `/onboarding/verify-email` });
     } catch (error) {

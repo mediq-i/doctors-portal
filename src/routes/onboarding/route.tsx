@@ -2,9 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import SEOWrapper from "@/utils/helpers/seo-wrapper";
 import { LogoBlue } from "@/components/icons";
 import { ArrowLeft } from "lucide-react";
-// import { Progress } from "@/components/ui/progress";
 import { ProgressBar } from "@/components/partials/progress-bar";
-import { OnboardingStep } from "@/store/form-store";
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
 

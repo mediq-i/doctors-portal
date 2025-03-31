@@ -10,13 +10,8 @@ import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 const Onboarding = () => {
-  const {
-    currentStep,
-    goToNextStep,
-    goToPreviousStep,
-    formData,
-    updateFormData,
-  } = usePersonalProfessionalInfoStore();
+  const { currentStep, goToNextStep, formData, updateFormData } =
+    usePersonalProfessionalInfoStore();
 
   const { nextStep } = useOnboardingProgressStore();
 
