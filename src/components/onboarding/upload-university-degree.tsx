@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
 import { useNavigate } from "@tanstack/react-router";
+import { LoadingIcon } from "../icons";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -22,6 +23,8 @@ export default function UploadUniversityDegree({
   const navigate = useNavigate();
 
   const [file, setFile] = useState<FileWithPreview | null>(null);
+
+  const isPending = false; // Replace with actual pending state if needed
 
   // Initialize file if defaultValues has documentFile
   useEffect(() => {
@@ -176,7 +179,7 @@ export default function UploadUniversityDegree({
           disabled={!file}
           className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
         >
-          Continue
+          {isPending ? <LoadingIcon /> : "Submit"}
         </Button>
       </form>
     </div>
