@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { ProgressBar } from "@/components/partials/progress-bar";
 import { OnboardingStep } from "@/store/form-store";
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
+import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingLayout,
@@ -14,7 +15,9 @@ export const Route = createFileRoute("/onboarding")({
 function OnboardingLayout() {
   //Get the currentStep and total steps from the store
   const { currentStep, totalSteps } = useOnboardingProgressStore();
-  const isLastStep = currentStep === OnboardingStep.COMPLETION;
+  const { goToPreviousStep } = usePersonalProfessionalInfoStore();
+  // const isLastStep = currentStep === OnboardingStep.COMPLETION;
+  const isLastStep = currentStep === 10;
 
   return (
     <SEOWrapper
@@ -58,7 +61,14 @@ function OnboardingLayout() {
 
             {!isLastStep && (
               <div className="flex items-center gap-x-5">
-                <ArrowLeft />
+                <ArrowLeft
+                  onClick={currentStep >= 5 ? goToPreviousStep : undefined}
+                  className={
+                    currentStep < 5
+                      ? "cursor-not-allowed opacity-50"
+                      : "cursor-pointer"
+                  }
+                />{" "}
                 <ProgressBar
                   currentStep={currentStep}
                   totalSteps={totalSteps}
@@ -73,11 +83,4 @@ function OnboardingLayout() {
       </div>
     </SEOWrapper>
   );
-}
-
-{
-  /* <Progress
-                value={progressPercentage}
-                className="w-[350px] md:w-[400px] h-1.5"
-              /> */
 }
