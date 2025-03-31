@@ -36,10 +36,10 @@ export default function CreateAccountForm() {
 
   const createAccountHandler = async (data: CreateAccountSchema) => {
     try {
-      // const res = await mutateAsync(data);
-      // const { auth_id } = res?.data;
+      const res = await mutateAsync(data);
+      const { auth_id } = res?.data;
 
-      // useAuthStore.getState().setAuthData({ auth_id });
+      useAuthStore.getState().setAuthData({ auth_id });
       // Exclude the password before storing user data
       const { password, ...userData } = data;
       setData(userData); // Store user details *without* the password

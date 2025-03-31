@@ -14,7 +14,7 @@ class ApiService<T, R> {
   // getter method to fetch the auth token dynamically
   private get token(): string | null {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       return token;
     }
     return null;
