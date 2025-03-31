@@ -79,8 +79,20 @@ export default function ProfessionalInfoForm({
         <div className="space-y-2">
           <Label htmlFor="issuingMedicalBoard">Issuing Medical Board</Label>
           <Select
-            onValueChange={(value) => setValue("issuingMedicalBoard", value)}
-            defaultValue=""
+            onValueChange={(value) => {
+              const selectedBoard = medicalBoards.find(
+                (board) => board.id === value
+              );
+              setValue(
+                "issuingMedicalBoard",
+                selectedBoard ? selectedBoard.name : ""
+              );
+            }}
+            defaultValue={
+              medicalBoards.find(
+                (board) => board.name === defaultValues?.issuingMedicalBoard
+              )?.id || ""
+            }
           >
             <SelectTrigger
               id="issuingMedicalBoard"
@@ -106,8 +118,20 @@ export default function ProfessionalInfoForm({
         <div className="space-y-2">
           <Label htmlFor="specialty">Specialty/Sub-specialties</Label>
           <Select
-            onValueChange={(value) => setValue("specialty", value)}
-            defaultValue=""
+            onValueChange={(value) => {
+              const selectedSpecialty = specialties.find(
+                (specialty) => specialty.id === value
+              );
+              setValue(
+                "specialty",
+                selectedSpecialty ? selectedSpecialty.name : ""
+              );
+            }}
+            defaultValue={
+              specialties.find(
+                (specialty) => specialty.name === defaultValues?.specialty
+              )?.id || ""
+            }
           >
             <SelectTrigger
               id="specialty"
