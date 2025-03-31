@@ -44,50 +44,49 @@ export const routeToInitialStepMap = {
 };
 
 // Define the types for our form data
-interface FormData {
-  // Account creation
-  email?: string;
-  password?: string;
-  otp?: string;
-  firstName?: string;
-  lastName?: string;
+// interface FormData {
+//   // Account creation
+//   email?: string;
+//   password?: string;
+//   otp?: string;
+//   firstName?: string;
+//   lastName?: string;
 
-  // Personal info
-  legalFirstName?: string;
-  legalLastName?: string;
-  dateOfBirth?: string;
+//   // Personal info
+//   legalFirstName?: string;
+//   legalLastName?: string;
+//   dateOfBirth?: string;
 
-  // Professional info
-  medicalLicenseNumber?: string;
-  issuingMedicalBoard?: string;
-  specialty?: string;
-  yearsOfExperience?: string;
-  professionalAssociations?: string;
+//   // Professional info
+//   medicalLicenseNumber?: string;
+//   issuingMedicalBoard?: string;
+//   specialty?: string;
+//   yearsOfExperience?: string;
+//   professionalAssociations?: string;
 
-  // Document upload
-  documentType?: string;
-  documentFile?: File;
+//   // Document upload
+//   documentType?: string;
+//   documentFile?: File;
 
-  medicalLicense?: File;
-  universityDegree?: File;
+//   medicalLicense?: File;
+//   universityDegree?: File;
 
-  // Additional steps can be added here
-  [key: string]: any;
-}
+//   // Additional steps can be added here
+//   [key: string]: any;
+// }
 
 // Define the store state and actions
 interface FormState {
   // State
-  formData: FormData;
+  // formData: FormData;
   currentStep: OnboardingStep;
   totalSteps: number;
 
   // Actions
-  updateFormData: (data: Partial<FormData>) => void;
-  goToNextStep: () => OnboardingStep;
-  goToPreviousStep: () => OnboardingStep;
-  goToStep: (step: OnboardingStep) => void;
-  resetForm: () => void;
+  // updateFormData: (data: Partial<FormData>) => void;
+  // goToNextStep: () => OnboardingStep;
+  // goToPreviousStep: () => OnboardingStep;
+  // goToStep: (step: OnboardingStep) => void;
 
   // Computed
   isLastStep: boolean;
@@ -107,40 +106,34 @@ export const useFormStore = create<FormState>()(
       totalSteps: TOTAL_STEPS,
 
       // Actions
-      updateFormData: (data) =>
-        set((state) => ({
-          formData: { ...state.formData, ...data },
-        })),
+      // updateFormData: (data) =>
+      //   set((state) => ({
+      //     formData: { ...state.formData, ...data },
+      //   })),
 
-      goToNextStep: () => {
-        const nextStep = get().currentStep + 1;
-        set({ currentStep: nextStep });
-        return nextStep;
-      },
-      goToPreviousStep: () => {
-        const prevStep = Math.max(1, get().currentStep - 1);
-        set({ currentStep: prevStep });
-        return prevStep;
-      },
+      // goToNextStep: () => {
+      //   const nextStep = get().currentStep + 1;
+      //   set({ currentStep: nextStep });
+      //   return nextStep;
+      // },
+      // goToPreviousStep: () => {
+      //   const prevStep = Math.max(1, get().currentStep - 1);
+      //   set({ currentStep: prevStep });
+      //   return prevStep;
+      // },
 
       // goToStep: (step) => {
       //   set({ currentStep: step });
       // },
-      goToStep: (step) => {
-        set((state) => {
-          if (state.currentStep !== step) {
-            // ✅ Prevents unnecessary re-renders
-            return { currentStep: step };
-          }
-          return state; // No change, no re-render
-        });
-      },
-
-      resetForm: () =>
-        set({
-          formData: {},
-          currentStep: OnboardingStep.CREATE_ACCOUNT,
-        }),
+      // goToStep: (step) => {
+      //   set((state) => {
+      //     if (state.currentStep !== step) {
+      //       // ✅ Prevents unnecessary re-renders
+      //       return { currentStep: step };
+      //     }
+      //     return state; // No change, no re-render
+      //   });
+      // },
 
       // Computed properties
       get isLastStep() {
@@ -153,16 +146,6 @@ export const useFormStore = create<FormState>()(
     }),
     {
       name: "onboarding-form-storage", // Name for the storage
-      partialize: (state) => {
-        // Don't persist the File object as it can't be serialized
-        const { formData, ...rest } = state;
-        const { documentFile, ...restFormData } = formData;
-
-        return {
-          ...rest,
-          formData: restFormData,
-        };
-      },
     }
   )
 );

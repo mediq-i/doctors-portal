@@ -7,6 +7,7 @@ import {
   UploadUniversityDegree,
 } from "../onboarding";
 import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 const Onboarding = () => {
   const {
@@ -17,12 +18,15 @@ const Onboarding = () => {
     updateFormData,
   } = usePersonalProfessionalInfoStore();
 
+  const { nextStep } = useOnboardingProgressStore();
+
   // Handle form submission for each step
   const handleStepSubmit = (data?: any) => {
     if (data) {
       updateFormData(data);
     }
-    goToNextStep();
+    nextStep(); //update progress bar
+    goToNextStep(); //moves to the next step in the personal-professional-info form
   };
 
   // Define step mapping to components
@@ -58,12 +62,12 @@ const Onboarding = () => {
   return (
     <div className="onboarding-container">
       {steps[currentStep - 1]} {/* Display the correct form */}
-      <div className="buttons">
+      {/* <div className="buttons">
         {currentStep > 1 && <button onClick={goToPreviousStep}>Back</button>}
         {currentStep < steps.length && (
           <button onClick={goToNextStep}>Continue</button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

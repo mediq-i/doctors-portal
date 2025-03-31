@@ -15,12 +15,14 @@ import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { useUserDetailsStore } from "@/store/user-details-store";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 export default function CreateAccountForm() {
   const [InputType, Icon, setVisible] = useObfuscationToggle();
   const { isPending, mutateAsync } = authMutation(AuthAdapter.signUp, "");
 
   const setData = useUserDetailsStore((state) => state.setData);
+  const { nextStep } = useOnboardingProgressStore();
 
   const navigate = useNavigate();
 
@@ -47,6 +49,7 @@ export default function CreateAccountForm() {
 
       // console.log(res?.data);
       // toast.success("Please check your mail for an OTP");
+      nextStep();
       navigate({ to: `/onboarding/verify-email` });
     } catch (error) {
       toast.error(getErrorMessage(error));
