@@ -6,6 +6,10 @@ import {
   AppointmentsSection,
 } from "@/components/dashboard";
 import type { Appointment } from "@/components/dashboard/appointment-card";
+import {
+  ServiceProviderAdapter,
+  useUserQuery,
+} from "@/adapters/ServiceProviders";
 
 export const Route = createFileRoute("/dashboard")({
   component: RouteComponent,
@@ -46,14 +50,25 @@ const mockAppointments: Appointment[] = [
 ];
 
 function RouteComponent() {
+  const userId = localStorage.getItem("user_id");
+
+  const { data: providerData } = useUserQuery({
+    queryKey: ["serviceProvider", userId!],
+    queryCallback: () =>
+      ServiceProviderAdapter.getServiceProviderDetails({ id: userId! }),
+    enabled: !!userId,
+  });
+
+  const providerName = providerData
+    ? `${providerData.data.first_name} ${providerData.data.last_name}`
+    : "--";
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back, Dr. Sarah Wilson
-          </p>
+          <p className="text-muted-foreground">Welcome back, {providerName}</p>
         </div>
 
         <WalletSection />

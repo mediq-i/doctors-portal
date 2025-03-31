@@ -30,11 +30,11 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const res = await mutateAsync(data);
-      console.log(res?.data);
       localStorage.setItem("access_token", res?.data.session.access_token);
+      localStorage.setItem("user_id", res?.data.session.user.id);
       toast.success("Login Successful. Welcome!");
       // Redirect to dashboard or home page after successful login
-      navigate({ to: "/" });
+      navigate({ to: "/dashboard" });
     } catch (error) {
       toast.error(getErrorMessage(error));
     }
