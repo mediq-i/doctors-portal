@@ -1,14 +1,11 @@
-import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { OnboardIcon } from "../icons";
 import { useNavigate } from "@tanstack/react-router";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
-interface OnboardingStepsProps {
-  onSubmit: () => void;
-}
-
-export function OnboardingStepsForm({ onSubmit }: OnboardingStepsProps) {
+export function OnboardingStepsForm() {
   const navigate = useNavigate();
+  const { nextStep } = useOnboardingProgressStore();
 
   return (
     <div className="w-full lg:max-w-3xl mx-auto pt-6 lg:pt-10 px-4 md:px-0 xl:px-8">
@@ -52,20 +49,15 @@ export function OnboardingStepsForm({ onSubmit }: OnboardingStepsProps) {
       </div>
 
       {/* Start Button */}
-      <Link
-        to="/onboarding/personal-professional-information"
-        className="block"
+      <Button
+        className="w-full bg-primary text-white hover:bg-primary/90 py-6 rounded-lg"
+        onClick={() => {
+          nextStep();
+          navigate({ to: "/onboarding/personal-professional-information" });
+        }}
       >
-        <Button
-          className="w-full bg-primary text-white hover:bg-primary/90 py-6 rounded-lg"
-          onClick={() => {
-            onSubmit();
-            navigate({ to: "/onboarding/personal-professional-information" });
-          }}
-        >
-          Start
-        </Button>
-      </Link>
+        Start
+      </Button>
     </div>
   );
 }

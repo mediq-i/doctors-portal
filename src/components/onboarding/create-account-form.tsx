@@ -14,17 +14,15 @@ import { useNavigate } from "@tanstack/react-router";
 import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { useAuthStore } from "@/store/auth-store";
-interface CreateAccountFormProps {
-  onSubmit: (data: CreateAccountSchema) => void;
-  defaultValues?: Partial<CreateAccountSchema>;
-}
+import { useUserDetailsStore } from "@/store/user-details-store";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
-export default function CreateAccountForm({
-  onSubmit,
-  defaultValues = {},
-}: CreateAccountFormProps) {
+export default function CreateAccountForm() {
   const [InputType, Icon, setVisible] = useObfuscationToggle();
   const { isPending, mutateAsync } = authMutation(AuthAdapter.signUp, "");
+
+  const setData = useUserDetailsStore((state) => state.setData);
+  const { nextStep } = useOnboardingProgressStore();
 
   const navigate = useNavigate();
 
@@ -34,19 +32,21 @@ export default function CreateAccountForm({
     formState: { errors },
   } = useForm<CreateAccountSchema>({
     resolver: zodResolver(createAccountSchema),
-    defaultValues,
   });
 
   const createAccountHandler = async (data: CreateAccountSchema) => {
     try {
-      const res = await mutateAsync(data);
-      const { auth_id } = res?.data;
+      // const res = await mutateAsync(data);
+      // const { auth_id } = res?.data;
 
-      useAuthStore.getState().setAuthData({ auth_id });
+      // useAuthStore.getState().setAuthData({ auth_id });
+      // Exclude the password before storing user data
+      const { password, ...userData } = data;
+      setData(userData); // Store user details *without* the password
 
-      console.log(res?.data);
+      // console.log(res?.data);
       toast.success("Please check your mail for an OTP");
-      onSubmit(data);
+      nextStep();
       navigate({ to: `/onboarding/verify-email` });
     } catch (error) {
       toast.error(getErrorMessage(error));

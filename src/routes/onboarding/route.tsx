@@ -2,9 +2,9 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import SEOWrapper from "@/utils/helpers/seo-wrapper";
 import { LogoBlue } from "@/components/icons";
 import { ArrowLeft } from "lucide-react";
-// import { Progress } from "@/components/ui/progress";
 import { ProgressBar } from "@/components/partials/progress-bar";
-import { useFormStore, OnboardingStep } from "@/store/form-store";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
+import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingLayout,
@@ -12,10 +12,10 @@ export const Route = createFileRoute("/onboarding")({
 
 function OnboardingLayout() {
   //Get the currentStep and total steps from the store
-  const { currentStep, totalSteps, goToPreviousStep } = useFormStore();
-  const isLastStep = currentStep === OnboardingStep.COMPLETION;
-
-  // const progressPercentage = (currentStep / totalSteps) * 100;
+  const { currentStep, totalSteps } = useOnboardingProgressStore();
+  const { goToPreviousStep } = usePersonalProfessionalInfoStore();
+  // const isLastStep = currentStep === OnboardingStep.COMPLETION;
+  const isLastStep = currentStep === 10;
 
   return (
     <SEOWrapper
@@ -59,7 +59,14 @@ function OnboardingLayout() {
 
             {!isLastStep && (
               <div className="flex items-center gap-x-5">
-                <ArrowLeft onClick={goToPreviousStep} />
+                <ArrowLeft
+                  onClick={currentStep >= 5 ? goToPreviousStep : undefined}
+                  className={
+                    currentStep < 5
+                      ? "cursor-not-allowed opacity-50"
+                      : "cursor-pointer"
+                  }
+                />{" "}
                 <ProgressBar
                   currentStep={currentStep}
                   totalSteps={totalSteps}
@@ -74,11 +81,4 @@ function OnboardingLayout() {
       </div>
     </SEOWrapper>
   );
-}
-
-{
-  /* <Progress
-                value={progressPercentage}
-                className="w-[350px] md:w-[400px] h-1.5"
-              /> */
 }

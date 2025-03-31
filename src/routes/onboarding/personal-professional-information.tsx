@@ -1,13 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-// import {
-//   PersonalInfoForm,
-//   SelectIdVerificationForm,
-//   VerifyIdForm,
-//   ProfessionalInfoForm,
-//   UploadMedicalLicense,
-// } from "@/components/onboarding";
-// import MultiStepForm from "@/components/partials/multi-step-form";
-import OnboardingController from "@/components/partials/onboarding-controller";
+import Onboarding from "@/components/partials/onboarding-wrapper";
 
 export const Route = createFileRoute(
   "/onboarding/personal-professional-information"
@@ -16,13 +8,5 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  return (
-    // <PersonalInfoForm />
-    // <SelectIdVerificationForm />
-    // <VerifyIdForm />
-    // <ProfessionalInfoForm />
-    // <UploadMedicalLicense />
-    // <MultiStepForm />
-    <OnboardingController />
-  );
+  return <Onboarding />;
 }

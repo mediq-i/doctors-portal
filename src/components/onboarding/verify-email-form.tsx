@@ -18,32 +18,24 @@ import { useNavigate } from "@tanstack/react-router";
 import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { useAuthStore } from "@/store/auth-store";
-import { useFormStore } from "@/store/form-store";
+import { useUserDetailsStore } from "@/store/user-details-store";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
-interface VerifyEmailFormProps {
-  onSubmit: (data: VerificationCodeSchema) => void;
-  defaultValues?: Partial<VerificationCodeSchema>;
-}
-
-export default function VerifyEmailForm({
-  onSubmit,
-  defaultValues = {},
-}: VerifyEmailFormProps) {
+export default function VerifyEmailForm() {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<VerificationCodeSchema>({
     resolver: zodResolver(verificationCodeValidator),
-    defaultValues,
   });
 
   const { isPending, mutateAsync } = authMutation(AuthAdapter.verifyEmail, "");
 
   const resendOTPMutation = authMutation(AuthAdapter.resendOtp, "");
 
-  const { formData } = useFormStore.getState();
-  const { email, firstName, lastName } = formData;
+  const { email, firstName, lastName } = useUserDetailsStore((state) => state);
+  const { nextStep } = useOnboardingProgressStore();
 
   const navigate = useNavigate();
 
@@ -60,33 +52,33 @@ export default function VerifyEmailForm({
   };
 
   const onSubmitVerificationCode = async (data: VerificationCodeSchema) => {
-    const { auth_id } = useAuthStore.getState();
+    // const { auth_id } = useAuthStore.getState();
 
-    if (!auth_id || !email) {
-      toast.error("Missing user details. Please sign up again.");
-      return;
-    }
+    // if (!auth_id || !email || !firstName || !lastName) {
+    //   toast.error("Missing user details. Please sign up again.");
+    //   return;
+    // }
 
-    const verificationPayload = {
-      auth_id,
-      email,
-      firstName,
-      lastName,
-      userType: "service_provider",
-      otp: data.otp,
-    };
+    // const verificationPayload = {
+    //   auth_id,
+    //   email,
+    //   firstName,
+    //   lastName,
+    //   userType: "service_provider",
+    //   otp: data.otp,
+    // };
 
     try {
-      if (!firstName) return null;
-      const res = await mutateAsync(verificationPayload);
-      console.log("verify email response: ", res?.data);
-      localStorage.setItem("access_token", res?.data.session.access_token);
-      localStorage.setItem("refreshtoken", res?.data.session.access_token);
+      // const res = await mutateAsync(verificationPayload);
+      // console.log("verify email response: ", res?.data);
+      // localStorage.setItem("access_token", res?.data.session.access_token);
+      // localStorage.setItem("refreshtoken", res?.data.session.access_token);
 
-      onSubmit(data);
+      // onSubmit(data);
       toast.success(
         "Email Verification Successful. Your account has been created"
       );
+      nextStep();
       navigate({ to: "/onboarding/onboarding-steps" });
     } catch (error: any) {
       toast.error(getErrorMessage(error));

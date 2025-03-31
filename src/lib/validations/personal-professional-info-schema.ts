@@ -4,6 +4,7 @@ import { z } from "zod";
 export const personalInfoSchema = z.object({
   legalFirstName: z.string().min(1, "Legal first name is required"),
   legalLastName: z.string().min(1, "Legal last name is required"),
+  languages: z.string().min(1, "Please enter at least one language"),
   dateOfBirth: z
     .string()
     .min(1, "Date of birth is required")
