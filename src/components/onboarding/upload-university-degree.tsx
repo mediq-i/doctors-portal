@@ -214,6 +214,7 @@ export default function UploadUniversityDegree({
       // Submit the form data
       const res = await mutateAsync(formData);
       console.log("File upload response: ", res?.data);
+      // await new Promise((resolve) => setTimeout(resolve, 4000));
 
       // Navigate to completion page on success
       navigate({ to: "/onboarding/completion" });

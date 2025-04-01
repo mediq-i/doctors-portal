@@ -12,8 +12,10 @@ import {
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 const Onboarding = () => {
-  const { currentStep, goToNextStep, formData, updateFormData } =
+  const { currentStep, goToNextStep, formData, totalSteps, updateFormData } =
     useOnboardingProgressStore();
+
+  console.log(totalSteps);
 
   // Handle form submission for each step
   const handleStepSubmit = (data?: any) => {
