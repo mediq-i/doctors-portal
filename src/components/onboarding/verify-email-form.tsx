@@ -73,6 +73,7 @@ export default function VerifyEmailForm() {
       console.log("verify email response: ", res?.data);
       localStorage.setItem("access_token", res?.data.session.access_token);
       localStorage.setItem("refreshtoken", res?.data.session.access_token);
+      localStorage.setItem("user_id", res?.data.user.id);
 
       toast.success(
         "Email Verification Successful. Your account has been created"

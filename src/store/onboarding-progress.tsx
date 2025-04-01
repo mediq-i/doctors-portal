@@ -30,7 +30,7 @@ interface FormData {
 interface OnboardingProgressState {
   formData: FormData;
   currentStep: number;
-  totalSteps: number; // Total number of steps (10)
+  totalSteps: number;
 
   // Actions
   updateFormData: (data: Partial<FormData>) => void;
@@ -40,7 +40,7 @@ interface OnboardingProgressState {
 }
 
 // Total number of steps in the form including completion
-const TOTAL_STEPS = 10;
+const TOTAL_STEPS = 9;
 
 export const useOnboardingProgressStore = create<OnboardingProgressState>()(
   persist(

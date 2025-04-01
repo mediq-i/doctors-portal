@@ -22,6 +22,9 @@ function OnboardingLayout() {
   const isLastStep = currentStep === 10;
 
   useEffect(() => {
+    if (location.pathname === "/onboarding/create-account") {
+      setStep(1); // Set step to 1 when navigating to this route
+    }
     if (location.pathname === "/onboarding/personal-professional-information") {
       setStep(4); // Set step to 4 when navigating to this route
     }

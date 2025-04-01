@@ -97,6 +97,10 @@ export default function UploadMedicalLicense({
     e.preventDefault();
     if (file) {
       // Submit the file
+      updateFormData({
+        medicalLicense: file,
+        medicalLicenseFileName: file.name,
+      });
       onSubmit({ medicalLicense: file });
     }
   };
@@ -125,7 +129,7 @@ export default function UploadMedicalLicense({
               <div className="w-full h-full flex flex-col items-center justify-center relative">
                 {file.type.startsWith("image/") ? (
                   <img
-                    src={filePreview || "/placeholder.svg"}
+                    src={file.preview || "/placeholder.svg"}
                     alt="Document preview"
                     className="max-h-[120px] max-w-full object-contain"
                   />

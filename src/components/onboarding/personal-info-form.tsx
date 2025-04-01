@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format, parse, isValid } from "date-fns";
-// import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface PersonalInfoFormProps {

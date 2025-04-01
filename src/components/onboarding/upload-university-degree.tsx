@@ -10,9 +10,9 @@ import {
   serviceProviderMutation,
   ServiceProviderAdapter,
 } from "../adapters/ServiceProvider";
-import { getErrorMessage, fileCache } from "@/utils";
+import { getErrorMessage } from "@/utils";
 import { toast } from "sonner";
-// import { useOnboardingProgressStore } from "@/store/onboarding-progress";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -20,7 +20,10 @@ interface FileWithPreview extends File {
 
 interface DocumentUploadProps {
   onSubmit: (data: { universityDegree?: File }) => void;
-  defaultValues?: { universityDegree?: File };
+  defaultValues?: {
+    universityDegree?: File;
+    universityDegreeFileName?: string;
+  };
 }
 
 export default function UploadUniversityDegree({
@@ -30,7 +33,10 @@ export default function UploadUniversityDegree({
   const navigate = useNavigate();
 
   const [file, setFile] = useState<FileWithPreview | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const updateFormData = useOnboardingProgressStore(
+    (state) => state.updateFormData
+  );
 
   const { isPending, mutateAsync } = serviceProviderMutation(
     ServiceProviderAdapter.updateServiceProvider,
@@ -51,31 +57,27 @@ export default function UploadUniversityDegree({
 
       setFile(fileWithPreview);
     }
-
-    // Check if we have a cached file
-    const cachedFile = fileCache.get("universityDegree");
-    if (cachedFile && !file && cachedFile instanceof File) {
-      const fileWithPreview = Object.assign(cachedFile, {
-        preview: URL.createObjectURL(cachedFile),
-      }) as FileWithPreview;
-
-      setFile(fileWithPreview);
-    }
   }, [defaultValues.universityDegree, file]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles?.length) {
-      const selectedFile = acceptedFiles[0];
-      const fileWithPreview = Object.assign(selectedFile, {
-        preview: URL.createObjectURL(selectedFile),
-      }) as FileWithPreview;
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles?.length) {
+        const selectedFile = acceptedFiles[0];
+        const fileWithPreview = Object.assign(selectedFile, {
+          preview: URL.createObjectURL(selectedFile),
+        }) as FileWithPreview;
 
-      setFile(fileWithPreview);
+        setFile(fileWithPreview);
 
-      // Store the file in our cache
-      fileCache.set("universityDegree", selectedFile);
-    }
-  }, []);
+        // Store the file in our cache
+        updateFormData({
+          universityDegree: selectedFile,
+          universityDegreeFileName: selectedFile.name,
+        });
+      }
+    },
+    [updateFormData]
+  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -95,8 +97,11 @@ export default function UploadUniversityDegree({
       URL.revokeObjectURL(file.preview);
       setFile(null);
 
-      // Remove from cache
-      fileCache.delete("universityDegree");
+      // clear file from store
+      updateFormData({
+        universityDegree: undefined,
+        universityDegreeFileName: undefined,
+      });
     }
   };
 
@@ -106,9 +111,12 @@ export default function UploadUniversityDegree({
       // Validate file exists before proceeding
       if (!file) {
         toast.error("Please upload your university degree");
-        setIsSubmitting(false);
         return;
       }
+      updateFormData({
+        universityDegree: file,
+        universityDegreeFileName: file.name,
+      });
       onSubmit({ universityDegree: file || undefined });
 
       // Retrieve stored form data from localStorage
@@ -311,10 +319,10 @@ export default function UploadUniversityDegree({
 
         <Button
           onClick={handleSubmit}
-          disabled={!file || isSubmitting || isPending}
+          disabled={!file || isPending}
           className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
         >
-          {isSubmitting || isPending ? <LoadingIcon /> : "Submit"}
+          {isPending ? <LoadingIcon /> : "Submit"}
         </Button>
       </form>
     </div>
