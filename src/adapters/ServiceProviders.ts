@@ -4,11 +4,12 @@ import {
   SearchServiceProvider,
   ServiceProviderDetails,
 } from "./types/ServiceProviderTypes";
+import { MutationCallBackArgs } from "./types/TanstackUtilTypes";
 import ApiService from "./utils/api-service";
 import TanstackWrapper from "./utils/tanstack-wrapper";
 
 // api service initilizer
-const userService = new ApiService("service-providers/");
+const userService = new ApiService("service-providers");
 const useUserMutation = TanstackWrapper.mutation;
 const useUserQuery = TanstackWrapper.query;
 
@@ -23,7 +24,7 @@ const ServiceProviderAdapter = {
     rating: string | null;
   }): Promise<SearchServiceProvider> => {
     const response = await userService.fetch<SearchServiceProvider>(
-      `search?specialty=${specialty}&languages=${languages}&rating=${rating}`
+      `/search?specialty=${specialty}&languages=${languages}&rating=${rating}`
     );
 
     return response;
@@ -35,8 +36,22 @@ const ServiceProviderAdapter = {
     id: string | null;
   }): Promise<ServiceProviderDetails> => {
     const response = await userService.fetch<ServiceProviderDetails>(
-      `get-service-provider/${id}`
+      `/get-service-provider/${id}`
     );
+
+    return response;
+  },
+
+  updateServiceProvider: async ({
+    payload,
+  }: MutationCallBackArgs<FormData>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response = await userService.mutate<FormData, any>({
+      slug: `update`,
+      payload,
+      type: "FormData",
+      method: "PATCH",
+    });
 
     return response;
   },

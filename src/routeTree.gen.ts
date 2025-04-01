@@ -12,19 +12,16 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings/route'
-import { Route as OnboardingRouteImport } from './routes/onboarding/route'
+import { Route as DoctorOnboardingRouteImport } from './routes/doctor-onboarding/route'
 import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as AuthRouteImport } from './routes/auth/route'
 import { Route as AppointmentsRouteImport } from './routes/appointments/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as OnboardingVerifyEmailImport } from './routes/onboarding/verify-email'
-import { Route as OnboardingPersonalProfessionalInformationImport } from './routes/onboarding/personal-professional-information'
-import { Route as OnboardingOnboardingStepsImport } from './routes/onboarding/onboarding-steps'
-import { Route as OnboardingCreateAccountImport } from './routes/onboarding/create-account'
-import { Route as OnboardingCompletionImport } from './routes/onboarding/completion'
+import { Route as AuthVerifyEmailImport } from './routes/auth/verify-email'
 import { Route as AuthResetPasswordImport } from './routes/auth/reset-password'
 import { Route as AuthLoginImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordImport } from './routes/auth/forgot-password'
+import { Route as AuthCreateAccountImport } from './routes/auth/create-account'
 
 // Create/Update Routes
 
@@ -34,9 +31,9 @@ const SettingsRouteRoute = SettingsRouteImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const OnboardingRouteRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
+const DoctorOnboardingRouteRoute = DoctorOnboardingRouteImport.update({
+  id: '/doctor-onboarding',
+  path: '/doctor-onboarding',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -64,35 +61,10 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const OnboardingVerifyEmailRoute = OnboardingVerifyEmailImport.update({
+const AuthVerifyEmailRoute = AuthVerifyEmailImport.update({
   id: '/verify-email',
   path: '/verify-email',
-  getParentRoute: () => OnboardingRouteRoute,
-} as any)
-
-const OnboardingPersonalProfessionalInformationRoute =
-  OnboardingPersonalProfessionalInformationImport.update({
-    id: '/personal-professional-information',
-    path: '/personal-professional-information',
-    getParentRoute: () => OnboardingRouteRoute,
-  } as any)
-
-const OnboardingOnboardingStepsRoute = OnboardingOnboardingStepsImport.update({
-  id: '/onboarding-steps',
-  path: '/onboarding-steps',
-  getParentRoute: () => OnboardingRouteRoute,
-} as any)
-
-const OnboardingCreateAccountRoute = OnboardingCreateAccountImport.update({
-  id: '/create-account',
-  path: '/create-account',
-  getParentRoute: () => OnboardingRouteRoute,
-} as any)
-
-const OnboardingCompletionRoute = OnboardingCompletionImport.update({
-  id: '/completion',
-  path: '/completion',
-  getParentRoute: () => OnboardingRouteRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const AuthResetPasswordRoute = AuthResetPasswordImport.update({
@@ -110,6 +82,12 @@ const AuthLoginRoute = AuthLoginImport.update({
 const AuthForgotPasswordRoute = AuthForgotPasswordImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
+const AuthCreateAccountRoute = AuthCreateAccountImport.update({
+  id: '/create-account',
+  path: '/create-account',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
@@ -145,11 +123,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
+    '/doctor-onboarding': {
+      id: '/doctor-onboarding'
+      path: '/doctor-onboarding'
+      fullPath: '/doctor-onboarding'
+      preLoaderRoute: typeof DoctorOnboardingRouteImport
       parentRoute: typeof rootRoute
     }
     '/settings': {
@@ -158,6 +136,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRoute
+    }
+    '/auth/create-account': {
+      id: '/auth/create-account'
+      path: '/create-account'
+      fullPath: '/auth/create-account'
+      preLoaderRoute: typeof AuthCreateAccountImport
+      parentRoute: typeof AuthRouteImport
     }
     '/auth/forgot-password': {
       id: '/auth/forgot-password'
@@ -180,40 +165,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordImport
       parentRoute: typeof AuthRouteImport
     }
-    '/onboarding/completion': {
-      id: '/onboarding/completion'
-      path: '/completion'
-      fullPath: '/onboarding/completion'
-      preLoaderRoute: typeof OnboardingCompletionImport
-      parentRoute: typeof OnboardingRouteImport
-    }
-    '/onboarding/create-account': {
-      id: '/onboarding/create-account'
-      path: '/create-account'
-      fullPath: '/onboarding/create-account'
-      preLoaderRoute: typeof OnboardingCreateAccountImport
-      parentRoute: typeof OnboardingRouteImport
-    }
-    '/onboarding/onboarding-steps': {
-      id: '/onboarding/onboarding-steps'
-      path: '/onboarding-steps'
-      fullPath: '/onboarding/onboarding-steps'
-      preLoaderRoute: typeof OnboardingOnboardingStepsImport
-      parentRoute: typeof OnboardingRouteImport
-    }
-    '/onboarding/personal-professional-information': {
-      id: '/onboarding/personal-professional-information'
-      path: '/personal-professional-information'
-      fullPath: '/onboarding/personal-professional-information'
-      preLoaderRoute: typeof OnboardingPersonalProfessionalInformationImport
-      parentRoute: typeof OnboardingRouteImport
-    }
-    '/onboarding/verify-email': {
-      id: '/onboarding/verify-email'
+    '/auth/verify-email': {
+      id: '/auth/verify-email'
       path: '/verify-email'
-      fullPath: '/onboarding/verify-email'
-      preLoaderRoute: typeof OnboardingVerifyEmailImport
-      parentRoute: typeof OnboardingRouteImport
+      fullPath: '/auth/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailImport
+      parentRoute: typeof AuthRouteImport
     }
   }
 }
@@ -221,40 +178,23 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthRouteRouteChildren {
+  AuthCreateAccountRoute: typeof AuthCreateAccountRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthCreateAccountRoute: AuthCreateAccountRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
+  AuthVerifyEmailRoute: AuthVerifyEmailRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
-)
-
-interface OnboardingRouteRouteChildren {
-  OnboardingCompletionRoute: typeof OnboardingCompletionRoute
-  OnboardingCreateAccountRoute: typeof OnboardingCreateAccountRoute
-  OnboardingOnboardingStepsRoute: typeof OnboardingOnboardingStepsRoute
-  OnboardingPersonalProfessionalInformationRoute: typeof OnboardingPersonalProfessionalInformationRoute
-  OnboardingVerifyEmailRoute: typeof OnboardingVerifyEmailRoute
-}
-
-const OnboardingRouteRouteChildren: OnboardingRouteRouteChildren = {
-  OnboardingCompletionRoute: OnboardingCompletionRoute,
-  OnboardingCreateAccountRoute: OnboardingCreateAccountRoute,
-  OnboardingOnboardingStepsRoute: OnboardingOnboardingStepsRoute,
-  OnboardingPersonalProfessionalInformationRoute:
-    OnboardingPersonalProfessionalInformationRoute,
-  OnboardingVerifyEmailRoute: OnboardingVerifyEmailRoute,
-}
-
-const OnboardingRouteRouteWithChildren = OnboardingRouteRoute._addFileChildren(
-  OnboardingRouteRouteChildren,
 )
 
 export interface FileRoutesByFullPath {
@@ -262,16 +202,13 @@ export interface FileRoutesByFullPath {
   '/appointments': typeof AppointmentsRouteRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRoute
-  '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/doctor-onboarding': typeof DoctorOnboardingRouteRoute
   '/settings': typeof SettingsRouteRoute
+  '/auth/create-account': typeof AuthCreateAccountRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/onboarding/completion': typeof OnboardingCompletionRoute
-  '/onboarding/create-account': typeof OnboardingCreateAccountRoute
-  '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
-  '/onboarding/personal-professional-information': typeof OnboardingPersonalProfessionalInformationRoute
-  '/onboarding/verify-email': typeof OnboardingVerifyEmailRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
 }
 
 export interface FileRoutesByTo {
@@ -279,16 +216,13 @@ export interface FileRoutesByTo {
   '/appointments': typeof AppointmentsRouteRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRoute
-  '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/doctor-onboarding': typeof DoctorOnboardingRouteRoute
   '/settings': typeof SettingsRouteRoute
+  '/auth/create-account': typeof AuthCreateAccountRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/onboarding/completion': typeof OnboardingCompletionRoute
-  '/onboarding/create-account': typeof OnboardingCreateAccountRoute
-  '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
-  '/onboarding/personal-professional-information': typeof OnboardingPersonalProfessionalInformationRoute
-  '/onboarding/verify-email': typeof OnboardingVerifyEmailRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
 }
 
 export interface FileRoutesById {
@@ -297,16 +231,13 @@ export interface FileRoutesById {
   '/appointments': typeof AppointmentsRouteRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRoute
-  '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/doctor-onboarding': typeof DoctorOnboardingRouteRoute
   '/settings': typeof SettingsRouteRoute
+  '/auth/create-account': typeof AuthCreateAccountRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/onboarding/completion': typeof OnboardingCompletionRoute
-  '/onboarding/create-account': typeof OnboardingCreateAccountRoute
-  '/onboarding/onboarding-steps': typeof OnboardingOnboardingStepsRoute
-  '/onboarding/personal-professional-information': typeof OnboardingPersonalProfessionalInformationRoute
-  '/onboarding/verify-email': typeof OnboardingVerifyEmailRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
 }
 
 export interface FileRouteTypes {
@@ -316,48 +247,39 @@ export interface FileRouteTypes {
     | '/appointments'
     | '/auth'
     | '/dashboard'
-    | '/onboarding'
+    | '/doctor-onboarding'
     | '/settings'
+    | '/auth/create-account'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
-    | '/onboarding/completion'
-    | '/onboarding/create-account'
-    | '/onboarding/onboarding-steps'
-    | '/onboarding/personal-professional-information'
-    | '/onboarding/verify-email'
+    | '/auth/verify-email'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/appointments'
     | '/auth'
     | '/dashboard'
-    | '/onboarding'
+    | '/doctor-onboarding'
     | '/settings'
+    | '/auth/create-account'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
-    | '/onboarding/completion'
-    | '/onboarding/create-account'
-    | '/onboarding/onboarding-steps'
-    | '/onboarding/personal-professional-information'
-    | '/onboarding/verify-email'
+    | '/auth/verify-email'
   id:
     | '__root__'
     | '/'
     | '/appointments'
     | '/auth'
     | '/dashboard'
-    | '/onboarding'
+    | '/doctor-onboarding'
     | '/settings'
+    | '/auth/create-account'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
-    | '/onboarding/completion'
-    | '/onboarding/create-account'
-    | '/onboarding/onboarding-steps'
-    | '/onboarding/personal-professional-information'
-    | '/onboarding/verify-email'
+    | '/auth/verify-email'
   fileRoutesById: FileRoutesById
 }
 
@@ -366,7 +288,7 @@ export interface RootRouteChildren {
   AppointmentsRouteRoute: typeof AppointmentsRouteRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRoute
-  OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
+  DoctorOnboardingRouteRoute: typeof DoctorOnboardingRouteRoute
   SettingsRouteRoute: typeof SettingsRouteRoute
 }
 
@@ -375,7 +297,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppointmentsRouteRoute: AppointmentsRouteRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRoute,
-  OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
+  DoctorOnboardingRouteRoute: DoctorOnboardingRouteRoute,
   SettingsRouteRoute: SettingsRouteRoute,
 }
 
@@ -393,7 +315,7 @@ export const routeTree = rootRoute
         "/appointments",
         "/auth",
         "/dashboard",
-        "/onboarding",
+        "/doctor-onboarding",
         "/settings"
       ]
     },
@@ -406,26 +328,25 @@ export const routeTree = rootRoute
     "/auth": {
       "filePath": "auth/route.tsx",
       "children": [
+        "/auth/create-account",
         "/auth/forgot-password",
         "/auth/login",
-        "/auth/reset-password"
+        "/auth/reset-password",
+        "/auth/verify-email"
       ]
     },
     "/dashboard": {
       "filePath": "dashboard/route.tsx"
     },
-    "/onboarding": {
-      "filePath": "onboarding/route.tsx",
-      "children": [
-        "/onboarding/completion",
-        "/onboarding/create-account",
-        "/onboarding/onboarding-steps",
-        "/onboarding/personal-professional-information",
-        "/onboarding/verify-email"
-      ]
+    "/doctor-onboarding": {
+      "filePath": "doctor-onboarding/route.tsx"
     },
     "/settings": {
       "filePath": "settings/route.tsx"
+    },
+    "/auth/create-account": {
+      "filePath": "auth/create-account.tsx",
+      "parent": "/auth"
     },
     "/auth/forgot-password": {
       "filePath": "auth/forgot-password.tsx",
@@ -439,25 +360,9 @@ export const routeTree = rootRoute
       "filePath": "auth/reset-password.tsx",
       "parent": "/auth"
     },
-    "/onboarding/completion": {
-      "filePath": "onboarding/completion.tsx",
-      "parent": "/onboarding"
-    },
-    "/onboarding/create-account": {
-      "filePath": "onboarding/create-account.tsx",
-      "parent": "/onboarding"
-    },
-    "/onboarding/onboarding-steps": {
-      "filePath": "onboarding/onboarding-steps.tsx",
-      "parent": "/onboarding"
-    },
-    "/onboarding/personal-professional-information": {
-      "filePath": "onboarding/personal-professional-information.tsx",
-      "parent": "/onboarding"
-    },
-    "/onboarding/verify-email": {
-      "filePath": "onboarding/verify-email.tsx",
-      "parent": "/onboarding"
+    "/auth/verify-email": {
+      "filePath": "auth/verify-email.tsx",
+      "parent": "/auth"
     }
   }
 }

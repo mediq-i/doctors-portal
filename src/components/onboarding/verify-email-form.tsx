@@ -19,7 +19,6 @@ import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { useUserDetailsStore } from "@/store/user-details-store";
-import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 export default function VerifyEmailForm() {
   const {
@@ -35,7 +34,6 @@ export default function VerifyEmailForm() {
   const resendOTPMutation = authMutation(AuthAdapter.resendOtp, "");
 
   const { email, firstName, lastName } = useUserDetailsStore((state) => state);
-  const { goToNextStep } = useOnboardingProgressStore();
 
   const navigate = useNavigate();
 
@@ -44,7 +42,7 @@ export default function VerifyEmailForm() {
       const res = resendOTPMutation.mutateAsync({ email: email! });
       console.log(res);
       toast.success("Please check your email for a new otp");
-    } catch (error: any) {
+    } catch (error) {
       // toast.error(error.response.data.message);
       console.log(error);
       toast.error(getErrorMessage(error));
@@ -70,7 +68,6 @@ export default function VerifyEmailForm() {
 
     try {
       const res = await mutateAsync(verificationPayload);
-      console.log("verify email response: ", res?.data);
       localStorage.setItem("access_token", res?.data.session.access_token);
       localStorage.setItem("refreshtoken", res?.data.session.access_token);
       localStorage.setItem("user_id", res?.data.user.id);
@@ -78,9 +75,9 @@ export default function VerifyEmailForm() {
       toast.success(
         "Email Verification Successful. Your account has been created"
       );
-      goToNextStep();
-      navigate({ to: "/onboarding/onboarding-steps" });
-    } catch (error: any) {
+
+      navigate({ to: "/doctor-onboarding" });
+    } catch (error) {
       toast.error(getErrorMessage(error));
       console.log(error);
     }

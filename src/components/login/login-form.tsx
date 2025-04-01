@@ -116,7 +116,7 @@ export default function LoginForm() {
         <div className="text-center text-base text-gray-500 pt-2">
           Don't have an account?{" "}
           <Link
-            to="/onboarding/create-account"
+            to="/auth/create-account"
             className="text-blue-500 hover:underline"
           >
             Create account

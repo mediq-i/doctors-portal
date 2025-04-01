@@ -6,6 +6,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import {
+  ServiceProviderAdapter,
+  useUserMutation,
+} from "@/adapters/ServiceProviders";
+import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface PersonalInfoFormProps {
   initialData: {
@@ -14,18 +20,20 @@ interface PersonalInfoFormProps {
     email: string;
     phone: string;
     gender: string;
-    address: string;
-    city: string;
-    state: string;
-    country: string;
     bio: string;
+    languages: string;
   };
 }
 
 export default function PersonalInfoForm({
   initialData,
 }: PersonalInfoFormProps) {
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState(initialData);
+
+  const { mutateAsync, isPending } = useUserMutation({
+    mutationCallback: ServiceProviderAdapter.updateServiceProvider,
+  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,10 +46,27 @@ export default function PersonalInfoForm({
     setFormData((prev) => ({ ...prev, gender: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would submit the data to your API
-    toast("Personal information updated");
+
+    try {
+      // Create FormData for the update
+      const formDataToSend = new FormData();
+
+      // Add all form fields to FormData
+      formDataToSend.append("first_name", formData.firstName);
+      formDataToSend.append("last_name", formData.lastName);
+      formDataToSend.append("bio", formData.bio || "");
+      formDataToSend.append("languages", formData.languages);
+      formDataToSend.append("gender", formData.gender);
+
+      await mutateAsync(formDataToSend);
+      queryClient.invalidateQueries({ queryKey: ["provider"] });
+      toast.success("Personal information updated successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to update personal information");
+    }
   };
 
   return (
@@ -79,16 +104,7 @@ export default function PersonalInfoForm({
             value={formData.email}
             onChange={handleChange}
             required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
-          <Input
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
+            disabled
           />
         </div>
       </div>
@@ -116,43 +132,19 @@ export default function PersonalInfoForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="address">Address</Label>
+        <Label htmlFor="languages">Languages</Label>
         <Input
-          id="address"
-          name="address"
-          value={formData.address}
+          id="languages"
+          name="languages"
+          value={formData.languages}
           onChange={handleChange}
+          placeholder="Enter languages separated by commas"
+          required
         />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="space-y-2">
-          <Label htmlFor="city">City</Label>
-          <Input
-            id="city"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="state">State/Province</Label>
-          <Input
-            id="state"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="country">Country</Label>
-          <Input
-            id="country"
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-          />
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Enter all languages you speak, separated by commas (e.g., English,
+          French, Yoruba)
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -166,6 +158,10 @@ export default function PersonalInfoForm({
           placeholder="Tell patients about yourself, your background, and your approach to care"
         />
       </div>
+
+      <Button type="submit" className="w-max" disabled={isPending}>
+        {isPending ? "Updating..." : "Save Changes"}
+      </Button>
     </form>
   );
 }

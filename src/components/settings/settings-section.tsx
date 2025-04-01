@@ -1,9 +1,5 @@
-import { CardFooter } from "@/components/ui/card";
-
 import { type ReactNode, useState } from "react";
 import { ChevronDown } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -25,7 +21,6 @@ export default function SettingsSection({
   description,
   children,
   defaultOpen = false,
-  onSave,
 }: SettingsSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -49,11 +44,6 @@ export default function SettingsSection({
       {isOpen && (
         <>
           <CardContent className="px-4 py-4">{children}</CardContent>
-          {onSave && (
-            <CardFooter className="border-t bg-muted/50 px-4 py-3">
-              <Button onClick={onSave}>Save Changes</Button>
-            </CardFooter>
-          )}
         </>
       )}
     </Card>
