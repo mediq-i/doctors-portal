@@ -22,7 +22,7 @@ interface ProfessionalInfoFormProps {
     primarySpecialty: string;
     subSpecialties: string[];
     yearsOfExperience: number;
-    professionalAssociations: string[];
+    professionalAssociations: string;
   };
 }
 
@@ -69,17 +69,17 @@ export default function ProfessionalInfoForm({
     }));
   };
 
-  const addAssociation = () => {
+  const addAssociation = (association: string) => {
     if (
-      newAssociation.trim() &&
-      !formData.professionalAssociations.includes(newAssociation.trim())
+      association.trim() &&
+      !formData.professionalAssociations.split(",").includes(association.trim())
     ) {
       setFormData((prev) => ({
         ...prev,
         professionalAssociations: [
-          ...prev.professionalAssociations,
-          newAssociation.trim(),
-        ],
+          ...prev.professionalAssociations.split(","),
+          association.trim(),
+        ].join(","),
       }));
       setNewAssociation("");
     }
@@ -88,9 +88,10 @@ export default function ProfessionalInfoForm({
   const removeAssociation = (association: string) => {
     setFormData((prev) => ({
       ...prev,
-      professionalAssociations: prev.professionalAssociations.filter(
-        (a) => a !== association
-      ),
+      professionalAssociations: prev.professionalAssociations
+        .split(",")
+        .filter((a) => a !== association)
+        .join(","),
     }));
   };
 
@@ -166,7 +167,7 @@ export default function ProfessionalInfoForm({
         </Select>
       </div>
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Label>Sub-Specialties</Label>
         <div className="flex flex-wrap gap-2">
           {formData.subSpecialties.map((specialty) => (
@@ -206,9 +207,9 @@ export default function ProfessionalInfoForm({
             <span className="sr-only">Add sub-specialty</span>
           </Button>
         </div>
-      </div>
+      </div> */}
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Label htmlFor="yearsOfExperience">Years of Experience</Label>
         <Select
           value={formData.yearsOfExperience.toString()}
@@ -225,12 +226,12 @@ export default function ProfessionalInfoForm({
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </div> */}
 
       <div className="space-y-2">
         <Label>Professional Associations</Label>
         <div className="flex flex-wrap gap-2">
-          {formData.professionalAssociations.map((association) => (
+          {formData.professionalAssociations.split(",").map((association) => (
             <div
               key={association}
               className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
@@ -260,7 +261,7 @@ export default function ProfessionalInfoForm({
             type="button"
             variant="outline"
             size="icon"
-            onClick={addAssociation}
+            onClick={() => addAssociation(newAssociation)}
             disabled={!newAssociation.trim()}
           >
             <Plus className="h-4 w-4" />

@@ -16,10 +16,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProtectedRoute from "@/utils/helpers/protected-route";
 
 export const Route = createFileRoute("/settings")({
-  component: RouteComponent,
+  component: SettingsComponent,
 });
 
-function RouteComponent() {
+function SettingsComponent() {
   const userId = localStorage.getItem("user_id");
 
   const {
@@ -93,6 +93,8 @@ function RouteComponent() {
     yearsOfExperience: provider?.years_of_experience || "",
     professionalAssociations: provider?.professional_associations || "",
   };
+
+  console.log(professionalInfo);
 
   const medicalLicense = {
     documentUrl: provider?.medical_license_file || "",
