@@ -12,6 +12,7 @@ import {
 } from "../adapters/ServiceProvider";
 import { getErrorMessage, fileCache } from "@/utils";
 import { toast } from "sonner";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -28,6 +29,8 @@ export default function UploadUniversityDegree({
 }: DocumentUploadProps) {
   const navigate = useNavigate();
 
+  const {} = useOnboardingProgressStore();
+
   const [file, setFile] = useState<FileWithPreview | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,7 +41,12 @@ export default function UploadUniversityDegree({
 
   // Initialize file if defaultValues has documentFile
   useEffect(() => {
-    if (defaultValues.universityDegree && !file) {
+    // Check for default values
+    if (
+      defaultValues.universityDegree &&
+      !file &&
+      defaultValues.universityDegree instanceof File
+    ) {
       const fileWithPreview = Object.assign(defaultValues.universityDegree, {
         preview: URL.createObjectURL(defaultValues.universityDegree),
       }) as FileWithPreview;
@@ -48,7 +56,7 @@ export default function UploadUniversityDegree({
 
     // Check if we have a cached file
     const cachedFile = fileCache.get("universityDegree");
-    if (cachedFile && !file) {
+    if (cachedFile && !file && cachedFile instanceof File) {
       const fileWithPreview = Object.assign(cachedFile, {
         preview: URL.createObjectURL(cachedFile),
       }) as FileWithPreview;
@@ -99,6 +107,13 @@ export default function UploadUniversityDegree({
 
     try {
       setIsSubmitting(true);
+
+      // Validate file exists before proceeding
+      if (!file) {
+        toast.error("Please upload your university degree");
+        setIsSubmitting(false);
+        return;
+      }
 
       // Call the onSubmit prop with the file
       onSubmit({ universityDegree: file || undefined });
@@ -207,6 +222,7 @@ export default function UploadUniversityDegree({
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error(getErrorMessage(error));
+      setIsSubmitting(false); // Make sure to set this to false even on error
     } finally {
       setIsSubmitting(false);
     }
@@ -307,7 +323,7 @@ export default function UploadUniversityDegree({
         </div>
 
         <Button
-          type="submit"
+          onClick={handleSubmit}
           disabled={!file || isSubmitting || isPending}
           className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
         >

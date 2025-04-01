@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format, parse, isValid } from "date-fns";
-import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
+// import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface PersonalInfoFormProps {
   onSubmit: (data: PersonalInfoFormValues) => void;
@@ -35,7 +36,7 @@ export default function PersonalInfoForm({
   const [isInternalUpdate, setIsInternalUpdate] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const updateFormData = usePersonalProfessionalInfoStore(
+  const updateFormData = useOnboardingProgressStore(
     (state) => state.updateFormData
   );
 

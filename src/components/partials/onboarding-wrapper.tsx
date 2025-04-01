@@ -1,4 +1,7 @@
 import {
+  CreateAccountForm,
+  VerifyEmailForm,
+  OnboardingStepsForm,
   PersonalInfoForm,
   SelectIdVerificationForm,
   VerifyIdForm,
@@ -6,49 +9,48 @@ import {
   UploadMedicalLicense,
   UploadUniversityDegree,
 } from "../onboarding";
-import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 const Onboarding = () => {
   const { currentStep, goToNextStep, formData, updateFormData } =
-    usePersonalProfessionalInfoStore();
-
-  const { nextStep } = useOnboardingProgressStore();
+    useOnboardingProgressStore();
 
   // Handle form submission for each step
   const handleStepSubmit = (data?: any) => {
     if (data) {
       updateFormData(data);
     }
-    nextStep(); //update progress bar
-    goToNextStep(); //moves to the next step in the personal-professional-info form
+    goToNextStep();
   };
 
   // Define step mapping to components
   const steps = [
+    <CreateAccountForm key="1" />,
+    <VerifyEmailForm key="2" />,
+    <OnboardingStepsForm key="3" />,
     <PersonalInfoForm
-      key="1"
-      onSubmit={handleStepSubmit}
-      defaultValues={formData}
-    />,
-    <SelectIdVerificationForm key="2" onSubmit={handleStepSubmit} />,
-    <VerifyIdForm
-      key="3"
-      onSubmit={handleStepSubmit}
-      defaultValues={formData}
-    />,
-    <ProfessionalInfoForm
       key="4"
       onSubmit={handleStepSubmit}
       defaultValues={formData}
     />,
+    <SelectIdVerificationForm key="5" onSubmit={handleStepSubmit} />,
+    <VerifyIdForm
+      key="6"
+      onSubmit={handleStepSubmit}
+      defaultValues={formData}
+    />,
+    <ProfessionalInfoForm
+      key="7"
+      onSubmit={handleStepSubmit}
+      defaultValues={formData}
+    />,
     <UploadMedicalLicense
-      key="5"
+      key="8"
       onSubmit={handleStepSubmit}
       defaultValues={formData}
     />,
     <UploadUniversityDegree
-      key="6"
+      key="9"
       onSubmit={handleStepSubmit}
       defaultValues={formData}
     />,

@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/select";
 import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
-import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
 import { fileCache } from "@/utils";
+import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -33,14 +33,18 @@ export default function VerifyIdForm({
   const [documentType, setDocumentType] = useState<string>(
     defaultValues.documentType || "national-id"
   );
-  const updateFormData = usePersonalProfessionalInfoStore(
+  const updateFormData = useOnboardingProgressStore(
     (state) => state.updateFormData
   );
 
   // Initialize file if defaultValues has documentFile or from cache
   useEffect(() => {
     // Try to get file from defaultValues
-    if (defaultValues.documentFile && !file) {
+    if (
+      defaultValues.documentFile &&
+      !file &&
+      defaultValues.documentFile instanceof File
+    ) {
       try {
         if (!(defaultValues.documentFile instanceof File)) {
           throw new Error("defaultValues.documentFile is not a File");

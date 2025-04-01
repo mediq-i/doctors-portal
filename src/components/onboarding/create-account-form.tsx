@@ -22,7 +22,7 @@ export default function CreateAccountForm() {
   const { isPending, mutateAsync } = authMutation(AuthAdapter.signUp, "");
 
   const setData = useUserDetailsStore((state) => state.setData);
-  const { nextStep } = useOnboardingProgressStore();
+  const { goToNextStep } = useOnboardingProgressStore();
 
   const navigate = useNavigate();
 
@@ -46,7 +46,7 @@ export default function CreateAccountForm() {
 
       // console.log(res?.data);
       toast.success("Please check your mail for an OTP");
-      nextStep();
+      goToNextStep();
       navigate({ to: `/onboarding/verify-email` });
     } catch (error) {
       toast.error(getErrorMessage(error));

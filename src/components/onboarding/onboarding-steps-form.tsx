@@ -5,7 +5,7 @@ import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 export function OnboardingStepsForm() {
   const navigate = useNavigate();
-  const { nextStep } = useOnboardingProgressStore();
+  const { goToNextStep } = useOnboardingProgressStore();
 
   return (
     <div className="w-full lg:max-w-3xl mx-auto pt-6 lg:pt-10 px-4 md:px-0 xl:px-8">
@@ -52,7 +52,7 @@ export function OnboardingStepsForm() {
       <Button
         className="w-full bg-primary text-white hover:bg-primary/90 py-6 rounded-lg"
         onClick={() => {
-          nextStep();
+          goToNextStep();
           navigate({ to: "/onboarding/personal-professional-information" });
         }}
       >

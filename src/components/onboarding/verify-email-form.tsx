@@ -35,7 +35,7 @@ export default function VerifyEmailForm() {
   const resendOTPMutation = authMutation(AuthAdapter.resendOtp, "");
 
   const { email, firstName, lastName } = useUserDetailsStore((state) => state);
-  const { nextStep } = useOnboardingProgressStore();
+  const { goToNextStep } = useOnboardingProgressStore();
 
   const navigate = useNavigate();
 
@@ -77,7 +77,7 @@ export default function VerifyEmailForm() {
       toast.success(
         "Email Verification Successful. Your account has been created"
       );
-      nextStep();
+      goToNextStep();
       navigate({ to: "/onboarding/onboarding-steps" });
     } catch (error: any) {
       toast.error(getErrorMessage(error));

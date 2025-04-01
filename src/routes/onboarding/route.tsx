@@ -4,18 +4,28 @@ import { LogoBlue } from "@/components/icons";
 import { ArrowLeft } from "lucide-react";
 import { ProgressBar } from "@/components/partials/progress-bar";
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
-import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
+// import { usePersonalProfessionalInfoStore } from "@/store/personal-professional-info-store";
+import { useEffect } from "react";
+import { useLocation } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingLayout,
 });
 
 function OnboardingLayout() {
+  const location = useLocation();
+  const setStep = useOnboardingProgressStore((state) => state.setStep);
   //Get the currentStep and total steps from the store
-  const { currentStep, totalSteps } = useOnboardingProgressStore();
-  const { goToPreviousStep } = usePersonalProfessionalInfoStore();
+  const { currentStep, totalSteps, goToPreviousStep } =
+    useOnboardingProgressStore();
   // const isLastStep = currentStep === OnboardingStep.COMPLETION;
   const isLastStep = currentStep === 10;
+
+  useEffect(() => {
+    if (location.pathname === "/onboarding/personal-professional-information") {
+      setStep(4); // Set step to 4 when navigating to this route
+    }
+  }, [location.pathname, setStep]);
 
   return (
     <SEOWrapper
