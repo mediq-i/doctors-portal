@@ -23,16 +23,8 @@ interface FormData {
 
   // File metadata (since we can't store the actual files)
   documentFileName?: string;
-  documentFileSize?: number;
-  documentFileType?: string;
-
   medicalLicenseFileName?: string;
-  medicalLicenseFileSize?: number;
-  medicalLicenseFileType?: string;
-
   universityDegreeFileName?: string;
-  universityDegreeFileSize?: number;
-  universityDegreeFileType?: string;
 }
 
 interface OnboardingProgressState {

@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
@@ -13,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
-import { fileCache } from "@/utils";
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface FileWithPreview extends File {
@@ -57,36 +54,27 @@ export default function VerifyIdForm({
         console.error("Error creating object URL from defaultValues:", error);
       }
     }
-
-    // Try to get file from cache if not in defaultValues
-    if (!file) {
-      const cachedFile = fileCache.get("documentFile");
-      if (cachedFile) {
-        try {
-          const fileWithPreview = Object.assign(cachedFile, {
-            preview: URL.createObjectURL(cachedFile),
-          }) as FileWithPreview;
-          setFile(fileWithPreview);
-        } catch (error) {
-          console.error("Error creating object URL from cache:", error);
-        }
-      }
-    }
   }, [defaultValues.documentFile, file]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles?.length) {
-      const selectedFile = acceptedFiles[0];
-      const fileWithPreview = Object.assign(selectedFile, {
-        preview: URL.createObjectURL(selectedFile),
-      }) as FileWithPreview;
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles?.length) {
+        const selectedFile = acceptedFiles[0];
+        const fileWithPreview = Object.assign(selectedFile, {
+          preview: URL.createObjectURL(selectedFile),
+        }) as FileWithPreview;
 
-      setFile(fileWithPreview);
+        setFile(fileWithPreview);
 
-      // Store the file in our cache
-      fileCache.set("documentFile", selectedFile);
-    }
-  }, []);
+        // Update store with file info
+        updateFormData({
+          documentFile: selectedFile,
+          documentFileName: selectedFile.name,
+        });
+      }
+    },
+    [updateFormData]
+  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -106,22 +94,19 @@ export default function VerifyIdForm({
       URL.revokeObjectURL(file.preview);
       setFile(null);
 
-      // Remove from cache
-      fileCache.delete("documentFile");
+      // clear file from store
+      updateFormData({ documentFile: undefined, documentFileName: undefined });
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (file) {
-      console.log("Document type:", documentType);
-
       // Store document type and file metadata in Zustand store
       updateFormData({
         documentType,
+        documentFile: file,
         documentFileName: file.name,
-        documentFileSize: file.size,
-        documentFileType: file.type,
       });
 
       // Call the onSubmit prop with the document type and file
@@ -129,8 +114,6 @@ export default function VerifyIdForm({
         documentType,
         documentFile: file,
       });
-
-      console.log("File:", file);
     }
   };
 

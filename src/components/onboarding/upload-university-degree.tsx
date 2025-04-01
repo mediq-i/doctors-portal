@@ -12,7 +12,7 @@ import {
 } from "../adapters/ServiceProvider";
 import { getErrorMessage, fileCache } from "@/utils";
 import { toast } from "sonner";
-import { useOnboardingProgressStore } from "@/store/onboarding-progress";
+// import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -28,8 +28,6 @@ export default function UploadUniversityDegree({
   defaultValues = {},
 }: DocumentUploadProps) {
   const navigate = useNavigate();
-
-  const {} = useOnboardingProgressStore();
 
   const [file, setFile] = useState<FileWithPreview | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,18 +102,13 @@ export default function UploadUniversityDegree({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      setIsSubmitting(true);
-
       // Validate file exists before proceeding
       if (!file) {
         toast.error("Please upload your university degree");
         setIsSubmitting(false);
         return;
       }
-
-      // Call the onSubmit prop with the file
       onSubmit({ universityDegree: file || undefined });
 
       // Retrieve stored form data from localStorage
@@ -127,11 +120,10 @@ export default function UploadUniversityDegree({
         toast.error(
           "No stored form data found. Please complete previous steps first."
         );
-        setIsSubmitting(false);
         return;
       }
+      const parsedData = JSON.parse(storedData!);
 
-      const parsedData = JSON.parse(storedData);
       const formData = new FormData();
 
       // Append text fields
@@ -189,24 +181,22 @@ export default function UploadUniversityDegree({
       }
 
       // Append file fields - Get files from our cache
-      const identificationFile = fileCache.get("documentFile");
-      if (identificationFile) {
-        formData.append("identification_file", identificationFile);
-      } else {
-        console.warn("Identification file not found in cache");
+      if (parsedData.state.formData.documentFile) {
+        formData.append(
+          "identification_file",
+          parsedData.state.formData.documentFile
+        );
       }
 
-      const medicalLicenseFile = fileCache.get("medicalLicense");
-      if (medicalLicenseFile) {
-        formData.append("medical_license_file", medicalLicenseFile);
-      } else {
-        console.warn("Medical license file not found in cache");
+      if (parsedData.state.formData.medicalLicense) {
+        formData.append(
+          "medical_license_file",
+          parsedData.state.formData.medicalLicense
+        );
       }
 
-      // The university degree file from this step
-      if (file) {
-        formData.append("university_degree_file", file);
-      }
+      // Add the university degree file
+      formData.append("university_degree_file", file);
 
       // Log the FormData for debugging
       for (const pair of formData.entries()) {
@@ -222,9 +212,6 @@ export default function UploadUniversityDegree({
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error(getErrorMessage(error));
-      setIsSubmitting(false); // Make sure to set this to false even on error
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

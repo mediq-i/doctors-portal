@@ -1,10 +1,8 @@
-import type React from "react";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { X, FileImage } from "lucide-react";
 import { CloudIcon } from "../icons";
-import { fileCache } from "@/utils";
 import { useOnboardingProgressStore } from "@/store/onboarding-progress";
 
 interface FileWithPreview extends File {
@@ -16,15 +14,12 @@ interface DocumentUploadProps {
   defaultValues?: { medicalLicense?: File };
 }
 
-// Create a global file cache to store files between components
-// This is a simple in-memory solution
-// const fileCache = new Map<string, File>();
-
 export default function UploadMedicalLicense({
   onSubmit,
   defaultValues = {},
 }: DocumentUploadProps) {
   const [file, setFile] = useState<FileWithPreview | null>(null);
+  const [filePreview, setFilePreview] = useState<string>("");
   const updateFormData = useOnboardingProgressStore(
     (state) => state.updateFormData
   );
@@ -42,31 +37,34 @@ export default function UploadMedicalLicense({
 
       setFile(fileWithPreview);
     }
-
-    // Check if we have a cached file
-    const cachedFile = fileCache.get("medicalLicense");
-    if (cachedFile && !file && cachedFile instanceof File) {
-      const fileWithPreview = Object.assign(cachedFile, {
-        preview: URL.createObjectURL(cachedFile),
-      }) as FileWithPreview;
-
-      setFile(fileWithPreview);
-    }
   }, [defaultValues.medicalLicense, file]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles?.length) {
-      const selectedFile = acceptedFiles[0];
-      const fileWithPreview = Object.assign(selectedFile, {
-        preview: URL.createObjectURL(selectedFile),
-      }) as FileWithPreview;
+  // Handle file drop
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles?.length) {
+        const selectedFile = acceptedFiles[0];
 
-      setFile(fileWithPreview);
+        // Create preview URL
+        const previewUrl = URL.createObjectURL(selectedFile);
+        setFilePreview(previewUrl);
 
-      // Store the file in our cache
-      fileCache.set("medicalLicense", selectedFile);
-    }
-  }, []);
+        // Store file with preview property
+        const fileWithPreview = Object.assign(selectedFile, {
+          preview: previewUrl,
+        }) as FileWithPreview;
+
+        setFile(fileWithPreview);
+
+        // Update store with file info
+        updateFormData({
+          medicalLicense: selectedFile,
+          medicalLicenseFileName: selectedFile.name,
+        });
+      }
+    },
+    [updateFormData]
+  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -77,35 +75,28 @@ export default function UploadMedicalLicense({
     },
     maxSize: 50485760, // 50MB
     maxFiles: 1,
-    noClick: !!file, // Disable click when file is already selected
-    noKeyboard: !!file, // Disable keyboard when file is already selected
+    noClick: !!file,
+    noKeyboard: !!file,
   });
 
   const removeFile = () => {
-    if (file) {
-      URL.revokeObjectURL(file.preview);
+    if (file && filePreview) {
+      URL.revokeObjectURL(filePreview);
       setFile(null);
+      setFilePreview("");
 
-      // Remove from cache
-      fileCache.delete("medicalLicense");
+      // Clear file from store
+      updateFormData({
+        medicalLicense: undefined,
+        medicalLicenseFileName: undefined,
+      });
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (file) {
-      console.log("File:", file);
-
-      // Store file metadata in the Zustand store
-      updateFormData({
-        medicalLicenseFileName: file.name,
-        medicalLicenseFileSize: file.size,
-        medicalLicenseFileType: file.type,
-        // We can't store the actual file in Zustand's persisted state,
-        // but we can store metadata about it
-      });
-
-      // Call the onSubmit prop with the file
+      // Submit the file
       onSubmit({ medicalLicense: file });
     }
   };
@@ -134,12 +125,9 @@ export default function UploadMedicalLicense({
               <div className="w-full h-full flex flex-col items-center justify-center relative">
                 {file.type.startsWith("image/") ? (
                   <img
-                    src={file.preview || "/placeholder.svg"}
+                    src={filePreview || "/placeholder.svg"}
                     alt="Document preview"
                     className="max-h-[120px] max-w-full object-contain"
-                    onLoad={() => {
-                      URL.revokeObjectURL(file.preview);
-                    }}
                   />
                 ) : (
                   <div className="flex flex-col items-center">
