@@ -80,6 +80,8 @@ function SettingsComponent() {
     gender: provider?.gender || "",
   };
 
+  console.log(personalInfo);
+
   const idVerification = {
     idType: provider?.identification_type || "",
     idNumber: provider?.identification_no || "",
@@ -93,8 +95,6 @@ function SettingsComponent() {
     yearsOfExperience: provider?.years_of_experience || "",
     professionalAssociations: provider?.professional_associations || "",
   };
-
-  console.log(professionalInfo);
 
   const medicalLicense = {
     documentUrl: provider?.medical_license_file || "",
@@ -126,7 +126,6 @@ function SettingsComponent() {
               defaultOpen={true}
               onSave={() => handleSaveSection("Personal Information")}
             >
-              {/* @ts-expect-error - TODO: fix this */}
               <PersonalInfoForm initialData={personalInfo} />
             </SettingsSection>
 
@@ -144,7 +143,6 @@ function SettingsComponent() {
               description="Update your medical credentials and specialties"
               onSave={() => handleSaveSection("Professional Information")}
             >
-              {/* @ts-expect-error - TODO: fix this */}
               <ProfessionalInfoForm initialData={professionalInfo} />
             </SettingsSection>
 

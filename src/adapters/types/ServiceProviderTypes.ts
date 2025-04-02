@@ -25,7 +25,7 @@ export type ServiceProviderDetails = {
   data: {
     created_at: string;
     updated_at: string;
-    languages: string[];
+    languages: string;
     specialty: string;
     rating: number;
     price: string | number | null;

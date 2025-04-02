@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -18,10 +18,10 @@ interface PersonalInfoFormProps {
     firstName: string;
     lastName: string;
     email: string;
-    phone: string;
     gender: string;
     bio: string;
     languages: string;
+    dob: string;
   };
 }
 
@@ -30,6 +30,24 @@ export default function PersonalInfoForm({
 }: PersonalInfoFormProps) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState(initialData);
+
+  // Calculate max date (today) and min date (120 years ago)
+  const [dateConstraints, setDateConstraints] = useState({
+    max: "",
+    min: "",
+  });
+
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    const minDate = new Date();
+    minDate.setFullYear(minDate.getFullYear() - 120);
+    const minDateString = minDate.toISOString().split("T")[0];
+
+    setDateConstraints({
+      max: today,
+      min: minDateString,
+    });
+  }, []);
 
   const { mutateAsync, isPending } = useUserMutation({
     mutationCallback: ServiceProviderAdapter.updateServiceProvider,
@@ -59,6 +77,7 @@ export default function PersonalInfoForm({
       formDataToSend.append("bio", formData.bio || "");
       formDataToSend.append("languages", formData.languages);
       formDataToSend.append("gender", formData.gender);
+      formDataToSend.append("dob", formData.dob); // Add date of birth
 
       await mutateAsync(formDataToSend);
       queryClient.invalidateQueries({ queryKey: ["provider"] });
@@ -105,6 +124,20 @@ export default function PersonalInfoForm({
             onChange={handleChange}
             required
             disabled
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="dob">Date of Birth</Label>
+          <Input
+            id="dob"
+            name="dob"
+            type="date"
+            value={formData.dob}
+            onChange={handleChange}
+            max={dateConstraints.max}
+            min={dateConstraints.min}
+            required
+            className="py-5"
           />
         </div>
       </div>

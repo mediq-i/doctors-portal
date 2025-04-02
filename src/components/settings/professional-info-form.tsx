@@ -1,6 +1,5 @@
 import type React from "react";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,9 +18,8 @@ interface ProfessionalInfoFormProps {
   initialData: {
     licenseNumber: string;
     issuingBoard: string;
-    primarySpecialty: string;
-    subSpecialties: string[];
-    yearsOfExperience: number;
+    specialty: string;
+    yearsOfExperience: number | string;
     professionalAssociations: string;
   };
 }
@@ -30,8 +28,36 @@ export default function ProfessionalInfoForm({
   initialData,
 }: ProfessionalInfoFormProps) {
   const [formData, setFormData] = useState(initialData);
-  const [newSubSpecialty, setNewSubSpecialty] = useState("");
   const [newAssociation, setNewAssociation] = useState("");
+
+  // Ensure specialty is in the list of specialties, or add it if not
+  const specialties = [
+    "Cardiology",
+    "Dermatology",
+    "Emergency Medicine",
+    "Family Medicine",
+    "Gastroenterology",
+    "Internal Medicine",
+    "Neurology",
+    "Obstetrics and Gynecology",
+    "Oncology",
+    "Ophthalmology",
+    "Orthopedics",
+    "Pediatrics",
+    "Psychiatry",
+    "Radiology",
+    "Surgery",
+    "Urology",
+    "Endocrinology",
+  ];
+
+  // Make sure the specialty from backend is included in the list
+  useEffect(() => {
+    if (formData.specialty && !specialties.includes(formData.specialty)) {
+      // If the backend specialty isn't in our list, add it
+      specialties.push(formData.specialty);
+    }
+  }, [formData.specialty, specialties]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,27 +71,7 @@ export default function ProfessionalInfoForm({
   const handleYearsChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
-      yearsOfExperience: Number.parseInt(value),
-    }));
-  };
-
-  const addSubSpecialty = () => {
-    if (
-      newSubSpecialty.trim() &&
-      !formData.subSpecialties.includes(newSubSpecialty.trim())
-    ) {
-      setFormData((prev) => ({
-        ...prev,
-        subSpecialties: [...prev.subSpecialties, newSubSpecialty.trim()],
-      }));
-      setNewSubSpecialty("");
-    }
-  };
-
-  const removeSubSpecialty = (specialty: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      subSpecialties: prev.subSpecialties.filter((s) => s !== specialty),
+      yearsOfExperience: value,
     }));
   };
 
@@ -76,10 +82,12 @@ export default function ProfessionalInfoForm({
     ) {
       setFormData((prev) => ({
         ...prev,
-        professionalAssociations: [
-          ...prev.professionalAssociations.split(","),
-          association.trim(),
-        ].join(","),
+        professionalAssociations: prev.professionalAssociations
+          ? [
+              ...prev.professionalAssociations.split(","),
+              association.trim(),
+            ].join(",")
+          : association.trim(),
       }));
       setNewAssociation("");
     }
@@ -100,26 +108,6 @@ export default function ProfessionalInfoForm({
     // Here you would submit the data to your API
     toast("Professional information updated");
   };
-
-  // Sample specialties for the dropdown
-  const specialties = [
-    "Cardiology",
-    "Dermatology",
-    "Emergency Medicine",
-    "Family Medicine",
-    "Gastroenterology",
-    "Internal Medicine",
-    "Neurology",
-    "Obstetrics and Gynecology",
-    "Oncology",
-    "Ophthalmology",
-    "Orthopedics",
-    "Pediatrics",
-    "Psychiatry",
-    "Radiology",
-    "Surgery",
-    "Urology",
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -147,108 +135,79 @@ export default function ProfessionalInfoForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="primarySpecialty">Primary Specialty</Label>
+        <Label htmlFor="specialty">Primary Specialty</Label>
         <Select
-          value={formData.primarySpecialty}
-          onValueChange={(value) =>
-            handleSelectChange("primarySpecialty", value)
-          }
+          value={formData.specialty}
+          onValueChange={(value) => handleSelectChange("specialty", value)}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a specialty" />
+          <SelectTrigger className="capitalize">
+            <SelectValue placeholder="Please choose a specialty">
+              {formData.specialty}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {specialties.map((specialty) => (
               <SelectItem key={specialty} value={specialty}>
-                {specialty}
+                <div className="flex items-center justify-between w-full">
+                  <span>{specialty}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* <div className="space-y-2">
-        <Label>Sub-Specialties</Label>
-        <div className="flex flex-wrap gap-2">
-          {formData.subSpecialties.map((specialty) => (
-            <div
-              key={specialty}
-              className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
-            >
-              {specialty}
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 rounded-full p-0 hover:bg-primary/20"
-                onClick={() => removeSubSpecialty(specialty)}
-              >
-                <X className="h-3 w-3" />
-                <span className="sr-only">Remove {specialty}</span>
-              </Button>
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 flex gap-2">
-          <Input
-            value={newSubSpecialty}
-            onChange={(e) => setNewSubSpecialty(e.target.value)}
-            placeholder="Add a sub-specialty"
-            className="flex-1"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={addSubSpecialty}
-            disabled={!newSubSpecialty.trim()}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="sr-only">Add sub-specialty</span>
-          </Button>
-        </div>
-      </div> */}
-
-      {/* <div className="space-y-2">
+      <div className="space-y-2">
         <Label htmlFor="yearsOfExperience">Years of Experience</Label>
         <Select
           value={formData.yearsOfExperience.toString()}
           onValueChange={handleYearsChange}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select years of experience" />
+            <SelectValue placeholder="Select years of experience">
+              {formData.yearsOfExperience}{" "}
+              {Number(formData.yearsOfExperience) === 1 ? "year" : "years"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Array.from({ length: 50 }, (_, i) => i + 1).map((year) => (
               <SelectItem key={year} value={year.toString()}>
-                {year} {year === 1 ? "year" : "years"}
+                <div className="flex items-center justify-between w-full">
+                  <span>
+                    {year} {year === 1 ? "year" : "years"}
+                  </span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-      </div> */}
+      </div>
 
       <div className="space-y-2">
         <Label>Professional Associations</Label>
         <div className="flex flex-wrap gap-2">
-          {formData.professionalAssociations.split(",").map((association) => (
-            <div
-              key={association}
-              className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
-            >
-              {association}
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 rounded-full p-0 hover:bg-primary/20"
-                onClick={() => removeAssociation(association)}
-              >
-                <X className="h-3 w-3" />
-                <span className="sr-only">Remove {association}</span>
-              </Button>
-            </div>
-          ))}
+          {formData.professionalAssociations &&
+            formData.professionalAssociations
+              .split(",")
+              .filter(Boolean)
+              .map((association) => (
+                <div
+                  key={association}
+                  className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
+                >
+                  {association}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4 rounded-full p-0 hover:bg-primary/20"
+                    onClick={() => removeAssociation(association)}
+                  >
+                    <X className="h-3 w-3" />
+                    <span className="sr-only">Remove {association}</span>
+                  </Button>
+                </div>
+              ))}
         </div>
         <div className="mt-2 flex gap-2">
           <Input
@@ -269,6 +228,10 @@ export default function ProfessionalInfoForm({
           </Button>
         </div>
       </div>
+
+      <Button type="submit" className="w-full">
+        Save Changes
+      </Button>
     </form>
   );
 }
