@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import {
+  ServiceProviderAdapter,
+  useUserMutation,
+} from "@/adapters/ServiceProviders";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ProfessionalInfoFormProps {
   initialData: {
     licenseNumber: string;
     issuingBoard: string;
     specialty: string;
-    yearsOfExperience: number | string;
+    yearsOfExperience: string;
     professionalAssociations: string;
   };
 }
@@ -27,8 +32,14 @@ interface ProfessionalInfoFormProps {
 export default function ProfessionalInfoForm({
   initialData,
 }: ProfessionalInfoFormProps) {
+  const queryClient = useQueryClient();
+
   const [formData, setFormData] = useState(initialData);
   const [newAssociation, setNewAssociation] = useState("");
+
+  const { mutateAsync, isPending } = useUserMutation({
+    mutationCallback: ServiceProviderAdapter.updateServiceProvider,
+  });
 
   // Ensure specialty is in the list of specialties, or add it if not
   const specialties = [
@@ -59,6 +70,16 @@ export default function ProfessionalInfoForm({
     }
   }, [formData.specialty, specialties]);
 
+  const hasChanges = useMemo(() => {
+    return (
+      formData.licenseNumber !== initialData.licenseNumber ||
+      formData.issuingBoard !== initialData.issuingBoard ||
+      formData.specialty !== initialData.specialty ||
+      formData.yearsOfExperience !== initialData.yearsOfExperience ||
+      formData.professionalAssociations !== initialData.professionalAssociations
+    );
+  }, [formData, initialData]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -73,6 +94,7 @@ export default function ProfessionalInfoForm({
       ...prev,
       yearsOfExperience: value,
     }));
+    console.log(formData);
   };
 
   const addAssociation = (association: string) => {
@@ -103,10 +125,34 @@ export default function ProfessionalInfoForm({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would submit the data to your API
-    toast("Professional information updated");
+
+    // If no changes, don't submit
+    if (!hasChanges) {
+      return;
+    }
+
+    try {
+      // Create FormData for the update
+      const formDataToSend = new FormData();
+
+      // Add all form fields to FormData
+      formDataToSend.append("medical_license_no", formData.licenseNumber);
+      formDataToSend.append("issuing_medical_board", formData.issuingBoard);
+      formDataToSend.append("specialty", formData.specialty);
+      formDataToSend.append("years_of_experience", formData.yearsOfExperience);
+      formDataToSend.append(
+        "professional_associations",
+        formData.professionalAssociations
+      );
+
+      await mutateAsync(formDataToSend);
+      queryClient.invalidateQueries({ queryKey: ["provider"] });
+      toast.success("Professional information updated successfully");
+    } catch (error) {
+      toast.error("Failed to update professional information");
+    }
   };
 
   return (
@@ -229,7 +275,11 @@ export default function ProfessionalInfoForm({
         </div>
       </div>
 
-      <Button type="submit" className="w-full">
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isPending || !hasChanges}
+      >
         Save Changes
       </Button>
     </form>

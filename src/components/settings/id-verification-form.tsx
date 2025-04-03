@@ -14,7 +14,7 @@ import {
 } from "@/adapters/ServiceProviders";
 import { useQueryClient } from "@tanstack/react-query";
 
-type IDType = "nin" | "passport" | "driversLicense";
+type IDType = "nin" | "passport" | "drivers_license";
 
 interface IDVerificationFormProps {
   initialData: {

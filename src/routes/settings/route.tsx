@@ -85,7 +85,6 @@ function SettingsComponent() {
     idNumber: provider?.identification_no || "",
     idDocument: provider?.identification_file || "",
   };
-  console.log(idVerification);
 
   const professionalInfo = {
     licenseNumber: provider?.medical_license_no || "",
@@ -100,6 +99,7 @@ function SettingsComponent() {
     documentName: "Medical License",
     uploadDate: provider?.updated_at,
   };
+  console.log(medicalLicense);
 
   const universityDegree = {
     documentUrl: provider?.university_degree_file || "",

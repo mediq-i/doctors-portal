@@ -20,6 +20,7 @@ export type SearchServiceProvider = {
     },
   ];
 };
+type IDType = "nin" | "passport" | "drivers_license";
 
 export type ServiceProviderDetails = {
   data: {
@@ -43,7 +44,7 @@ export type ServiceProviderDetails = {
     medical_license_no: string;
     identification_file: string;
     identification_no: string | null;
-    identification_type: string;
+    identification_type: IDType;
     university_degree_file: string;
     years_of_experience: string;
     issuing_medical_board: string;

@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// type IDType = "nin" | "passport" | "drivers_license";
+
 type DoctorOnboardingState = {
   formStep: number;
   personalInfo: {
@@ -15,6 +17,7 @@ type DoctorOnboardingState = {
     professional_associations: string;
   };
   documentInfo: {
+    // identification_type?: IDType;
     identification_type?: string;
     identification_file?: File;
     medical_license_file?: File;
