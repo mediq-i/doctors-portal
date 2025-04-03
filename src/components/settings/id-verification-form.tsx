@@ -2,10 +2,10 @@ import type React from "react";
 
 import { useState, useMemo } from "react";
 import { FileText, Upload } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import {
@@ -18,7 +18,7 @@ type IDType = "nin" | "passport" | "drivers_license";
 
 interface IDVerificationFormProps {
   initialData: {
-    idType: IDType;
+    idType: IDType | string;
     idNumber: string;
     idDocument?: string;
   };

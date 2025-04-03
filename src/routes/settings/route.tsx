@@ -86,6 +86,8 @@ function SettingsComponent() {
     idDocument: provider?.identification_file || "",
   };
 
+  console.log(idVerification);
+
   const professionalInfo = {
     licenseNumber: provider?.medical_license_no || "",
     issuingBoard: provider?.issuing_medical_board || "",
@@ -106,6 +108,8 @@ function SettingsComponent() {
     documentName: "University Degree",
     uploadDate: provider?.updated_at,
   };
+
+  console.log(universityDegree);
 
   return (
     <ProtectedRoute>
@@ -133,7 +137,6 @@ function SettingsComponent() {
               description="Update your identification documents"
               onSave={() => handleSaveSection("ID Verification")}
             >
-              {/* @ts-expect-error - TODO: fix this */}
               <IDVerificationForm initialData={idVerification} />
             </SettingsSection>
 
