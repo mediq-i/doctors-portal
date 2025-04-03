@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -53,6 +53,18 @@ export default function PersonalInfoForm({
     mutationCallback: ServiceProviderAdapter.updateServiceProvider,
   });
 
+  // Check if form data has changed from initial data
+  const hasChanges = useMemo(() => {
+    return (
+      formData.firstName !== initialData.firstName ||
+      formData.lastName !== initialData.lastName ||
+      formData.gender !== initialData.gender ||
+      formData.bio !== initialData.bio ||
+      formData.languages !== initialData.languages ||
+      formData.dob !== initialData.dob
+    );
+  }, [formData, initialData]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -66,6 +78,11 @@ export default function PersonalInfoForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // If no changes, don't submit
+    if (!hasChanges) {
+      return;
+    }
 
     try {
       // Create FormData for the update
@@ -192,7 +209,11 @@ export default function PersonalInfoForm({
         />
       </div>
 
-      <Button type="submit" className="w-max" disabled={isPending}>
+      <Button
+        type="submit"
+        className="w-max"
+        disabled={isPending || !hasChanges}
+      >
         {isPending ? "Updating..." : "Save Changes"}
       </Button>
     </form>

@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { FileText, Upload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import {
+  ServiceProviderAdapter,
+  useUserMutation,
+} from "@/adapters/ServiceProviders";
+import { useQueryClient } from "@tanstack/react-query";
 
 type IDType = "nin" | "passport" | "driversLicense";
 
@@ -15,7 +20,6 @@ interface IDVerificationFormProps {
   initialData: {
     idType: IDType;
     idNumber: string;
-    idExpiryDate?: string;
     idDocument?: string;
   };
 }
@@ -23,8 +27,27 @@ interface IDVerificationFormProps {
 export default function IDVerificationForm({
   initialData,
 }: IDVerificationFormProps) {
+  const queryClient = useQueryClient();
+
   const [formData, setFormData] = useState(initialData);
   const [file, setFile] = useState<File | null>(null);
+
+  const { mutateAsync, isPending } = useUserMutation({
+    mutationCallback: ServiceProviderAdapter.updateServiceProvider,
+  });
+
+  // Check if form data has changed from initial data
+  const hasChanges = useMemo(() => {
+    // Check if form fields have changed
+    const formFieldsChanged =
+      formData.idType !== initialData.idType ||
+      formData.idNumber !== initialData.idNumber;
+
+    // Check if a new file has been selected
+    const fileChanged = file !== null;
+
+    return formFieldsChanged || fileChanged;
+  }, [formData, initialData, file]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,10 +64,34 @@ export default function IDVerificationForm({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would submit the data to your API
-    toast("ID verification updated");
+
+    // If no changes, don't submit
+    if (!hasChanges) {
+      return;
+    }
+
+    try {
+      // Create FormData for the update
+      const formDataToSend = new FormData();
+
+      //
+      if (formData) {
+        formDataToSend.append("identification_type", formData.idType);
+        formDataToSend.append("identification_no", formData.idNumber);
+      }
+      if (file) {
+        formDataToSend.append("identification_file", file as Blob);
+      }
+
+      await mutateAsync(formDataToSend);
+      queryClient.invalidateQueries({ queryKey: ["provider"] });
+      toast.success("ID verification updated successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to update ID verification");
+    }
   };
 
   return (
@@ -65,8 +112,8 @@ export default function IDVerificationForm({
             <Label htmlFor="passport">International Passport</Label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="driversLicense" id="driversLicense" />
-            <Label htmlFor="driversLicense">Driver's License</Label>
+            <RadioGroupItem value="drivers_license" id="drivers_license" />
+            <Label htmlFor="drivers_license">Driver's License</Label>
           </div>
         </RadioGroup>
       </div>
@@ -78,28 +125,13 @@ export default function IDVerificationForm({
           name="idNumber"
           value={formData.idNumber}
           onChange={handleChange}
-          required
         />
       </div>
-
-      {(formData.idType === "passport" ||
-        formData.idType === "driversLicense") && (
-        <div className="space-y-2">
-          <Label htmlFor="idExpiryDate">Expiry Date</Label>
-          <Input
-            id="idExpiryDate"
-            name="idExpiryDate"
-            type="date"
-            value={formData.idExpiryDate}
-            onChange={handleChange}
-          />
-        </div>
-      )}
 
       <div className="space-y-2">
         <Label>Upload ID Document</Label>
         <div className="mt-1 flex items-center gap-4">
-          {initialData.idDocument && (
+          {initialData.idDocument && !file && (
             <div className="flex items-center gap-2 rounded-md border bg-muted/50 px-3 py-2 text-sm">
               <FileText className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Current document</span>
@@ -137,6 +169,14 @@ export default function IDVerificationForm({
           Accepted formats: PDF, JPG, JPEG, PNG. Max size: 5MB
         </p>
       </div>
+
+      <Button
+        type="submit"
+        className="w-max"
+        disabled={isPending || !hasChanges}
+      >
+        {isPending ? "Updating..." : "Save Changes"}
+      </Button>
     </form>
   );
 }

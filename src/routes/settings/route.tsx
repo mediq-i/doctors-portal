@@ -80,13 +80,12 @@ function SettingsComponent() {
     gender: provider?.gender || "",
   };
 
-  console.log(personalInfo);
-
   const idVerification = {
     idType: provider?.identification_type || "",
     idNumber: provider?.identification_no || "",
     idDocument: provider?.identification_file || "",
   };
+  console.log(idVerification);
 
   const professionalInfo = {
     licenseNumber: provider?.medical_license_no || "",
