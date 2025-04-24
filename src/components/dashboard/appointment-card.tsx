@@ -44,11 +44,14 @@ export default function AppointmentCard({
   const uid = Math.floor(10000000 + Math.random() * 90000000);
   const isToday =
     format(appointment.date, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+
   const canJoinSession =
     appointment.agora_token &&
     appointment.agora_channel &&
     isToday &&
     appointment.status === "confirmed";
+
+  console.log(canJoinSession);
 
   const { mutate: generateToken, isPending: isGeneratingToken } =
     useBookingMutation({
@@ -141,7 +144,7 @@ export default function AppointmentCard({
           size="sm"
           className="flex-1 gap-2"
           onClick={handleJoinSession}
-          disabled={!canJoinSession}
+          // disabled={!canJoinSession}
         >
           {isGeneratingToken ? (
             <Loader2 className="h-4 w-4 animate-spin" />
