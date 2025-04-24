@@ -18,6 +18,17 @@ const mapSessionToAppointment = (session: Session): Appointment => {
     symptoms: session.patient_symptoms,
     symptomsDuration: session.patient_symptom_duration,
     description: session.patient_ailment_description,
+    status: session.status,
+    cancellation_reason: session.cancellation_reason,
+    cancellation_date: session.cancellation_date,
+    patient_id: session.patient_id,
+    payment_status: session.payment_status,
+    payment_id: session.payment_id,
+    agora_token: session.agora_token,
+    agora_channel: session.agora_channel,
+    service_provider_name: session.service_provider_name,
+    patient_name: session.patient_name,
+    medical_document_url: session.medical_document_url,
   };
 };
 
@@ -28,7 +39,7 @@ export default function AppointmentsSection() {
 
   const { data: sessionData, isLoading } = useUserQuery({
     queryKey: ["appointments", "upcoming"],
-    queryCallback: () => BookingAdapter.getSessionHistory("pending"),
+    queryCallback: () => BookingAdapter.getSessionHistory("confirmed"),
   });
 
   const appointments = sessionData?.data.map(mapSessionToAppointment) ?? [];

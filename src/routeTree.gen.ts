@@ -17,6 +17,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as AuthRouteImport } from './routes/auth/route'
 import { Route as AppointmentsRouteImport } from './routes/appointments/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as AppointmentRoomIndexImport } from './routes/appointment-room/index'
 import { Route as AuthVerifyEmailImport } from './routes/auth/verify-email'
 import { Route as AuthResetPasswordImport } from './routes/auth/reset-password'
 import { Route as AuthLoginImport } from './routes/auth/login'
@@ -58,6 +59,12 @@ const AppointmentsRouteRoute = AppointmentsRouteImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AppointmentRoomIndexRoute = AppointmentRoomIndexImport.update({
+  id: '/appointment-room/',
+  path: '/appointment-room/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -172,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthVerifyEmailImport
       parentRoute: typeof AuthRouteImport
     }
+    '/appointment-room/': {
+      id: '/appointment-room/'
+      path: '/appointment-room'
+      fullPath: '/appointment-room'
+      preLoaderRoute: typeof AppointmentRoomIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -209,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/appointment-room': typeof AppointmentRoomIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -223,6 +238,7 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/appointment-room': typeof AppointmentRoomIndexRoute
 }
 
 export interface FileRoutesById {
@@ -238,6 +254,7 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/appointment-room/': typeof AppointmentRoomIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -254,6 +271,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/appointment-room'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -267,6 +285,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/appointment-room'
   id:
     | '__root__'
     | '/'
@@ -280,6 +299,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/appointment-room/'
   fileRoutesById: FileRoutesById
 }
 
@@ -290,6 +310,7 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRoute
   DoctorOnboardingRouteRoute: typeof DoctorOnboardingRouteRoute
   SettingsRouteRoute: typeof SettingsRouteRoute
+  AppointmentRoomIndexRoute: typeof AppointmentRoomIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -299,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRoute,
   DoctorOnboardingRouteRoute: DoctorOnboardingRouteRoute,
   SettingsRouteRoute: SettingsRouteRoute,
+  AppointmentRoomIndexRoute: AppointmentRoomIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -316,7 +338,8 @@ export const routeTree = rootRoute
         "/auth",
         "/dashboard",
         "/doctor-onboarding",
-        "/settings"
+        "/settings",
+        "/appointment-room/"
       ]
     },
     "/": {
@@ -363,6 +386,9 @@ export const routeTree = rootRoute
     "/auth/verify-email": {
       "filePath": "auth/verify-email.tsx",
       "parent": "/auth"
+    },
+    "/appointment-room/": {
+      "filePath": "appointment-room/index.tsx"
     }
   }
 }

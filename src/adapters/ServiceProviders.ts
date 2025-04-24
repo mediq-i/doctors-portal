@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import {
   SearchServiceProvider,
   ServiceProviderDetails,
+  UpdateWorkingHoursPayload,
 } from "./types/ServiceProviderTypes";
 import { MutationCallBackArgs } from "./types/TanstackUtilTypes";
 import ApiService from "./utils/api-service";
@@ -45,8 +44,7 @@ const ServiceProviderAdapter = {
   updateServiceProvider: async ({
     payload,
   }: MutationCallBackArgs<FormData>) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await userService.mutate<FormData, any>({
+    const response = await userService.mutate<FormData, unknown>({
       slug: `update`,
       payload,
       type: "FormData",
@@ -55,6 +53,24 @@ const ServiceProviderAdapter = {
 
     return response;
   },
+
+  updateWorkingHours: async ({
+    payload,
+  }: MutationCallBackArgs<UpdateWorkingHoursPayload>) => {
+    const response = await userService.mutate<
+      UpdateWorkingHoursPayload,
+      unknown
+    >({
+      slug: `working-hours`,
+      payload,
+      type: "JSON",
+      method: "PATCH",
+    });
+
+    return response;
+  },
+
+  
 };
 
 export { ServiceProviderAdapter, useUserMutation, useUserQuery };
