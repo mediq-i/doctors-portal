@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Calendar, Clock, User } from "lucide-react";
+import { Calendar, Clock, FileText, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,9 +29,15 @@ export default function AppointmentDetailsModal({
   const handleCancelAppointment = () => {
     // Here you would implement the actual cancellation logic
     // For now, we'll just close the modal
-    alert(`Appointment with ${appointment.patientName} has been cancelled`);
+    alert(`Appointment with ${appointment.patient_name} has been cancelled`);
     onClose();
   };
+
+  const handleViewMedicalReport = () => {
+    if (appointment.medical_document_url) {
+      window.open(appointment.medical_document_url, "_blank");
+    }
+  };   
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -39,7 +45,7 @@ export default function AppointmentDetailsModal({
         <DialogHeader>
           <DialogTitle>Appointment Details</DialogTitle>
           <DialogDescription>
-            Appointment with {appointment.patientName} on{" "}
+            Appointment with {appointment.patient_name} on{" "}
             {format(appointment.date, "MMMM d, yyyy")}
           </DialogDescription>
         </DialogHeader>
@@ -47,7 +53,7 @@ export default function AppointmentDetailsModal({
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-primary" />
-            <span className="font-medium">{appointment.patientName}</span>
+            <span className="font-medium">{appointment.patient_name}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -93,6 +99,29 @@ export default function AppointmentDetailsModal({
             <p className="text-sm font-medium">Description</p>
             <p className="text-sm">{appointment.description}</p>
           </div>
+
+          {appointment.medical_document_url && (
+            <>
+              <Separator />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">Medical Report</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={handleViewMedicalReport}
+                  >
+                    <FileText className="h-4 w-4" />
+                    View Report
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Patient has attached a medical report for this appointment
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">

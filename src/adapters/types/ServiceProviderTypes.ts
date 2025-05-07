@@ -35,7 +35,6 @@ export type ServiceProviderDetails = {
     status: string | null;
     email: string;
     service_type: string | null;
-    working_hours: string | null;
     first_name: string;
     last_name: string;
     id: string;
@@ -52,5 +51,99 @@ export type ServiceProviderDetails = {
     profile_image: string | null;
     dob: string;
     gender: string;
+    working_hours: {
+      monday?: DaySchedule;
+      tuesday?: DaySchedule;
+      wednesday?: DaySchedule;
+      thursday?: DaySchedule;
+      friday?: DaySchedule;
+      saturday?: DaySchedule;
+      sunday?: DaySchedule;
+    };
   };
 };
+
+export type UpdateWorkingHoursPayload = {
+  working_hours: {
+    monday?: DaySchedule;
+    tuesday?: DaySchedule;
+    wednesday?: DaySchedule;
+    thursday?: DaySchedule;
+    friday?: DaySchedule;
+    saturday?: DaySchedule;
+    sunday?: DaySchedule;
+  };
+};
+
+export type DaySchedule = {
+  isAvailable: boolean;
+  slots: { start: string; end: string }[];
+};
+
+export interface Patient {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  first_name: string;
+  last_name: string;
+  dob: string | null;
+  email: string;
+  phone_number: string | null;
+  profile_completed: boolean | null;
+  gender: string | null;
+  blood_type: string | null;
+  blood_group: string | null;
+  appointments: null;
+}
+
+export interface GetAllPatientsResponse {
+  data: {
+    patients: Patient[];
+    total: 1;
+    page: 1;
+    limit: 10;
+    totalPages: 1;
+  };
+}
+export interface GetPatientsDetailsResponse {
+  data: Patient;
+}
+
+export interface GetPatientVitalsResponse {
+  data: PatientVitals[];
+}
+
+export interface PatientVitals {
+  blood_pressure: string | null;
+  created_at: string;
+  heart_rate: string | null;
+  id: string;
+  patient_id: string | null;
+  sugar_level: string | null;
+  temperature: string | null;
+}
+
+export interface PrescriptionPayload {
+  patientId: string;
+  medication: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  notes?: string;
+}
+
+export interface Prescription {
+  id: string;
+  patientId: string;
+  medication: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GetPrescriptionsResponse {
+  data: Prescription[];
+}

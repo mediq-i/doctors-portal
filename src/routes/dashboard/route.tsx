@@ -36,10 +36,12 @@ function RouteComponent() {
   return (
     <ProtectedRoute>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-8 max-w-5xl mx-auto w-full">
           <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">Hello, Dr. {providerName}</p>
+            <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground text-base md:text-lg">
+              Hello, Dr. {providerName}
+            </p>
           </div>
 
           {(isVerified === null || isVerified === false) && (
@@ -58,9 +60,7 @@ function RouteComponent() {
           )}
 
           <WalletSection />
-
           <AvailabilitySection />
-
           <AppointmentsSection />
         </div>
       </DashboardLayout>
