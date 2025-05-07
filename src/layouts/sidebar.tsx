@@ -2,7 +2,7 @@ import type React from "react";
 // import Link from "next/link"
 // import { usePathname } from "next/navigation"
 import { Link, useMatches } from "@tanstack/react-router";
-import { Calendar, Home, LogOut, Settings } from "lucide-react";
+import { Calendar, Home, LogOut, Settings, X, Users } from "lucide-react";
 import { LogoBlue } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
@@ -32,24 +32,47 @@ const navItems: NavItem[] = [
     icon: Calendar,
   },
   {
+    title: "Patients",
+    href: "/patients",
+    icon: Users,
+  },
+  {
     title: "Settings",
     href: "/settings",
     icon: Settings,
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void;
+}
+
+export function Sidebar({ onNavigate }: SidebarProps) {
   //   const pathname = usePathname()
   const matches = useMatches();
   const currentPath = matches[matches.length - 1].pathname;
 
   return (
-    <div className="flex h-screen w-16 flex-col justify-between border-r bg-white py-6 md:w-64">
+    <div className="flex h-full flex-col justify-between border-r bg-white py-6 w-64">
       <div>
-        <div className="flex justify-center md:justify-start md:px-6">
-          <Link to="/dashboard" className="flex items-center gap-2">
+        {/* Mobile close button */}
+        <div className="flex items-center justify-between md:justify-start md:px-6 px-4">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2"
+            onClick={onNavigate}
+          >
             <LogoBlue />
           </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={onNavigate}
+            aria-label="Close sidebar"
+          >
+            <X className="h-6 w-6" />
+          </Button>
         </div>
         <div className="mt-10 space-y-1 px-2">
           <TooltipProvider delayDuration={0}>
@@ -62,16 +85,15 @@ export function Sidebar() {
                     <Link
                       to={item.href}
                       className={cn(
-                        "flex h-10 items-center justify-center rounded-md md:justify-start md:px-4",
+                        "flex h-10 items-center gap-2 justify-start rounded-md px-4",
                         isActivePath
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
+                      onClick={onNavigate}
                     >
                       <item.icon className="h-5 w-5" />
-                      <span className="hidden md:ml-2 md:inline-block">
-                        {item.title}
-                      </span>
+                      <span className="ml-2">{item.title}</span>
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent side="right" className="md:hidden">
@@ -90,10 +112,10 @@ export function Sidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-full justify-center md:justify-start md:px-4"
+                className="h-10 w-full justify-start px-4"
               >
                 <LogOut className="h-5 w-5 text-muted-foreground" />
-                <span className="hidden md:ml-2 md:inline-block">Logout</span>
+                <span className="ml-2">Logout</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" className="md:hidden">

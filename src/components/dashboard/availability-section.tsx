@@ -179,7 +179,7 @@ export default function AvailabilitySection() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-xl font-bold">Availability Settings</h2>
             <p className="text-sm text-muted-foreground mt-1">
@@ -187,14 +187,14 @@ export default function AvailabilitySection() {
             </p>
           </div>
         </div>
-        <div className="flex gap-8 animate-pulse">
-          <div className="w-1/3 space-y-3">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 animate-pulse">
+          <div className="w-full sm:w-1/3 space-y-3">
             {[...Array(7)].map((_, i) => (
               <div key={i} className="h-14 bg-slate-100 rounded-lg" />
             ))}
           </div>
-          <div className="flex-1 bg-slate-50 rounded-xl p-6">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="flex-1 bg-slate-50 rounded-xl p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="h-12 bg-slate-100 rounded-lg" />
               ))}
@@ -207,7 +207,7 @@ export default function AvailabilitySection() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <div>
           <h2 className="text-xl font-bold">Availability Settings</h2>
           <p className="text-sm text-muted-foreground mt-1">
@@ -217,15 +217,15 @@ export default function AvailabilitySection() {
         <Button
           onClick={handleSaveAvailability}
           disabled={isPending}
-          className="px-6"
+          className="w-full sm:w-auto px-6 mt-2 sm:mt-0"
         >
           {isPending ? "Saving..." : "Save Changes"}
         </Button>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
         {/* Days Column */}
-        <div className="w-1/3 space-y-3">
+        <div className="w-full sm:w-1/3 space-y-3">
           <h3 className="text-sm font-medium text-muted-foreground mb-4">
             Select Working Days
           </h3>
@@ -272,14 +272,14 @@ export default function AvailabilitySection() {
         </div>
 
         {/* Time Slots Column */}
-        <div className="flex-1 bg-slate-50 rounded-xl p-6">
+        <div className="flex-1 bg-slate-50 rounded-xl p-4 sm:p-6 mt-4 sm:mt-0">
           <div className="flex items-center gap-2 mb-6">
             <Clock className="h-5 w-5 text-primary" />
             <h3 className="font-medium capitalize">{selectedDay} Time Slots</h3>
           </div>
 
           {currentDayData.available ? (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {TIME_SLOTS.map((timeSlot) => {
                 const isSelected = currentDayData.timeSlots.includes(
                   timeSlot.display
@@ -310,7 +310,7 @@ export default function AvailabilitySection() {
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-[300px] text-center">
+            <div className="flex flex-col items-center justify-center h-[200px] sm:h-[300px] text-center">
               <Calendar className="h-12 w-12 text-muted-foreground/50 mb-4" />
               <p className="text-muted-foreground">
                 Please mark this day as available to set time slots

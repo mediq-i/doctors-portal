@@ -12,12 +12,14 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings/route'
+import { Route as PatientsRouteImport } from './routes/patients/route'
 import { Route as DoctorOnboardingRouteImport } from './routes/doctor-onboarding/route'
 import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as AuthRouteImport } from './routes/auth/route'
 import { Route as AppointmentsRouteImport } from './routes/appointments/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as AppointmentRoomIndexImport } from './routes/appointment-room/index'
+import { Route as PatientPatientIdImport } from './routes/patient/$patientId'
 import { Route as AuthVerifyEmailImport } from './routes/auth/verify-email'
 import { Route as AuthResetPasswordImport } from './routes/auth/reset-password'
 import { Route as AuthLoginImport } from './routes/auth/login'
@@ -29,6 +31,12 @@ import { Route as AuthCreateAccountImport } from './routes/auth/create-account'
 const SettingsRouteRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PatientsRouteRoute = PatientsRouteImport.update({
+  id: '/patients',
+  path: '/patients',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -65,6 +73,12 @@ const IndexRoute = IndexImport.update({
 const AppointmentRoomIndexRoute = AppointmentRoomIndexImport.update({
   id: '/appointment-room/',
   path: '/appointment-room/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PatientPatientIdRoute = PatientPatientIdImport.update({
+  id: '/patient/$patientId',
+  path: '/patient/$patientId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -137,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DoctorOnboardingRouteImport
       parentRoute: typeof rootRoute
     }
+    '/patients': {
+      id: '/patients'
+      path: '/patients'
+      fullPath: '/patients'
+      preLoaderRoute: typeof PatientsRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -179,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthVerifyEmailImport
       parentRoute: typeof AuthRouteImport
     }
+    '/patient/$patientId': {
+      id: '/patient/$patientId'
+      path: '/patient/$patientId'
+      fullPath: '/patient/$patientId'
+      preLoaderRoute: typeof PatientPatientIdImport
+      parentRoute: typeof rootRoute
+    }
     '/appointment-room/': {
       id: '/appointment-room/'
       path: '/appointment-room'
@@ -217,12 +245,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRoute
   '/doctor-onboarding': typeof DoctorOnboardingRouteRoute
+  '/patients': typeof PatientsRouteRoute
   '/settings': typeof SettingsRouteRoute
   '/auth/create-account': typeof AuthCreateAccountRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/patient/$patientId': typeof PatientPatientIdRoute
   '/appointment-room': typeof AppointmentRoomIndexRoute
 }
 
@@ -232,12 +262,14 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRoute
   '/doctor-onboarding': typeof DoctorOnboardingRouteRoute
+  '/patients': typeof PatientsRouteRoute
   '/settings': typeof SettingsRouteRoute
   '/auth/create-account': typeof AuthCreateAccountRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/patient/$patientId': typeof PatientPatientIdRoute
   '/appointment-room': typeof AppointmentRoomIndexRoute
 }
 
@@ -248,12 +280,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRoute
   '/doctor-onboarding': typeof DoctorOnboardingRouteRoute
+  '/patients': typeof PatientsRouteRoute
   '/settings': typeof SettingsRouteRoute
   '/auth/create-account': typeof AuthCreateAccountRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/patient/$patientId': typeof PatientPatientIdRoute
   '/appointment-room/': typeof AppointmentRoomIndexRoute
 }
 
@@ -265,12 +299,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/doctor-onboarding'
+    | '/patients'
     | '/settings'
     | '/auth/create-account'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/patient/$patientId'
     | '/appointment-room'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -279,12 +315,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/doctor-onboarding'
+    | '/patients'
     | '/settings'
     | '/auth/create-account'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/patient/$patientId'
     | '/appointment-room'
   id:
     | '__root__'
@@ -293,12 +331,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/doctor-onboarding'
+    | '/patients'
     | '/settings'
     | '/auth/create-account'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/verify-email'
+    | '/patient/$patientId'
     | '/appointment-room/'
   fileRoutesById: FileRoutesById
 }
@@ -309,7 +349,9 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRoute
   DoctorOnboardingRouteRoute: typeof DoctorOnboardingRouteRoute
+  PatientsRouteRoute: typeof PatientsRouteRoute
   SettingsRouteRoute: typeof SettingsRouteRoute
+  PatientPatientIdRoute: typeof PatientPatientIdRoute
   AppointmentRoomIndexRoute: typeof AppointmentRoomIndexRoute
 }
 
@@ -319,7 +361,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRoute,
   DoctorOnboardingRouteRoute: DoctorOnboardingRouteRoute,
+  PatientsRouteRoute: PatientsRouteRoute,
   SettingsRouteRoute: SettingsRouteRoute,
+  PatientPatientIdRoute: PatientPatientIdRoute,
   AppointmentRoomIndexRoute: AppointmentRoomIndexRoute,
 }
 
@@ -338,7 +382,9 @@ export const routeTree = rootRoute
         "/auth",
         "/dashboard",
         "/doctor-onboarding",
+        "/patients",
         "/settings",
+        "/patient/$patientId",
         "/appointment-room/"
       ]
     },
@@ -364,6 +410,9 @@ export const routeTree = rootRoute
     "/doctor-onboarding": {
       "filePath": "doctor-onboarding/route.tsx"
     },
+    "/patients": {
+      "filePath": "patients/route.tsx"
+    },
     "/settings": {
       "filePath": "settings/route.tsx"
     },
@@ -386,6 +435,9 @@ export const routeTree = rootRoute
     "/auth/verify-email": {
       "filePath": "auth/verify-email.tsx",
       "parent": "/auth"
+    },
+    "/patient/$patientId": {
+      "filePath": "patient/$patientId.tsx"
     },
     "/appointment-room/": {
       "filePath": "appointment-room/index.tsx"

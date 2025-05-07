@@ -18,6 +18,14 @@ import { toast } from "sonner";
 import { LocalVideoView } from "./local-video-view";
 import { RemoteVideoView } from "./remote-video-view";
 import { useRouter } from "@tanstack/react-router";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AppointmentRoom({
   token,
@@ -204,6 +212,23 @@ export default function AppointmentRoom({
     }
   };
 
+  // Notes & Prescription modal state
+  const [modalOpen, setModalOpen] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [prescription, setPrescription] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  // Save handler (replace with API call as needed)
+  const handleSaveNotes = async () => {
+    setSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setSaving(false);
+      setModalOpen(false);
+      toast.success("Notes and prescription saved!");
+    }, 1000);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -217,63 +242,120 @@ export default function AppointmentRoom({
 
   // Your existing UI render code here
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
-      <div className="max-w-7xl mx-auto relative">
+    <div className="min-h-screen bg-gray-900 p-2 sm:p-6">
+      <div className="md:max-w-7xl mx-auto relative">
         {/* Timer */}
-        <div className="absolute top-4 right-4 z-10">
-          <div className="bg-gray-800 rounded-lg px-4 py-2 text-white">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10">
+          <div className="bg-gray-800 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-white text-sm sm:text-base">
             {Math.floor(timeLeft / 60)}:
             {(timeLeft % 60).toString().padStart(2, "0")}
           </div>
         </div>
 
-        {/* Remote Stream */}
-        <div className="w-full h-[80vh] bg-gray-800 rounded-2xl overflow-hidden">
-          {remoteUsers.map((user) => (
-            <RemoteVideoView key={user.uid} user={user} />
-          ))}
+        {/* Video Streams Layout */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full h-[60vh] sm:h-[80vh]">
+          {/* Remote Stream */}
+          <div className="flex-1 bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden flex items-center justify-center">
+            {remoteUsers.length > 0 ? (
+              remoteUsers.map((user) => (
+                <RemoteVideoView key={user.uid} user={user} />
+              ))
+            ) : (
+              <div className="text-white text-center opacity-60">
+                Waiting for participant...
+              </div>
+            )}
+          </div>
+          {/* Local Stream */}
+          <div className="w-full sm:w-[320px] py-4 sm:h-full bg-gray-900 rounded-xl overflow-hidden flex flex-col gap-6 items-center justify-center border border-gray-700">
+            <LocalVideoView
+              localMicrophoneTrack={audioTrack.localMicrophoneTrack}
+              localCameraTrack={cameraTrack.localCameraTrack}
+              cameraOn={cameraOn}
+              micOn={micOn}
+              localUserVolumeLevel={localUserVolumeLevel}
+            />
+
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 justify-center">
+              <Button
+                onClick={handleAudioMute}
+                variant={micOn ? "secondary" : "destructive"}
+                size="icon"
+                className="rounded-full h-10 w-10 sm:h-12 sm:w-12"
+              >
+                {micOn ? <Mic /> : <MicOff />}
+              </Button>
+
+              <Button
+                onClick={handleEndCall}
+                variant="destructive"
+                size="icon"
+                className="rounded-full h-12 w-12 sm:h-14 sm:w-14"
+              >
+                <PhoneOff className="h-5 w-5 sm:h-6 sm:w-6" />
+              </Button>
+
+              <Button
+                onClick={handleVideoMute}
+                variant={cameraOn ? "secondary" : "destructive"}
+                size="icon"
+                className="rounded-full h-10 w-10 sm:h-12 sm:w-12"
+              >
+                {cameraOn ? <Video /> : <VideoOff />}
+              </Button>
+
+              {/* Notes & Prescription Button */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full h-10 w-10 sm:h-12 sm:w-12"
+                onClick={() => setModalOpen(true)}
+                title="Add Notes & Prescription"
+              >
+                <span className="font-bold text-lg">✎</span>
+              </Button>
+            </div>
+          </div>
         </div>
 
-        {/* Local Stream */}
-        <div className="absolute bottom-4 left-4 z-10">
-          <LocalVideoView
-            localMicrophoneTrack={audioTrack.localMicrophoneTrack}
-            localCameraTrack={cameraTrack.localCameraTrack}
-            cameraOn={cameraOn}
-            micOn={micOn}
-            localUserVolumeLevel={localUserVolumeLevel}
-          />
-        </div>
-
-        {/* Controls */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4">
-          <Button
-            onClick={handleAudioMute}
-            variant={micOn ? "secondary" : "destructive"}
-            size="lg"
-            className="rounded-full h-12 w-12"
-          >
-            {micOn ? <Mic /> : <MicOff />}
-          </Button>
-
-          <Button
-            onClick={handleEndCall}
-            variant="destructive"
-            size="lg"
-            className="rounded-full h-14 w-14"
-          >
-            <PhoneOff className="h-6 w-6" />
-          </Button>
-
-          <Button
-            onClick={handleVideoMute}
-            variant={cameraOn ? "secondary" : "destructive"}
-            size="lg"
-            className="rounded-full h-12 w-12"
-          >
-            {cameraOn ? <Video /> : <VideoOff />}
-          </Button>
-        </div>
+        {/* Notes & Prescription Modal */}
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Add Notes & Prescription</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Notes</label>
+                <Textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={4}
+                  placeholder="Type your notes here..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Prescription
+                </label>
+                <Textarea
+                  value={prescription}
+                  onChange={(e) => setPrescription(e.target.value)}
+                  rows={4}
+                  placeholder="Type prescription here..."
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveNotes} disabled={saving}>
+                {saving ? "Saving..." : "Save"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
