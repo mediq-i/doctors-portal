@@ -1,20 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PatientCard } from "@/components/patients/patient-card";
-import { DashboardLayout } from "@/layouts";
-import ProtectedRoute from "@/utils/helpers/protected-route";
 import {
   ServiceProviderAdapter,
   useUserQuery,
 } from "@/adapters/ServiceProviders";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PatientCard } from "@/components/patients/patient-card";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import ProtectedRoute from "@/utils/helpers/protected-route";
+import { createFileRoute } from "@tanstack/react-router";
 
-//@ts-expect-error - This is a file route
 export const Route = createFileRoute("/patients")({
   component: RouteComponent,
 });
 
-export function RouteComponent() {
+function RouteComponent() {
   const { isLoading, data } = useUserQuery({
     queryKey: ["patients"],
     queryCallback: ServiceProviderAdapter.getPatients,
