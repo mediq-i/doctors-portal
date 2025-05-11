@@ -20,6 +20,7 @@ const MEDICAL_BOARDS = [
 ];
 
 const SPECIALTIES = [
+  { value: "general-medicine", label: "General Medicine" },
   { value: "cardiology", label: "Cardiology" },
   { value: "dermatology", label: "Dermatology" },
   { value: "endocrinology", label: "Endocrinology" },
@@ -29,6 +30,7 @@ const SPECIALTIES = [
   { value: "pediatrics", label: "Pediatrics" },
   { value: "psychiatry", label: "Psychiatry" },
   { value: "surgery", label: "Surgery" },
+  { value: "urology", label: "Urology" },
 ];
 
 const professionalInfoSchema = z.object({
