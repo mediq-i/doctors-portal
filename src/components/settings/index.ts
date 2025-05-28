@@ -3,6 +3,7 @@ import IDVerificationForm from "./id-verification-form";
 import PersonalInfoForm from "./personal-info-form";
 import ProfessionalInfoForm from "./professional-info-form";
 import SettingsSection from "./settings-section";
+import BankDetailsForm from "./bank-details-form";
 
 export {
   DocumentUploadForm,
@@ -10,4 +11,5 @@ export {
   PersonalInfoForm,
   ProfessionalInfoForm,
   SettingsSection,
+  BankDetailsForm,
 };

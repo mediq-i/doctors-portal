@@ -17,10 +17,13 @@ import { AuthAdapter, authMutation } from "../adapters";
 import { getErrorMessage } from "@/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { useUserDetailsStore } from "@/store/user-details-store";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 export default function CreateAccountForm() {
   const [InputType, Icon, setVisible] = useObfuscationToggle();
   const { isPending, mutateAsync } = authMutation(AuthAdapter.signUp, "");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const setData = useUserDetailsStore((state) => state.setData);
 
@@ -133,14 +136,32 @@ export default function CreateAccountForm() {
           )}
         </div>
 
-        <div className="text-sm font-medium text-muted-foreground mt-4 text-center">
-          Once your account is created we'll send you a verification link.
+        <div className="flex items-center space-x-2 mt-4">
+          <Checkbox
+            id="terms"
+            checked={agreedToTerms}
+            onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+          />
+          <Label
+            htmlFor="terms"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            I agree to the
+            <a
+              href="https://www.mediqihealth.com/staff-agreement"
+              className="text-primary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Terms and Conditions
+            </a>
+          </Label>
         </div>
 
         <Button
           type="submit"
           className="w-full mt-6 rounded-xl py-6 font-semibold text-base"
-          disabled={isPending}
+          disabled={!agreedToTerms || isPending}
         >
           {isPending ? "Creating account..." : "Start"}
         </Button>

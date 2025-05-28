@@ -49,3 +49,9 @@ export type TransactionHistory = {
     transactions: Payment[];
   };
 };
+
+export type SubAccountPayload = {
+  bankCode: string;
+  accountNumber: string;
+  accountName: string;
+};

@@ -6,6 +6,7 @@ import {
   PersonalInfoForm,
   ProfessionalInfoForm,
   SettingsSection,
+  BankDetailsForm,
 } from "@/components/settings";
 import { toast } from "sonner";
 import {
@@ -86,8 +87,6 @@ function SettingsComponent() {
     idDocument: provider?.identification_file || "",
   };
 
-  console.log(idVerification);
-
   const professionalInfo = {
     licenseNumber: provider?.medical_license_no || "",
     issuingBoard: provider?.issuing_medical_board || "",
@@ -101,7 +100,6 @@ function SettingsComponent() {
     documentName: "Medical License",
     uploadDate: provider?.updated_at,
   };
-  console.log(medicalLicense);
 
   const universityDegree = {
     documentUrl: provider?.university_degree_file || "",
@@ -109,7 +107,12 @@ function SettingsComponent() {
     uploadDate: provider?.updated_at,
   };
 
-  console.log(universityDegree);
+  const bankDetails = {
+    accountName: provider?.bank_account_name || "",
+    accountNumber: provider?.account_number || "",
+    bankCode: provider?.bank_code,
+    providerId: provider?.id,
+  };
 
   return (
     <ProtectedRoute>
@@ -122,7 +125,7 @@ function SettingsComponent() {
             </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 ">
             <SettingsSection
               title="Personal Information"
               description="Update your personal details and contact information"
@@ -146,6 +149,14 @@ function SettingsComponent() {
               onSave={() => handleSaveSection("Professional Information")}
             >
               <ProfessionalInfoForm initialData={professionalInfo} />
+            </SettingsSection>
+
+            <SettingsSection
+              title="Bank Details"
+              description="Update your bank account information for payments"
+              onSave={() => handleSaveSection("Bank Details")}
+            >
+              <BankDetailsForm initialData={bankDetails} />
             </SettingsSection>
 
             <SettingsSection
