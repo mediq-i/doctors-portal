@@ -5,6 +5,7 @@ import {
   CreatePaymentIntent,
   TransactionHistory,
   VerifyPaymentPayload,
+  SubAccountPayload,
 } from "./types/PaymentAdapterTypes";
 
 // api service initilizer
@@ -16,8 +17,7 @@ const PaymentAdapter = {
   createPaymentIntent: async ({
     payload,
   }: MutationCallBackArgs<CreatePaymentIntent>) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await paymentService.mutate<CreatePaymentIntent, any>({
+    const response = await paymentService.mutate<CreatePaymentIntent, unknown>({
       slug: `create-intent`,
       payload,
       type: "JSON",
@@ -29,13 +29,14 @@ const PaymentAdapter = {
   verifyPayment: async ({
     payload,
   }: MutationCallBackArgs<VerifyPaymentPayload>) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await paymentService.mutate<VerifyPaymentPayload, any>({
-      slug: `verify`,
-      payload,
-      type: "JSON",
-      method: "POST",
-    });
+    const response = await paymentService.mutate<VerifyPaymentPayload, unknown>(
+      {
+        slug: `verify`,
+        payload,
+        type: "JSON",
+        method: "POST",
+      }
+    );
 
     return response;
   },
@@ -43,12 +44,36 @@ const PaymentAdapter = {
     id,
   }: {
     id: string | undefined;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<TransactionHistory> => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await paymentService.fetch<TransactionHistory>(
       `/history/${id}`
     );
+
+    return response;
+  },
+  createSubAccount: async ({
+    payload,
+    params,
+  }: MutationCallBackArgs<SubAccountPayload>) => {
+    const response = await paymentService.mutate<SubAccountPayload, unknown>({
+      slug: `${params}/sub-account`,
+      payload,
+      type: "JSON",
+      method: "POST",
+    });
+
+    return response;
+  },
+  updateSubAccount: async ({
+    payload,
+    params,
+  }: MutationCallBackArgs<SubAccountPayload>) => {
+    const response = await paymentService.mutate<SubAccountPayload, unknown>({
+      slug: `${params}/sub-account`,
+      payload,
+      type: "JSON",
+      method: "PUT",
+    });
 
     return response;
   },

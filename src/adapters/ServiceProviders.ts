@@ -149,6 +149,30 @@ const ServiceProviderAdapter = {
 
     return response;
   },
+
+  updateBankDetails: async ({
+    payload,
+  }: MutationCallBackArgs<{
+    account_name: string;
+    bank_name: string;
+    account_number: string;
+  }>) => {
+    const response = await userService.mutate<
+      {
+        account_name: string;
+        bank_name: string;
+        account_number: string;
+      },
+      unknown
+    >({
+      slug: `bank-details`,
+      payload,
+      type: "JSON",
+      method: "PATCH",
+    });
+
+    return response;
+  },
 };
 
 export { ServiceProviderAdapter, useUserMutation, useUserQuery };

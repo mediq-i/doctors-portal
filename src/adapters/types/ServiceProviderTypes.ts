@@ -51,6 +51,9 @@ export type ServiceProviderDetails = {
     profile_image: string | null;
     dob: string;
     gender: string;
+    bank_account_name: string | null;
+    account_number: string | null;
+    bank_code: string | null;
     working_hours: {
       monday?: DaySchedule;
       tuesday?: DaySchedule;
