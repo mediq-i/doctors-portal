@@ -31,6 +31,12 @@ const SPECIALTIES = [
   { value: "psychiatry", label: "Psychiatry" },
   { value: "surgery", label: "Surgery" },
   { value: "urology", label: "Urology" },
+  { value: "dietetics", label: "Dietetics" },
+  { value: "pharmacy", label: "Pharmacy" },
+  { value: "physiotherapy", label: "Physiotherapy" },
+  { value: "radiology", label: "Radiology" },
+  { value: "radiotherapy", label: "Radiotherapy" },
+  { value: "rehabilitation", label: "Rehabilitation" },
 ];
 
 const professionalInfoSchema = z.object({
