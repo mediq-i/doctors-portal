@@ -4,6 +4,7 @@ import type React from "react";
 import { Link, useMatches } from "@tanstack/react-router";
 import { Calendar, Home, LogOut, Settings, X, Users } from "lucide-react";
 import { LogoBlue } from "@/components/icons";
+import { useRouter } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   //   const pathname = usePathname()
+  const router = useRouter();
   const matches = useMatches();
   const currentPath = matches[matches.length - 1].pathname;
 
@@ -113,6 +115,11 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                 variant="ghost"
                 size="icon"
                 className="h-10 w-full justify-start px-4"
+                onClick={() => {
+                  localStorage.removeItem("user_id");
+                  localStorage.removeItem("access_token");
+                  router.navigate({ to: "/" });
+                }}
               >
                 <LogOut className="h-5 w-5 text-muted-foreground" />
                 <span className="ml-2">Logout</span>

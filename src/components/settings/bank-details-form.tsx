@@ -46,10 +46,19 @@ export default function BankDetailsForm({ initialData }: BankDetailsFormProps) {
     },
   });
 
-  const { mutateAsync: updateBankDetails, isPending } = usePaymentMutation({
-    mutationCallback: PaymentAdapter.createSubAccount,
-    params: initialData.providerId,
-  });
+  const { mutateAsync: createBankDetails, isPending: isCreatePending } =
+    usePaymentMutation({
+      mutationCallback: PaymentAdapter.createSubAccount,
+      params: initialData.providerId,
+    });
+
+  const { mutateAsync: updateBankDetails, isPending: isUpdatePending } =
+    usePaymentMutation({
+      mutationCallback: PaymentAdapter.updateSubAccount,
+      params: initialData.providerId,
+    });
+
+  const hasExistingAccount = !!initialData.accountNumber;
 
   useEffect(() => {
     const hasFormChanges =
@@ -72,16 +81,24 @@ export default function BankDetailsForm({ initialData }: BankDetailsFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateBankDetails({
+      const payload = {
         accountName: formData.accountName,
         bankCode: formData.bankCode || "",
         accountNumber: formData.accountNumber,
-      });
-      toast.success("Bank details updated successfully");
+      };
+
+      if (hasExistingAccount) {
+        await updateBankDetails(payload);
+        toast.success("Bank details updated successfully");
+      } else {
+        await createBankDetails(payload);
+        toast.success("Bank details added successfully");
+      }
+
       queryClient.invalidateQueries({ queryKey: ["serviceProvider"] });
     } catch (error) {
-      console.log(error);
-      //   toast.error("Failed to update bank details");
+      console.error(error);
+      toast.error("Failed to update bank details");
     }
   };
 
@@ -141,9 +158,13 @@ export default function BankDetailsForm({ initialData }: BankDetailsFormProps) {
       <Button
         type="submit"
         className="w-max"
-        disabled={isPending || !hasChanges}
+        disabled={isCreatePending || isUpdatePending || !hasChanges}
       >
-        {isPending ? "Updating..." : "Save Changes"}
+        {isCreatePending || isUpdatePending
+          ? "Processing..."
+          : hasExistingAccount
+            ? "Save Changes"
+            : "Add Bank Details"}
       </Button>
     </form>
   );

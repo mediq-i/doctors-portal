@@ -15,6 +15,8 @@ import {
 } from "@/adapters/ServiceProviders";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProtectedRoute from "@/utils/helpers/protected-route";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsComponent,
@@ -123,6 +125,24 @@ function SettingsComponent() {
             <p className="text-muted-foreground">
               Manage your profile information and credentials
             </p>
+
+            {providerData?.data.verified && (
+              <Alert className="bg-green-50 border-green-200 mt-4">
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                <AlertTitle className="text-green-800 font-medium">
+                  Account Verified
+                </AlertTitle>
+              </Alert>
+            )}
+
+            {providerData?.data.verified === null && (
+              <Alert className="bg-yellow-50 border-yellow-200 mt-4">
+                <AlertCircle className="h-5 w-5 text-yellow-600" />
+                <AlertTitle className="text-yellow-800 font-medium">
+                  Account Under Review
+                </AlertTitle>
+              </Alert>
+            )}
           </div>
 
           <div className="space-y-6 ">
