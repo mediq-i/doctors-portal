@@ -12,11 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useDoctorOnboardingStore from "@/store/doctor-onboarding-store";
+import { useState } from "react";
 
 const MEDICAL_BOARDS = [
   { value: "mdcn", label: "Medical and Dental Council of Nigeria (MDCN)" },
   { value: "nmcn", label: "Nursing and Midwifery Council of Nigeria (NMCN)" },
   { value: "pcn", label: "Pharmacists Council of Nigeria (PCN)" },
+  { value: "others", label: "Others" },
 ];
 
 const SPECIALTIES = [
@@ -43,6 +45,7 @@ const SPECIALTIES = [
 const professionalInfoSchema = z.object({
   medical_license_no: z.string().min(1, "Medical license number is required"),
   issuing_medical_board: z.string().min(1, "Issuing medical board is required"),
+  custom_medical_board: z.string().optional(),
   specialty: z.string().min(1, "Specialty is required"),
   years_of_experience: z.string().min(1, "Years of experience is required"),
   professional_associations: z.string().optional(),
@@ -53,6 +56,8 @@ type ProfessionalInfoFormValues = z.infer<typeof professionalInfoSchema>;
 export function ProfessionalInfoForm() {
   const { updateFormStep, updateProfessionalInfo, professionalInfo } =
     useDoctorOnboardingStore();
+  const [showCustomBoard, setShowCustomBoard] = useState(false);
+  const [customBoardName, setCustomBoardName] = useState("");
 
   const {
     register,
@@ -65,7 +70,15 @@ export function ProfessionalInfoForm() {
   });
 
   const onSubmit = (data: ProfessionalInfoFormValues) => {
-    Object.entries(data).forEach(([key, value]) => {
+    const finalData = {
+      ...data,
+      issuing_medical_board:
+        data.issuing_medical_board === "others"
+          ? customBoardName
+          : data.issuing_medical_board,
+    };
+
+    Object.entries(finalData).forEach(([key, value]) => {
       updateProfessionalInfo(key as keyof typeof professionalInfo, value);
     });
 
@@ -103,6 +116,7 @@ export function ProfessionalInfoForm() {
             defaultValue={professionalInfo.issuing_medical_board}
             onValueChange={(value) => {
               setValue("issuing_medical_board", value);
+              setShowCustomBoard(value === "others");
               updateProfessionalInfo("issuing_medical_board", value);
             }}
           >
@@ -123,6 +137,29 @@ export function ProfessionalInfoForm() {
             <p className="text-sm text-destructive">
               {errors.issuing_medical_board.message}
             </p>
+          )}
+          {showCustomBoard && (
+            <div className="mt-2 flex gap-2">
+              <Input
+                placeholder="Enter medical board name"
+                value={customBoardName}
+                onChange={(e) => setCustomBoardName(e.target.value)}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                onClick={() => {
+                  if (customBoardName.trim()) {
+                    updateProfessionalInfo(
+                      "issuing_medical_board",
+                      customBoardName
+                    );
+                  }
+                }}
+              >
+                Add
+              </Button>
+            </div>
           )}
         </div>
 
