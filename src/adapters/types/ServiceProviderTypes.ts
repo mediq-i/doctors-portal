@@ -150,3 +150,33 @@ export interface Prescription {
 export interface GetPrescriptionsResponse {
   data: Prescription[];
 }
+
+export interface TimeSlot {
+  start: string; // HH:mm format
+  end: string; // HH:mm format
+}
+
+export interface DayAvailability {
+  isAvailable: boolean;
+  slots: TimeSlot[];
+}
+
+export interface MonthlyAvailabilityPayload {
+  monthly_availability: {
+    year: number;
+    month: number; // 1-12
+    days: {
+      [day: number]: DayAvailability; // day: 1-31
+    };
+  };
+}
+
+export interface MonthlyAvailability {
+  data: {
+    year: number;
+    month: number; // 1-12
+    days: {
+      [day: number]: DayAvailability; // day: 1-31
+    };
+  };
+}

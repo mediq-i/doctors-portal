@@ -7,6 +7,8 @@ import {
   GetPatientVitalsResponse,
   GetPrescriptionsResponse,
   GetPatientsDetailsResponse,
+  MonthlyAvailabilityPayload,
+  MonthlyAvailability,
 } from "./types/ServiceProviderTypes";
 import { MutationCallBackArgs } from "./types/TanstackUtilTypes";
 import ApiService from "./utils/api-service";
@@ -122,6 +124,14 @@ const ServiceProviderAdapter = {
     return response;
   },
 
+  getMonthlyAvailability: async (): Promise<MonthlyAvailability> => {
+    const response = await userService.fetch<MonthlyAvailability>(
+      `/monthly-availability`
+    );
+
+    return response;
+  },
+
   // Add a new prescription for a patient
   addPrescription: async ({
     payload,
@@ -145,6 +155,22 @@ const ServiceProviderAdapter = {
       payload,
       type: "JSON",
       method: "DELETE",
+    });
+
+    return response;
+  },
+
+  updateMonthlyAvailability: async ({
+    payload,
+  }: MutationCallBackArgs<MonthlyAvailabilityPayload>) => {
+    const response = await userService.mutate<
+      MonthlyAvailabilityPayload,
+      unknown
+    >({
+      slug: `monthly-availability`,
+      payload,
+      type: "JSON",
+      method: "PUT",
     });
 
     return response;
