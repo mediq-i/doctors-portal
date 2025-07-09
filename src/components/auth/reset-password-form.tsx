@@ -34,7 +34,7 @@ export default function ResetPasswordForm() {
     setRefreshToken(refreshToken);
 
     if (accessToken) {
-      localStorage.setItem("token", accessToken);
+      localStorage.setItem("access_token", accessToken);
     } else if (!refreshToken) {
       toast.error("No refresh token found");
     } else {
@@ -61,8 +61,7 @@ export default function ResetPasswordForm() {
     };
 
     try {
-      const res = await mutateAsync(resetPasswordPayload);
-      console.log(res);
+      await mutateAsync(resetPasswordPayload);
       toast.success("Reset password Successful");
       navigate({ to: "/auth/login" });
     } catch (error) {
