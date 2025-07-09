@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
+  domainOrigin: z.string().optional(),
 });
 
 // Infer the type from the schema

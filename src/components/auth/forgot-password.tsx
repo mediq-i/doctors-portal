@@ -34,8 +34,11 @@ export default function ForgotPasswordForm() {
 
   const onSubmit = async (data: ForgotPasswordFormValues) => {
     try {
-      const res = await mutateAsync(data);
-      console.log(res);
+      await mutateAsync({
+        email: data.email,
+        domainOrigin: "service-provider-portal",
+      });
+
       toast.success(
         "Please check your mail for the next steps on how to proceed"
       );
