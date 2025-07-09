@@ -80,6 +80,7 @@ const AuthAdapter = {
       slug: `password-recovery`,
       payload: {
         email: payload.email,
+        domainOrigin: payload.domainOrigin
       },
       type: "JSON",
       method: "POST",

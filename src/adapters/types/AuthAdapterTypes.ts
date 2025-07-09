@@ -38,6 +38,7 @@ export type LoginPayload = {
 };
 export type ForgotPasswordPayload = {
   email: string;
+  domainOrigin: string
 };
 export type ResetPasswordPayload = {
   password: string;

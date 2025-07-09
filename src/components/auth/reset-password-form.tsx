@@ -33,9 +33,6 @@ export default function ResetPasswordForm() {
     const refreshToken = hashParams.get("refresh_token"); // Extract refresh_token
     setRefreshToken(refreshToken);
 
-    console.log("access token: ", accessToken);
-    console.log("refreshToken", refreshToken);
-
     if (accessToken) {
       localStorage.setItem("token", accessToken);
     } else if (!refreshToken) {
