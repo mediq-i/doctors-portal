@@ -7,6 +7,7 @@ export interface Prescription {
   medication: string | null;
   notes: string | null;
   patient_id: string | null;
+  service_provider_id: string | null;
   updated_at: string | null;
 }
 
