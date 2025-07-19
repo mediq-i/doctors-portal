@@ -1,7 +1,21 @@
 "use client";
 
-import { format } from "date-fns";
-import { Calendar, Clock, Loader2, User, Video } from "lucide-react";
+import {
+  addMinutes,
+  format,
+  formatDistanceToNow,
+  isAfter,
+  isBefore,
+} from "date-fns";
+import {
+  Calendar,
+  CheckCircle,
+  Clock,
+  // Loader2,
+  Loader2Icon,
+  User,
+  Video,
+} from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -64,7 +78,7 @@ export default function AppointmentCard({
     if (appointment.agora_token && appointment.agora_channel) {
       // Join directly with existing credentials
       router.navigate({
-        to: `/appointment-room?token=${appointment.agora_token}&channel=${appointment.agora_channel}&uid=${uid}`,
+        to: `/appointment-room?token=${appointment.agora_token}&channel=${appointment.agora_channel}&uid=${uid}&patientId=${appointment.patient_id}&appointmentId=${appointment.id}`,
       });
     } else {
       // Generate new token if none exists
@@ -75,7 +89,7 @@ export default function AppointmentCard({
             const { token, channelName, uid, appId } =
               response.data.agoraTokenData;
             router.navigate({
-              to: `/appointment-room?token=${token}&channel=${channelName}&uid=${uid}&appId=${appId}`,
+              to: `/appointment-room?token=${token}&channel=${channelName}&uid=${uid}&appId=${appId}&patientId=${appointment.patient_id}&appointmentId=${appointment.id}`,
             });
           },
           onError: (error) => {
@@ -87,6 +101,21 @@ export default function AppointmentCard({
           },
         }
       );
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getSessionStatus = () => {
+    const now = new Date();
+    const sessionDate = new Date(appointment.date);
+    const sessionEndTime = addMinutes(sessionDate, 30);
+
+    if (isBefore(now, addMinutes(sessionDate, -5))) {
+      return "upcoming";
+    } else if (isAfter(now, sessionEndTime)) {
+      return "completed";
+    } else {
+      return "active";
     }
   };
 
@@ -139,12 +168,44 @@ export default function AppointmentCard({
           View Details
         </Button>
 
-        <Button
+        {getSessionStatus() === "upcoming" && (
+          <Button disabled className="flex items-center gap-2 bg-gray-400">
+            <Clock className="h-4 w-4" />
+            Session starts in {formatDistanceToNow(new Date(appointment.date))}
+          </Button>
+        )}
+
+        {getSessionStatus() === "active" && (
+          <Button
+            onClick={handleJoinSession}
+            disabled={isGeneratingToken}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+          >
+            <Video className="h-4 w-4" />
+            {isGeneratingToken ? (
+              <Loader2Icon className="h-4 w-4 animate-spin" />
+            ) : (
+              "Join Session"
+            )}
+          </Button>
+        )}
+
+        {getSessionStatus() === "completed" && (
+          <Button disabled className="flex items-center gap-2 bg-gray-400">
+            <CheckCircle className="h-4 w-4" />
+            Session Completed
+          </Button>
+        )}
+
+        {/* <Button
           variant="default"
           size="sm"
           className="flex-1 gap-2"
           onClick={handleJoinSession}
-          // disabled={!canJoinSession}
+          disabled={
+            getSessionStatus() === "upcoming" ||
+            getSessionStatus() === "completed"
+          }
         >
           {isGeneratingToken ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -152,7 +213,7 @@ export default function AppointmentCard({
             <Video className="h-4 w-4" />
           )}
           {isGeneratingToken ? "Joining..." : "Join Session"}
-        </Button>
+        </Button> */}
       </CardFooter>
     </Card>
   );

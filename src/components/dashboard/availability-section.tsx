@@ -49,6 +49,14 @@ const TIME_SLOTS = [
   { display: "4:30 PM - 5:00 PM", start: "16:30", end: "17:00" },
   { display: "5:00 PM - 5:30 PM", start: "17:00", end: "17:30" },
   { display: "5:30 PM - 6:00 PM", start: "17:30", end: "18:00" },
+  { display: "6:00 PM - 6:30 PM", start: "18:00", end: "18:30" },
+  { display: "6:30 PM - 7:00 PM", start: "18:30", end: "19:00" },
+  { display: "7:00 PM - 7:30 PM", start: "19:00", end: "19:30" },
+  { display: "7:30 PM - 8:00 PM", start: "19:30", end: "20:00" },
+  { display: "8:00 PM - 8:30 PM", start: "20:00", end: "20:30" },
+  { display: "8:30 PM - 9:00 PM", start: "20:30", end: "21:00" },
+  { display: "9:00 PM - 9:30 PM", start: "21:00", end: "21:30" },
+  { display: "9:30 PM - 10:00 PM", start: "21:30", end: "22:00" },
 ];
 
 interface CalendarDay {
@@ -468,38 +476,42 @@ export default function AvailabilitySection() {
               </div>
 
               {selectedDayData?.isAvailable ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label className="text-sm font-medium">Time Slots</Label>
-                  {TIME_SLOTS.map((timeSlot) => {
-                    const isSelected = selectedDayData.timeSlots.includes(
-                      timeSlot.display
-                    );
-                    return (
-                      <div
-                        key={timeSlot.display}
-                        className={cn(
-                          "p-3 rounded-lg border bg-white cursor-pointer transition-all",
-                          isSelected
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        )}
-                        onClick={() =>
-                          handleTimeSlotToggle(
-                            selectedDate.getDate(),
-                            timeSlot.display,
-                            !isSelected
-                          )
-                        }
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm">{timeSlot.display}</span>
-                          {isSelected && (
-                            <Check className="h-4 w-4 text-primary" />
+                  <div className="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
+                    {TIME_SLOTS.map((timeSlot) => {
+                      const isSelected = selectedDayData.timeSlots.includes(
+                        timeSlot.display
+                      );
+                      return (
+                        <div
+                          key={timeSlot.display}
+                          className={cn(
+                            "flex-shrink-0 p-2 rounded-lg border bg-white cursor-pointer transition-all min-w-[140px]",
+                            isSelected
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-primary/50"
                           )}
+                          onClick={() =>
+                            handleTimeSlotToggle(
+                              selectedDate.getDate(),
+                              timeSlot.display,
+                              !isSelected
+                            )
+                          }
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-base font-medium">
+                              {timeSlot.display}
+                            </span>
+                            {isSelected && (
+                              <Check className="h-3 w-3 text-primary flex-shrink-0" />
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-32 text-center">

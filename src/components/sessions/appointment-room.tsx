@@ -13,30 +13,45 @@ import {
   useNetworkQuality,
 } from "agora-rtc-react";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { LocalVideoView } from "./local-video-view";
 import { RemoteVideoView } from "./remote-video-view";
-import { useRouter } from "@tanstack/react-router";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import {
+  PrescriptionsAdapter,
+  usePrescriptionMutation,
+} from "@/adapters/PrescriptionsAdapter";
+import {
+  SessionNotesAdapter,
+  useSessionNotesMutation,
+} from "@/adapters/SessionNotesAdapter";
 
 export default function AppointmentRoom({
   token,
   channel,
   uid,
+  patientId,
+  appointmentId,
 }: {
   token: string;
   channel: string;
   uid: string;
+  patientId: string;
+  appointmentId: string;
 }) {
-  const router = useRouter();
   const agoraClient = useRTCClient();
   const connectionState = useConnectionState();
   const networkQuality = useNetworkQuality();
@@ -52,7 +67,12 @@ export default function AppointmentRoom({
   const [micOn, setMic] = useState(true);
   const [cameraOn, setCamera] = useState(true);
   const [lastWarningTime, setLastWarningTime] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(1800);
+  const [warningsShown, setWarningsShown] = useState({
+    tenMinutes: false,
+    fiveMinutes: false,
+    timeUp: false,
+  });
 
   // Get tracks using hooks
   const audioTrack = useLocalMicrophoneTrack(micOn);
@@ -172,16 +192,42 @@ export default function AppointmentRoom({
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev <= 1) {
-          handleEndCall();
+        const newTime = prev - 1;
+
+        // Show warning when 10 minutes remaining (600 seconds)
+        if (newTime === 600 && !warningsShown.tenMinutes) {
+          toast.warning("10 minutes remaining in your session", {
+            duration: 5000,
+            id: "ten-minute-warning",
+          });
+          setWarningsShown((prev) => ({ ...prev, tenMinutes: true }));
+        }
+
+        // Show warning when 5 minutes remaining (300 seconds)
+        if (newTime === 300 && !warningsShown.fiveMinutes) {
+          toast.warning("5 minutes remaining in your session", {
+            duration: 5000,
+            id: "five-minute-warning",
+          });
+          setWarningsShown((prev) => ({ ...prev, fiveMinutes: true }));
+        }
+
+        // Show final warning when time is up
+        if (newTime <= 0 && !warningsShown.timeUp) {
+          toast.error("Session time has expired", {
+            duration: 10000,
+            id: "time-up-warning",
+          });
+          setWarningsShown((prev) => ({ ...prev, timeUp: true }));
           return 0;
         }
-        return prev - 1;
+
+        return newTime;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [warningsShown]);
 
   const handleVideoMute = async () => {
     if (cameraTrack.localCameraTrack) {
@@ -206,7 +252,7 @@ export default function AppointmentRoom({
         cameraTrack.localCameraTrack.close();
       }
       await agoraClient.leave();
-      router.navigate({ to: "/dashboard" });
+      window.location.href = "/dashboard";
     } catch (error) {
       console.error("Error ending call:", error);
     }
@@ -215,18 +261,66 @@ export default function AppointmentRoom({
   // Notes & Prescription modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [notes, setNotes] = useState("");
-  const [prescription, setPrescription] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [isPrescriptionDialogOpen, setIsPrescriptionDialogOpen] =
+    useState(false);
+  const [prescription, setPrescription] = useState({
+    medication: "",
+    dosage: "",
+    frequency: "",
+    duration: "",
+    notes: "",
+  });
 
-  // Save handler (replace with API call as needed)
-  const handleSaveNotes = async () => {
-    setSaving(true);
-    // Simulate API call
-    setTimeout(() => {
-      setSaving(false);
+  // Add prescription mutation (using mutateAsync)
+  const { mutateAsync: addPrescriptionAsync, isPending: isAddingPrescription } =
+    usePrescriptionMutation({
+      mutationCallback: PrescriptionsAdapter.addPrescription,
+    });
+
+  const { mutateAsync: addSessionNoteAsync, isPending: isAddingSessionNote } =
+    useSessionNotesMutation({
+      mutationCallback: SessionNotesAdapter.addSessionNote,
+    });
+
+  const handleAddPrescription = async () => {
+    try {
+      await addPrescriptionAsync({
+        patient_id: patientId,
+        ...prescription,
+      });
+      setIsPrescriptionDialogOpen(false);
+      setPrescription({
+        medication: "",
+        dosage: "",
+        frequency: "",
+        duration: "",
+        notes: "",
+      });
+
+      toast.success("Prescription added successfully");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to add prescription";
+      toast.error(message);
+    }
+  };
+
+  const handleAddSessionNote = async () => {
+    try {
+      await addSessionNoteAsync({
+        patient_id: patientId,
+        note: notes,
+        appointment_id: appointmentId,
+      });
       setModalOpen(false);
-      toast.success("Notes and prescription saved!");
-    }, 1000);
+      setNotes("");
+
+      toast.success("Session note added successfully");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to add session note";
+      toast.error(message);
+    }
   };
 
   if (isLoading) {
@@ -267,7 +361,7 @@ export default function AppointmentRoom({
             )}
           </div>
           {/* Local Stream */}
-          <div className="w-full sm:w-[320px] py-4 sm:h-full bg-gray-900 rounded-xl overflow-hidden flex flex-col gap-6 items-center justify-center border border-gray-700">
+          <div className="w-full sm:w-[350px] py-4 sm:h-full bg-gray-900 rounded-xl overflow-hidden flex flex-col gap-6 items-center justify-center border border-gray-700">
             <LocalVideoView
               localMicrophoneTrack={audioTrack.localMicrophoneTrack}
               localCameraTrack={cameraTrack.localCameraTrack}
@@ -310,52 +404,154 @@ export default function AppointmentRoom({
                 size="icon"
                 className="rounded-full h-10 w-10 sm:h-12 sm:w-12"
                 onClick={() => setModalOpen(true)}
-                title="Add Notes & Prescription"
+                title="Add Notes"
               >
                 <span className="font-bold text-lg">✎</span>
               </Button>
+              {/*  Prescription Button */}
+
+              <Dialog
+                open={isPrescriptionDialogOpen}
+                onOpenChange={setIsPrescriptionDialogOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full h-10 w-10 sm:h-12 sm:w-12"
+                    title="Add A Prescription"
+                  >
+                    <span className="font-bold text-lg">💊</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Prescription</DialogTitle>
+                    <DialogDescription>
+                      Enter the prescription details for the patient
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="medication">Medication</Label>
+                      <Input
+                        id="medication"
+                        value={prescription.medication}
+                        onChange={(e) =>
+                          setPrescription({
+                            ...prescription,
+                            medication: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="dosage">Dosage</Label>
+                      <Input
+                        id="dosage"
+                        value={prescription.dosage}
+                        onChange={(e) =>
+                          setPrescription({
+                            ...prescription,
+                            dosage: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="frequency">Frequency</Label>
+                      <Input
+                        id="frequency"
+                        value={prescription.frequency}
+                        onChange={(e) =>
+                          setPrescription({
+                            ...prescription,
+                            frequency: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="duration">Duration</Label>
+                      <Input
+                        id="duration"
+                        value={prescription.duration}
+                        onChange={(e) =>
+                          setPrescription({
+                            ...prescription,
+                            duration: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="notes">Notes</Label>
+                      <Textarea
+                        id="notes"
+                        value={prescription.notes}
+                        onChange={(e) =>
+                          setPrescription({
+                            ...prescription,
+                            notes: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsPrescriptionDialogOpen(false)}
+                      disabled={isAddingPrescription}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleAddPrescription}
+                      disabled={isAddingPrescription}
+                    >
+                      {isAddingPrescription ? "Adding..." : "Add Prescription"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
-        </div>
 
-        {/* Notes & Prescription Modal */}
-        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Add Notes & Prescription</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Notes</label>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={4}
-                  placeholder="Type your notes here..."
-                />
+          {/* Notes */}
+          <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Add Notes</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    rows={10}
+                    placeholder="Type your notes here..."
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Prescription
-                </label>
-                <Textarea
-                  value={prescription}
-                  onChange={(e) => setPrescription(e.target.value)}
-                  rows={4}
-                  placeholder="Type prescription here..."
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveNotes} disabled={saving}>
-                {saving ? "Saving..." : "Save"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAddSessionNote}
+                  disabled={isAddingSessionNote}
+                >
+                  {isAddingSessionNote ? (
+                    <Loader2 className="animate-spin h-4 w-4" />
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );
